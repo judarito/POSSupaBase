@@ -72,7 +72,7 @@ else
                                     <RadzenButton Text="Editar" Style="width: 100%" />
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" SizeMD="8" SizeLG="8">
-                                    <RadzenButton Text="Eliminar" Style="width: 100%" Click="@DeteteLider" ButtonStyle="ButtonStyle.Danger" />
+                                    <RadzenButton Text="Eliminar" Style="width: 100%" Click="@(()=> DeteteLider(Lider.id))" ButtonStyle="ButtonStyle.Danger" />
                                 </RadzenColumn>
                             </RadzenRow>
 
@@ -106,23 +106,31 @@ else
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        lideres = await Http.GetFromJsonAsync<Lider[]>("Lideres/GetAlls");
+        await LoadData();
     }
 
-    public async void DeteteLider()
+    public async void DeteteLider(int id)
     {
         var result = await AppUtils.ShowConfirm("Eliminar líder", "Esta seguro de querer eliminar este líder?", DialogService);
         //AppUtils.ShowAlert("Eliminar líder", "Esta seguro de querer eliminar este líder?", DialogService);
         if ((bool)result)
         {
-            Console.WriteLine("Presiono Si");
+            Console.WriteLine($"Presiono Si {id}");
+            var response = await Http.DeleteAsync("Lideres/DeleteById/" + Convert.ToInt32(id));
+            await LoadData();
+            StateHasChanged();
+            Console.WriteLine(response);
             return;
         }
-        Console.WriteLine("Presiono No");
+        Console.WriteLine($"Presiono No {id}");
     }
 
     public void IrANuevo()
     {
         Navigation.NavigateTo("lideresnew");
+    }
+    public async Task LoadData()
+    {
+        lideres = await Http.GetFromJsonAsync<Lider[]>("Lideres/GetAlls");
     }
 }

@@ -1,0 +1,30 @@
+﻿@using votClient.Shared.Services;
+@inject SpinnerService SpinnerService;
+
+@if (IsVisible)
+{
+    <div class="spinner-container">
+        <RadzenProgressBar ProgressBarStyle="ProgressBarStyle.Primary" Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
+    </div>
+}
+
+@code {
+    protected bool IsVisible { get; set; }
+    protected override void OnInitialized()
+    {
+        SpinnerService.OnShow += ShowSpinner;
+        SpinnerService.OnHide += HideSpinner;
+    }
+
+    public void ShowSpinner()
+    {
+        IsVisible = true;
+        StateHasChanged();
+    }
+
+    public void HideSpinner()
+    {
+        IsVisible = false;
+        StateHasChanged();
+    }
+}
