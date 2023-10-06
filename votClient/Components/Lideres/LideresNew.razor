@@ -1,0 +1,98 @@
+﻿@using System.Text.Json;
+@using votClient.Models;
+@inject HttpClient Http
+<PageTitle>Líderes</PageTitle>
+
+<h1>Nuevo Líder</h1>
+
+@if (lider == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <RadzenTemplateForm Data="@lider" Submit="@((Lider args) => { Submit(args); })">
+        <RadzenRow Gap="2rem" Class="rz-p-0 rz-p-lg-4">
+            <RadzenColumn Size="12" SizeMD="11">
+                <RadzenStack>
+                    <RadzenFieldset Text="Datos del Líder">
+                        <RadzenStack Gap="1rem">
+
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenLabel Text="Nombre" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <RadzenTextBox Style="width: 100%;" Name="nombre" @bind-Value="lider.nombre" />
+                                    <RadzenRequiredValidator Component="nombre" Text="Nombre es requerido" Popup=@popup Style="position: relative" />
+                                </RadzenColumn>
+                            </RadzenRow>
+
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenLabel Text="Cedula" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <RadzenTextBox Style="width: 100%;" Name="cedula" @bind-Value="lider.cedula" />
+                                    <RadzenRequiredValidator Component="cedula" Text="Cedula es requerido" Popup=@popup Style="position: relative" />
+                                </RadzenColumn>
+                            </RadzenRow>
+
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenLabel Text="Telefono" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <RadzenTextBox Style="width: 100%;" Name="telefono" @bind-Value="lider.telefono" />
+                                </RadzenColumn>
+                            </RadzenRow>
+                     
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenLabel Text="Referido" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <RadzenTextBox Style="width: 100%;" Name="referido" @bind-Value="lider.referido" />
+                                </RadzenColumn>
+                            </RadzenRow>
+                        </RadzenStack>
+                    </RadzenFieldset>
+                    
+                </RadzenStack>
+            </RadzenColumn>
+          
+        </RadzenRow>
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="1rem" Class="rz-mt-8 rz-mb-4">
+            <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large" Icon="save" Text="Save" />
+            <RadzenButton ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Large" Icon="cancel" Text="Cancel" Click="@Cancel" />
+        </RadzenStack>
+    </RadzenTemplateForm>
+}
+
+
+
+@code {
+    private Lider? lider;
+    bool popup=true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        lider = new Lider();
+    }
+
+    async void  Submit(Lider arg)
+    {
+        var resultLider = JsonSerializer.Serialize(arg, new JsonSerializerOptions() { WriteIndented = true });
+        Console.WriteLine($"Submit: {resultLider}");
+        using var response = await Http.PostAsJsonAsync("Lideres/Create", arg);
+        lider = new Lider();
+        Navigation.NavigateTo("lideres");
+        Console.WriteLine($"response: {response}");
+    }
+
+    void Cancel()
+    {
+        Navigation.NavigateTo("lideres");
+    }
+}
