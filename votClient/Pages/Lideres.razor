@@ -15,7 +15,7 @@
     <p><em>Loading...</em></p>
 }
 else
-{
+{@*
     <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
                 Data="@lideres" TItem="Lider" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
         <Columns>
@@ -25,14 +25,87 @@ else
             <RadzenDataGridColumn TItem="Lider" Property="telefono" Title="Telefono" Width="200px" />
             <RadzenDataGridColumn TItem="Lider" Property="referido" Title="Referido" Width="120px" />
         </Columns>
-    </RadzenDataGrid>
+    </RadzenDataGrid>*@
+
+
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem" Class="rz-p-2">
+        <RadzenCheckBox @bind-Value="@allowVirtualization" Name="allowVirtualization" />
+        <RadzenLabel Text="Allow virtualization" Component="allowVirtualization" />
+    </RadzenStack>
+
+    <RadzenDataList AllowVirtualization=@allowVirtualization Style="@(allowVirtualization ? "height:400px;overflow:auto;" : "")"
+                WrapItems="@(!allowVirtualization)" AllowPaging="@(!allowVirtualization)"
+                Data="@lideres" TItem="Lider" PageSize="5" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true">
+        <Template Context="Lider">
+            <RadzenCard Style="width: 100%; padding: 0;">
+                <RadzenRow Gap="0">
+                    <RadzenColumn Size="12" SizeLG="3" Class="rz-p-4 product-title">
+                        <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class="rz-color-secondary">@(Lider.nombre)</RadzenText>
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeLG="7" Class="rz-p-4">
+                            <RadzenRow Gap="0">
+                                <RadzenColumn Size="12" SizeMD="6" SizeLG="2">
+                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Cedula</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Body2">@(Lider.cedula)</RadzenText>
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="6" SizeLG="2">
+                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Telefono</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Body2">@(Lider.telefono)</RadzenText>
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="6" SizeLG="5">
+                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Referido</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Body2">@(Lider.referido)</RadzenText>
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="6" SizeLG="3" Class="rz-text-align-start rz-text-align-lg-end">
+                                    <RadzenBadge BadgeStyle="BadgeStyle.Secondary" Shade="Shade.Lighter" class="price-badge" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", Lider.id)}") />
+                                </RadzenColumn>
+                            </RadzenRow>
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeLG="2" Class="rz-p-4">
+                            <RadzenRow Gap="0">
+                                <RadzenColumn Size="12" SizeMD="8" SizeLG="8">
+                                    <RadzenButton Text="Editar" Style="width: 100%" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="8" SizeLG="8">
+                                    <RadzenButton Text="Eliminar" Style="width: 100%" ButtonStyle="ButtonStyle.Danger" />
+                                </RadzenColumn>
+                            </RadzenRow>
+
+
+                        </RadzenColumn>
+                    </RadzenRow>
+                </RadzenCard>
+            </Template>
+        </RadzenDataList>
+
+
+
+
+
 }
 
+<style>
+    .product-title {
+        min-height: 72px;
+        background-color: var(--rz-secondary-lighter);
+    }
+
+    .price-badge {
+        font-size: 16px;
+        font-weight: bold;
+        line-height: 20px;
+        padding: 8px;
+    }
+</style>
+
 @code {
+
+    bool allowVirtualization;
     private Lider[]? lideres;
 
     protected override async Task OnInitializedAsync()
     {
+        await base.OnInitializedAsync();
         lideres = await Http.GetFromJsonAsync<Lider[]>("Lideres/GetAlls");
     }
 }
