@@ -1,6 +1,7 @@
 ﻿@using System.Text.Json;
 @using votClient.Models;
-@inject HttpClient Http
+@using votClient.Services.Lideres;
+@inject ILideresService lideresService
 <PageTitle>Líderes</PageTitle>
 
 <h1>Nuevo Líder</h1>
@@ -72,6 +73,10 @@ else
 
 
 @code {
+
+    [Parameter]
+    public int? id { get; set; }
+
     private Lider? lider;
     bool popup=true;
 
@@ -79,16 +84,22 @@ else
     {
         await base.OnInitializedAsync();
         lider = new Lider();
+
+        if(id != null)
+        {
+            lider = await lideresService.GetById(id);
+        }
+
+
     }
 
     async void  Submit(Lider arg)
     {
-        var resultLider = JsonSerializer.Serialize(arg, new JsonSerializerOptions() { WriteIndented = true });
-        Console.WriteLine($"Submit: {resultLider}");
-        using var response = await Http.PostAsJsonAsync("Lideres/Create", arg);
+        var response = arg?.id != null ? await lideresService.Update(arg) : await lideresService.Create(arg);
         lider = new Lider();
         Navigation.NavigateTo("lideres");
         Console.WriteLine($"response: {response}");
+        
     }
 
     void Cancel()

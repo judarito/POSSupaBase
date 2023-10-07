@@ -1,7 +1,8 @@
 ﻿@page "/lideres"
-@using votClient.Models;
-@inject HttpClient Http
 
+@using votClient.Models;
+@using votClient.Services.Lideres;
+@inject ILideresService lideresService
 
 
 
@@ -69,7 +70,7 @@ else
                         <RadzenColumn Size="12" SizeLG="2" Class="rz-p-4">
                             <RadzenRow Gap="0">
                                 <RadzenColumn Size="12" SizeMD="8" SizeLG="8">
-                                    <RadzenButton Text="Editar" Style="width: 100%" />
+                                    <RadzenButton Text="Editar" Style="width: 100%" Click="@(()=> EditarLider(Lider.id))" />
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" SizeMD="8" SizeLG="8">
                                     <RadzenButton Text="Eliminar" Style="width: 100%" Click="@(()=> DeteteLider(Lider.id))" ButtonStyle="ButtonStyle.Danger" />
@@ -100,6 +101,8 @@ else
 
 @code {
 
+    [Parameter]
+    public int Id { get; set; }
     bool allowVirtualization;
     private Lider[]? lideres;
 
@@ -115,14 +118,17 @@ else
         //AppUtils.ShowAlert("Eliminar líder", "Esta seguro de querer eliminar este líder?", DialogService);
         if ((bool)result)
         {
-            Console.WriteLine($"Presiono Si {id}");
-            var response = await Http.DeleteAsync("Lideres/DeleteById/" + Convert.ToInt32(id));
+            var response = await lideresService.Delete(id);
             await LoadData();
             StateHasChanged();
             Console.WriteLine(response);
             return;
         }
-        Console.WriteLine($"Presiono No {id}");
+    }
+
+    public async void EditarLider(int id)
+    {
+        Navigation.NavigateTo($"lideresnew/{id}");
     }
 
     public void IrANuevo()
@@ -131,6 +137,6 @@ else
     }
     public async Task LoadData()
     {
-        lideres = await Http.GetFromJsonAsync<Lider[]>("Lideres/GetAlls");
+        lideres = await lideresService.GetAll();
     }
 }

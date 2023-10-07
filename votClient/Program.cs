@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Radzen;
 using votClient;
 using votClient.HttpMessageHandler;
+using votClient.Services.Lideres;
 using votClient.Shared.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -27,5 +28,6 @@ builder.Services.AddScoped<DialogService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<TooltipService>();
 builder.Services.AddScoped<SpinnerService>();
+builder.Services.AddScoped<ILideresService, LideresService>();
 
 await builder.Build().RunAsync();
