@@ -7,6 +7,7 @@
         public string Telefono { get; set; }
         public string Cedula { get; set; }
         public string Referido { get; set; }
+        public int votos { get; set; }
 
     }
 }
