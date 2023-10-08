@@ -104,6 +104,14 @@ else
     async void Submit(Lider arg)
     {
         var response = arg?.Id != null && arg?.Id > 0 ? await lideresService.Update(arg) : await lideresService.Create(arg);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            Console.WriteLine(response);
+            AppUtils.ShowAlert("Error", $"{response.ReasonPhrase} : { await response.Content.ReadAsStringAsync()} ", DialogService);
+            return;
+        }
+
         lider = new Lider();
         Navigation.NavigateTo("lideres");
         Console.WriteLine($"response: {response}");
