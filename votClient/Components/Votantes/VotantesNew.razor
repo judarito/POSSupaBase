@@ -49,8 +49,8 @@ else
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" SizeMD="9">
                                     <RadzenTextBox Style="width: 100%;" Name="nombre" @bind-Value="votante.Nombre" MaxLength="50" />
-                                    <RadzenLengthValidator Component="nombre" Max="50" Text="El nombre debe tener como máximo 50 caracteres." Popup=@popup Style="position: absolute" />
-                                    <RadzenCustomValidator Component="nombre" Validator="@(() => ValidateSpaces(votante.Nombre))" Text="Nombre es requerido" Popup=@popup Style="position: absolute" />
+                                    <RadzenLengthValidator Component="nombre" Max="50" Text="El nombre debe tener como máximo 50 caracteres." Popup=@popup Style="position: relative" />
+                                    <RadzenCustomValidator Component="nombre" Validator="@(() => ValidateSpaces(votante.Nombre))" Text="Nombre es requerido" Popup=@popup Style="position: relative" />
                                 </RadzenColumn>
                             </RadzenRow>
 
@@ -60,9 +60,9 @@ else
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" SizeMD="9">
                                     <RadzenTextBox Style="width: 100%;" Name="cedula" @bind-Value="votante.Cedula" MaxLength="20" />
-                                    <RadzenCustomValidator Component="cedula" Validator="@(() => ValidateSpaces(votante.Cedula))" Text="Cedula es requerido" Popup=@popup Style="position: absolute" />
-                                    <RadzenLengthValidator Component="cedula" Max="20" Text="La Cedula debe tener como máximo 20 caracteres." Popup=@popup Style="position: absolute" />
-                                    <RadzenCustomValidator Component="cedula" Validator="@(() => ValidateOnlyNumber(votante.Cedula))" Text="Solo puede escribir numeros" Popup=@popup Style="position: absolute" />
+                                    <RadzenCustomValidator Component="cedula" Validator="@(() => ValidateSpaces(votante.Cedula))" Text="Cedula es requerido" Popup=@popup Style="position: relative" />
+                                    <RadzenLengthValidator Component="cedula" Max="20" Text="La Cedula debe tener como máximo 20 caracteres." Popup=@popup Style="position: relative" />
+                                    <RadzenCustomValidator Component="cedula" Validator="@(() => ValidateOnlyNumber(votante.Cedula))" Text="Solo puede escribir numeros" Popup=@popup Style="position: relative" />
                                 </RadzenColumn>
                             </RadzenRow>
 
@@ -72,9 +72,9 @@ else
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" SizeMD="9">
                                     <RadzenTextBox Style="width: 100%;" Name="telefono" @bind-Value="votante.Telefono" MaxLength="20" />
-                                    <RadzenCustomValidator Component="telefono" Validator="@(() => ValidateSpaces(votante.Telefono))" Text="Telefono es requerido" Popup=@popup Style="position: absolute" />
-                                    <RadzenLengthValidator Component="telefono" Max="20" Text="El Telefono debe tener como máximo 20 caracteres." Popup=@popup Style="position: absolute" />
-                                    <RadzenCustomValidator Component="telefono" Validator="@(() => ValidateOnlyNumber(votante.Telefono))" Text="Solo puede escribir numeros" Popup=@popup Style="position: absolute" />
+                                    <RadzenCustomValidator Component="telefono" Validator="@(() => ValidateSpaces(votante.Telefono))" Text="Telefono es requerido" Popup=@popup Style="position: relative" />
+                                    <RadzenLengthValidator Component="telefono" Max="20" Text="El Telefono debe tener como máximo 20 caracteres." Popup=@popup Style="position: relative" />
+                                    <RadzenCustomValidator Component="telefono" Validator="@(() => ValidateOnlyNumber(votante.Telefono))" Text="Solo puede escribir numeros" Popup=@popup Style="position: relative" />
                                 </RadzenColumn>
                             </RadzenRow>
 
@@ -84,7 +84,7 @@ else
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" SizeMD="9">
                                     <RadzenTextBox Style="width: 100%;" Name="Direccion" @bind-Value="votante.Direccion" MaxLength="50" />
-                                    <RadzenLengthValidator Component="Direccion" Max="50" Text="La dirección debe tener como máximo 50 caracteres." Popup=@popup Style="position: absolute" />
+                                    <RadzenLengthValidator Component="Direccion" Max="50" Text="La dirección debe tener como máximo 50 caracteres." Popup=@popup Style="position: relative" />
                                 </RadzenColumn>
                             </RadzenRow>
 
