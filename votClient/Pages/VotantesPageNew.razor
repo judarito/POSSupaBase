@@ -1,0 +1,10 @@
+﻿@page "/votantesnew"
+@page "/votantesnew/{id:int}"   
+@using votClient.Components.Votantes
+
+<VotantesNew id="@id"></VotantesNew>
+
+@code {
+    [Parameter]
+    public int? id { get; set; }
+}

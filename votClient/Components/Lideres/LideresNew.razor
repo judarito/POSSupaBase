@@ -93,7 +93,7 @@ else
             }
             catch (Exception ex)
             {
-                AppUtils.ShowAlert("Error", ex.StackTrace, DialogService);
+                AppUtils.ShowNotify(ex.Message, "ERROR", Ns);
             }
 
         }
@@ -107,15 +107,13 @@ else
 
         if (!response.IsSuccessStatusCode)
         {
-            Console.WriteLine(response);
-            AppUtils.ShowAlert("Error", $"{response.ReasonPhrase} : { await response.Content.ReadAsStringAsync()} ", DialogService);
+            AppUtils.ShowNotify($"{response.ReasonPhrase} : {await response.Content.ReadAsStringAsync()} ", "WARNING", Ns);
             return;
         }
 
         lider = new Lider();
+        AppUtils.ShowNotify("Información guardada de manera exitosa", "OK", Ns);
         Navigation.NavigateTo("lideres");
-        Console.WriteLine($"response: {response}");
-
     }
 
     void Cancel()

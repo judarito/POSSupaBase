@@ -1,15 +1,14 @@
 ﻿@using votClient.Models;
-@using votClient.Services.Lideres;
-@inject ILideresService lideresService
+@using votClient.Services.Votantes;
+@inject IVotantesService votantesService
 
-<PageTitle>Líderes</PageTitle>
+<PageTitle>Votantes</PageTitle>
 
-<h1>Líderes</h1>
+<h1>Votantes</h1>
 
-<p>En esta pagina puedes almacenar los datos de los lídeles.</p>
+<p>En esta pagina puedes almacenar los datos de los Votantes.</p>
 
-
-@if (lideres == null)
+@if (votantes == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -37,39 +36,43 @@ else
 
     <RadzenDataList AllowVirtualization=@allowVirtualization Style="@(allowVirtualization ? "height:400px;overflow:auto;" : "")"
                 WrapItems="@(!allowVirtualization)" AllowPaging="@(!allowVirtualization)"
-                Data="@lideres" TItem="Lider" PageSize="5" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true">
-        <Template Context="Lider">
+                Data="@votantes" TItem="Votante" PageSize="5" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true">
+        <Template Context="Votante">
             <RadzenCard Style="width: 100%; padding: 0;">
                 <RadzenRow Gap="0">
                     <RadzenColumn Size="12" SizeLG="3" Class="rz-p-4 product-title">
-                        <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class="rz-color-secondary">@(Lider.Nombre)</RadzenText>
+                        <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class="rz-color-secondary">@(Votante.Nombre)</RadzenText>
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeLG="7" Class="rz-p-4">
                             <RadzenRow Gap="0">
                                 <RadzenColumn Size="12" SizeMD="6" SizeLG="2">
                                     <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Cedula</RadzenText>
-                                    <RadzenText TextStyle="TextStyle.Body2">@(Lider.Cedula)</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Body2">@(Votante.Cedula)</RadzenText>
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" SizeMD="6" SizeLG="2">
                                     <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Telefono</RadzenText>
-                                    <RadzenText TextStyle="TextStyle.Body2">@(Lider.Telefono)</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Body2">@(Votante.Telefono)</RadzenText>
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" SizeMD="6" SizeLG="5">
-                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Referido</RadzenText>
-                                    <RadzenText TextStyle="TextStyle.Body2">@(Lider.Referido)</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">E-mail</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Body2">@(Votante.Email)</RadzenText>
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="6" SizeLG="5">
+                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Lider</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Body2">@(Votante.NombreLider)</RadzenText>
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" SizeMD="6" SizeLG="3" Class="rz-text-align-start rz-text-align-lg-end">
-                                    <RadzenBadge BadgeStyle="BadgeStyle.Secondary" Shade="Shade.Lighter" class="price-badge" Text="@(Lider.Id.ToString())" />
+                                    <RadzenBadge BadgeStyle="BadgeStyle.Secondary" Shade="Shade.Lighter" class="price-badge" Text="@(Votante.NombrePuesto.ToString())" />
                                 </RadzenColumn>
                             </RadzenRow>
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeLG="2" Class="rz-p-4">
                             <RadzenRow Gap="0">
                                 <RadzenColumn Size="12" SizeMD="8" SizeLG="8">
-                                    <RadzenButton Text="Editar" Style="width: 100%" Click="@(()=> EditarLider(Lider.Id))" />
+                                    <RadzenButton Text="Editar" Style="width: 100%" Click="@(()=> EditarLider(Votante.Id))" />
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" SizeMD="8" SizeLG="8">
-                                    <RadzenButton Text="Eliminar" Style="width: 100%" Click="@(()=> DeteteLider(Lider.Id))" ButtonStyle="ButtonStyle.Danger" />
+                                    <RadzenButton Text="Eliminar" Style="width: 100%" Click="@(()=> DeteteLider(Votante.Id))" ButtonStyle="ButtonStyle.Danger" />
                                 </RadzenColumn>
                             </RadzenRow>
 
@@ -96,10 +99,9 @@ else
 </style>
 
 
-
 @code {
     bool allowVirtualization;
-    private Lider[]? lideres;
+    private Votante[]? votantes;
 
     protected override async Task OnInitializedAsync()
     {
@@ -109,29 +111,30 @@ else
 
     public async void DeteteLider(int id)
     {
-        var result = await AppUtils.ShowConfirm("Eliminar líder", "Está seguro de querer eliminar este líder?", DialogService);
+        var result = await AppUtils.ShowConfirm("Eliminar votante", "Está seguro de querer eliminar este votante?", DialogService);
         //AppUtils.ShowAlert("Eliminar líder", "Esta seguro de querer eliminar este líder?", DialogService);
         if ((bool)result)
         {
-            var response = await lideresService.Delete(id);
+            var response = await votantesService.Delete(id);
             await LoadData();
             StateHasChanged();
-            AppUtils.ShowNotify("Lider Eliminado exitósamente","OK",Ns);
+            AppUtils.ShowNotify("Votante Eliminado exitosamente", "OK", Ns);
             return;
         }
     }
 
     public async void EditarLider(int id)
     {
-        Navigation.NavigateTo($"lideresnew/{id}");
+        Navigation.NavigateTo($"votantesnew/{id}");
     }
 
     public void IrANuevo()
     {
-        Navigation.NavigateTo("lideresnew");
+        Navigation.NavigateTo("votantesnew");
     }
     public async Task LoadData()
     {
-        lideres = await lideresService.GetAll();
+        votantes = await votantesService.GetAll();
     }
+
 }

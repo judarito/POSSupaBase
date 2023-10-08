@@ -5,6 +5,8 @@ using Radzen;
 using votClient;
 using votClient.HttpMessageHandler;
 using votClient.Services.Lideres;
+using votClient.Services.Puestos;
+using votClient.Services.Votantes;
 using votClient.Shared.Services;
 
 const string ApiUrlBase = "https://vot20231005162706.azurewebsites.net/api/";
@@ -32,5 +34,7 @@ builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<TooltipService>();
 builder.Services.AddScoped<SpinnerService>();
 builder.Services.AddScoped<ILideresService, LideresService>();
+builder.Services.AddScoped<IVotantesService, VotantesService>();
+builder.Services.AddScoped<IPuestosService, PuestosService>();
 
 await builder.Build().RunAsync();

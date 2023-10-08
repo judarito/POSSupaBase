@@ -10,5 +10,27 @@ namespace votClient.Shared.Utils
             return result != null ? (bool)result : false;
         }
         public static void ShowAlert(string Title, string Message, DialogService dialogService) => dialogService.Alert(Message, Title, new AlertOptions() { OkButtonText = "Ok" });
+
+        public static void ShowNotify(string Message ,string Severity, NotificationService Ds) {
+            switch (Severity)
+            {
+                case "ERROR":
+                    Ds.Notify(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = "Error", Detail = Message, Duration = 4000 });
+                    break;
+                case "OK":
+                    Ds.Notify(new NotificationMessage { Severity = NotificationSeverity.Success, Summary = "Exitóso", Detail = Message, Duration = 4000 });
+                    break;
+                case "WARNING":
+                    Ds.Notify(new NotificationMessage { Severity = NotificationSeverity.Warning, Summary = "Precaución", Detail = Message, Duration = 4000 });
+                    break;
+                case "INFO":
+                    Ds.Notify(new NotificationMessage { Severity = NotificationSeverity.Info, Summary = "Información", Detail = Message, Duration = 4000 });
+                    break;
+                default:
+                    Ds.Notify(new NotificationMessage { Severity = NotificationSeverity.Warning, Summary = "Precaución", Detail = Message, Duration = 4000 });
+                    break;
+            }
+
+        }
     }
 }

@@ -1,0 +1,213 @@
+﻿@using System.Text.Json;
+@using votClient.Models;
+@using votClient.Services.Lideres;
+@using votClient.Services.Puestos;
+@using votClient.Services.Votantes;
+@inject IVotantesService votantesService
+@inject ILideresService lideresService
+@inject IPuestosService puestosService
+<PageTitle>Votante</PageTitle>
+
+<h1>Nuevo Votante</h1>
+
+
+@if (votante == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <RadzenTemplateForm Data="@votante" Submit="@((Votante args) => { Submit(args); })">
+        <RadzenRow Gap="2rem" Class="rz-p-0 rz-p-lg-4">
+            <RadzenColumn Size="12" SizeMD="11">
+                <RadzenStack>
+                    <RadzenFieldset Text="Datos del Votante">
+                        <RadzenStack Gap="1rem">
+
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenLabel Text="Líder" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    @if (Lideres== null)
+                                    {
+                                        <p><em>Cargando Lideres...</em></p>
+                                    }
+                                    else
+                                    {
+                                        <RadzenDropDown Name="lider" @bind-Value=@currentLider TValue="Lider" Data=@Lideres TextProperty="Nombre" Style="width: 100%; max-width: 400px;" />
+                                        <RadzenRequiredValidator Component="lider" Text="Líder es requerido" Popup=@popup Style="position: relative" />
+                                    }
+                                   
+                                </RadzenColumn>
+                            </RadzenRow>
+
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenLabel Text="Nombre" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <RadzenTextBox Style="width: 100%;" Name="nombre" @bind-Value="votante.Nombre" />
+                                    <RadzenRequiredValidator Component="nombre" Text="Nombre es requerido" Popup=@popup Style="position: relative" />
+                                </RadzenColumn>
+                            </RadzenRow>
+
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenLabel Text="Cedula" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <RadzenTextBox Style="width: 100%;" Name="cedula" @bind-Value="votante.Cedula" />
+                                    <RadzenRequiredValidator Component="cedula" Text="Cedula es requerido" Popup=@popup Style="position: relative" />
+                                </RadzenColumn>
+                            </RadzenRow>
+
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenLabel Text="Telefono" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <RadzenTextBox Style="width: 100%;" Name="telefono" @bind-Value="votante.Telefono" />
+                                    <RadzenRequiredValidator Component="telefono" Text="Telefono es requerido" Popup=@popup Style="position: relative" />
+                                </RadzenColumn>
+                            </RadzenRow>
+
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenLabel Text="Dirección" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <RadzenTextBox Style="width: 100%;" Name="Direccion" @bind-Value="votante.Direccion" />
+                                </RadzenColumn>
+                            </RadzenRow>
+
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenLabel Text="E-Mail" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <RadzenTextBox Style="width: 100%;" Name="email" @bind-Value="votante.Email" />
+                                    <RadzenRequiredValidator Component="email" Text="E-mail es requerido" Popup=@popup Style="position: relative" />
+                                    <RadzenEmailValidator Component="email" Text="Email invalido" Popup=@popup Style="position: relative" />
+                                </RadzenColumn>
+                            </RadzenRow>
+
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenLabel Text="Puesto de votación" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    @if (puestos == null)
+                                    {
+                                        <p><em>Cargando puestos de votación...</em></p>
+                                    }
+                                    else
+                                    {
+                                        <RadzenDropDown Name="puesto" @bind-Value=@currentPuesto TValue="PuestoVotacion" Data=@puestos TextProperty="Nombre" Style="width: 100%; max-width: 400px;" />
+                                        <RadzenRequiredValidator Component="puesto" Text="Puesto de votación es requerido" Popup=@popup Style="position: relative" />
+                                    }
+
+                                </RadzenColumn>
+                            </RadzenRow>
+                        </RadzenStack>
+                    </RadzenFieldset>
+
+                </RadzenStack>
+            </RadzenColumn>
+
+        </RadzenRow>
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="1rem" Class="rz-mt-8 rz-mb-4">
+            <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large" Icon="save" Text="Save" />
+            <RadzenButton ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Large" Icon="cancel" Text="Cancel" Click="@Cancel" />
+        </RadzenStack>
+    </RadzenTemplateForm>
+    }
+
+@code {
+
+    [Parameter]
+    public int? id { get; set; }
+    private Lider? currentLider;
+    private IEnumerable<Lider> Lideres;
+
+    private PuestoVotacion? currentPuesto;
+    private IEnumerable<PuestoVotacion> puestos;
+
+    private Votante? votante;
+    bool popup = true;
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        votante = new Votante();
+        currentLider = null;
+        currentPuesto = null;
+
+        Lideres = await lideresService.GetAll();
+        puestos = await puestosService.GetAll();
+
+        if (id != null && id > 0)
+        {
+            try
+            {
+                votante = await votantesService.GetById(id);
+                currentLider = Lideres.FirstOrDefault(x => x.Id == votante.IdLider);
+                currentPuesto = puestos.FirstOrDefault(x => x.Id == votante.IdPuesto);
+
+            }
+            catch (Exception ex)
+            {
+                AppUtils.ShowNotify(ex.Message, "ERROR", Ns);
+            }
+
+        }
+
+
+    }
+
+    async void Submit(Votante arg)
+    {
+        arg.IdLider = currentLider.Id;
+        arg.IdPuesto = currentPuesto.Id;
+        var response = arg?.Id != null && arg?.Id > 0 ? await votantesService.Update(arg) : await votantesService.Create(arg);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            AppUtils.ShowNotify($"{response.ReasonPhrase} : {await response.Content.ReadAsStringAsync()} ", "WARNING", Ns);
+            return;
+        }
+
+        votante = new Votante();
+        currentPuesto = null;
+        AppUtils.ShowNotify("Información guardada de manera exitosa", "OK", Ns);
+
+        if (arg?.Id <= 0)
+        {
+            var result = await AppUtils.ShowConfirm("Seguir Ingresando", "Desea seguir ingresando votantes para el líder seleccionado?", DialogService);
+            //AppUtils.ShowAlert("Eliminar líder", "Esta seguro de querer eliminar este líder?", DialogService);
+            if (!((bool)result))
+            {
+                currentLider = null;
+                Navigation.NavigateTo("votantes");
+            }
+        }
+        else
+        {
+            currentLider = null;
+            Navigation.NavigateTo("votantes");
+        }
+
+        StateHasChanged();
+       
+
+    }
+
+    void Cancel()
+    {
+        Navigation.NavigateTo("votantes");
+    }
+
+    
+}
