@@ -24,7 +24,7 @@ else
                                     <RadzenLabel Text="Nombre" />
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" SizeMD="9">
-                                    <RadzenTextBox Style="width: 100%;" Name="nombre" @bind-Value="lider.nombre" />
+                                    <RadzenTextBox Style="width: 100%;" Name="nombre" @bind-Value="lider.Nombre" />
                                     <RadzenRequiredValidator Component="nombre" Text="Nombre es requerido" Popup=@popup Style="position: relative" />
                                 </RadzenColumn>
                             </RadzenRow>
@@ -34,7 +34,7 @@ else
                                     <RadzenLabel Text="Cedula" />
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" SizeMD="9">
-                                    <RadzenTextBox Style="width: 100%;" Name="cedula" @bind-Value="lider.cedula" />
+                                    <RadzenTextBox Style="width: 100%;" Name="cedula" @bind-Value="lider.Cedula" />
                                     <RadzenRequiredValidator Component="cedula" Text="Cedula es requerido" Popup=@popup Style="position: relative" />
                                 </RadzenColumn>
                             </RadzenRow>
@@ -44,24 +44,24 @@ else
                                     <RadzenLabel Text="Telefono" />
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" SizeMD="9">
-                                    <RadzenTextBox Style="width: 100%;" Name="telefono" @bind-Value="lider.telefono" />
+                                    <RadzenTextBox Style="width: 100%;" Name="telefono" @bind-Value="lider.Telefono" />
                                 </RadzenColumn>
                             </RadzenRow>
-                     
+
                             <RadzenRow AlignItems="AlignItems.Center">
                                 <RadzenColumn Size="12" SizeMD="2">
                                     <RadzenLabel Text="Referido" />
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" SizeMD="9">
-                                    <RadzenTextBox Style="width: 100%;" Name="referido" @bind-Value="lider.referido" />
+                                    <RadzenTextBox Style="width: 100%;" Name="referido" @bind-Value="lider.Referido" />
                                 </RadzenColumn>
                             </RadzenRow>
                         </RadzenStack>
                     </RadzenFieldset>
-                    
+
                 </RadzenStack>
             </RadzenColumn>
-          
+
         </RadzenRow>
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="1rem" Class="rz-mt-8 rz-mb-4">
             <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large" Icon="save" Text="Save" />
@@ -78,28 +78,36 @@ else
     public int? id { get; set; }
 
     private Lider? lider;
-    bool popup=true;
+    bool popup = true;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         lider = new Lider();
 
-        if(id != null)
+        if (id != null && id > 0)
         {
-            lider = await lideresService.GetById(id);
+            try
+            {
+                lider = await lideresService.GetById(id);
+            }
+            catch (Exception ex)
+            {
+                AppUtils.ShowAlert("Error", ex.StackTrace, DialogService);
+            }
+
         }
 
 
     }
 
-    async void  Submit(Lider arg)
+    async void Submit(Lider arg)
     {
-        var response = arg?.id != null ? await lideresService.Update(arg) : await lideresService.Create(arg);
+        var response = arg?.Id != null && arg?.Id > 0 ? await lideresService.Update(arg) : await lideresService.Create(arg);
         lider = new Lider();
         Navigation.NavigateTo("lideres");
         Console.WriteLine($"response: {response}");
-        
+
     }
 
     void Cancel()

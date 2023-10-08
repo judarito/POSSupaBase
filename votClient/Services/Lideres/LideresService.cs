@@ -21,11 +21,7 @@ namespace votClient.Services.Lideres
 
         public async Task<Lider[]> GetAll() => await _http.GetFromJsonAsync<Lider[]>("Lideres/GetAlls");
 
-        public async Task<Lider> GetById(int? id)
-        {
-            var result = await _http.GetFromJsonAsync<Lider[]>($"Lideres/GetById/{id}");
-            return result.FirstOrDefault();
-        }
+        public async Task<Lider> GetById(int? id) => await _http.GetFromJsonAsync<Lider>($"Lideres/GetById/{id}");
 
         public async Task<HttpResponseMessage> Update(Lider lider) => await _http.PutAsJsonAsync("Lideres/Update", lider);
     }

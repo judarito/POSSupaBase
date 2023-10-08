@@ -2,11 +2,11 @@
 {
     public class Lider
     {
-        public int id { get; set; }
-        public string nombre { get; set; }
-        public string telefono { get; set; }
-        public string cedula { get; set; }
-        public string referido { get; set; }
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+        public string Telefono { get; set; }
+        public string Cedula { get; set; }
+        public string Referido { get; set; }
 
     }
 }
