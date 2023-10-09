@@ -9,8 +9,8 @@ using votClient.Services.Puestos;
 using votClient.Services.Votantes;
 using votClient.Shared.Services;
 
-const string ApiUrlBase = "https://vot20231005162706.azurewebsites.net/api/";
-//const string ApiUrlBase = "https://localhost:44356/api/";
+//const string ApiUrlBase = "https://vot20231005162706.azurewebsites.net/api/";
+const string ApiUrlBase = "https://localhost:7010/api/";
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");

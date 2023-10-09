@@ -72,7 +72,6 @@ else
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" SizeMD="9">
                                     <RadzenTextBox Style="width: 100%;" Name="telefono" @bind-Value="votante.Telefono" MaxLength="20" />
-                                    <RadzenCustomValidator Component="telefono" Validator="@(() => ValidateSpaces(votante.Telefono))" Text="Telefono es requerido" Popup=@popup Style="position: relative" />
                                     <RadzenLengthValidator Component="telefono" Max="20" Text="El Telefono debe tener como máximo 20 caracteres." Popup=@popup Style="position: relative" />
                                     <RadzenCustomValidator Component="telefono" Validator="@(() => ValidateOnlyNumber(votante.Telefono))" Text="Solo puede escribir numeros" Popup=@popup Style="position: relative" />
                                 </RadzenColumn>
@@ -94,7 +93,6 @@ else
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" SizeMD="9">
                                     <RadzenTextBox Style="width: 100%;" Name="email" @bind-Value="votante.Email" MaxLength="40" />
-                                    <RadzenRequiredValidator Component="email" Text="E-mail es requerido" Popup=@popup Style="position: relative" />
                                     <RadzenCustomValidator Component="email" Validator="@(() => ValidateNewEmail(votante.Email))" Text="Email Invalido" Popup=@popup Style="position: relative"/>
                                     <RadzenLengthValidator Component="email" Max="40" Text="El E-mail debe tener como máximo 40 caracteres." Popup=@popup Style="position: relative" />
 
@@ -222,7 +220,7 @@ else
     {
         if (string.IsNullOrEmpty(email))
         {
-            return false;
+            return true;
         }
         Regex regex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
         Match match = regex.Match(email);
@@ -243,7 +241,7 @@ else
     {
         if (string.IsNullOrEmpty(value))
         {
-            return false;
+            return true;
         }
         Regex regex = new Regex("^[0-9]+$");
         Match match = regex.Match(value);
