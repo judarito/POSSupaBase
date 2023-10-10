@@ -1,9 +1,24 @@
 ﻿@page "/"
+@using Microsoft.AspNetCore.Components.Authorization;
+@using votClient.Shared.Services;
 @attribute [Authorize]
+@inject TokenServerAuthenticationStateProvider authStateProvider
 <PageTitle>Index</PageTitle>
 
-<h1>Bienvenidos!</h1>
+<h1>Te damos la bienvenida @DisplayName !!</h1>
 
 <p>Este es el sistema de gestión de votantes y agenda para candidatos políticos</p>
 
 
+@code{
+    [CascadingParameter]
+    Task<AuthenticationState> AuthenticationState { get; set; }
+
+    private string? DisplayName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        DisplayName = await authStateProvider.GetDisplayNamenAsync();
+    }
+}

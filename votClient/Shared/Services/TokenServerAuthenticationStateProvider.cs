@@ -12,6 +12,7 @@ namespace votClient.Shared.Services
         }
 
         public async Task<string> GetTokenAsync() => await _sessionStorage.GetItemAsync<string>("jwt");
+        public async Task<string> GetDisplayNamenAsync() => await _sessionStorage.GetItemAsync<string>("DisplayName");
 
         public async Task SetTokenAsync(string token)
         {
@@ -58,9 +59,10 @@ namespace votClient.Shared.Services
 
         public async Task Logout()
         {
-
-            await _sessionStorage.RemoveItemAsync("jwt");
-            await _sessionStorage.RemoveItemAsync("UserName");
+            await _sessionStorage.ClearAsync();
+            //await _sessionStorage.RemoveItemAsync("jwt");
+            //await _sessionStorage.RemoveItemAsync("UserName");
+            //await _sessionStorage.RemoveItemAsync("DisplayName");
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
         }
     }

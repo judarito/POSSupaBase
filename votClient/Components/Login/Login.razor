@@ -36,6 +36,7 @@
         {
             //await sessionStorage.SetItemAsStringAsync("jwt", result.token);
             await sessionStorage.SetItemAsStringAsync("UserName", result.userName);
+            await sessionStorage.SetItemAsStringAsync("DisplayName", result.displayName);
             await authStateProvider.SetTokenAsync(result.token);
             Navigation.NavigateTo($"");
         }
