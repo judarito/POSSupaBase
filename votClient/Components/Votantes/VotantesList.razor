@@ -106,7 +106,14 @@ else
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        await LoadData();
+        try
+        {
+            await LoadData();
+        }
+        catch (Exception ex)
+        {
+            AppUtils.ShowNotify(ex.Message, "ERROR", Ns);
+        }
     }
 
     public async void DeteteLider(int id)

@@ -1,5 +1,9 @@
-﻿@using votClient.Shared.Components;
+﻿@using Microsoft.AspNetCore.Components.Authorization;
+@using votClient.Shared.Components;
+@using votClient.Shared.Services;
 @inherits LayoutComponentBase
+@inject NavigationManager navigationManager
+@inject TokenServerAuthenticationStateProvider authStateProvider
 
 <div class="page">
     
@@ -9,7 +13,9 @@
 
     <main>
         <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+            <div>
+                <RadzenButton Click=@(args => LogoutClick()) Icon="exit_to_app" ButtonStyle="ButtonStyle.Info" />
+             </div>
         </div>
         <Spinner></Spinner>
 
@@ -22,3 +28,15 @@
 <RadzenDialog />
 <RadzenNotification />
 <RadzenTooltip />
+
+@code{
+    [CascadingParameter]
+    Task<AuthenticationState> AuthenticationState { get; set; }
+    
+    async Task LogoutClick()
+    {
+        await authStateProvider.Logout();
+        navigationManager.NavigateTo("/login");
+    }
+
+}

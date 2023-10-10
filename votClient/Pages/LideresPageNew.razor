@@ -1,5 +1,6 @@
 ﻿@page "/lideresnew"
 @page "/lideresnew/{id:int}"
+@attribute [Authorize]
 @using votClient.Components.Lideres
 
 <LideresNew id="@id"></LideresNew>

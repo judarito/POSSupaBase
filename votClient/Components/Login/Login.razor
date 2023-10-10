@@ -1,0 +1,58 @@
+﻿@using votClient.Models.Login;
+@using votClient.Services.Login;
+@using votClient.Shared.Services;
+@inject ILoginService LoginService
+@inject TokenServerAuthenticationStateProvider authStateProvider
+
+<RadzenCard class="rz-my-12 rz-mx-auto rz-p-4 rz-p-md-12" style="max-width: 600px;">
+    <RadzenTemplateForm Data=@("SimpleLogin")>
+        <RadzenLogin AllowRegister="false" AllowResetPassword="false" Username=@userName Password=@password
+                     AllowRememberMe="false" RememberMe="@rememberMe"
+                     Login=@(args => OnLogin(args, "Login with default values")) />
+    </RadzenTemplateForm>
+</RadzenCard>
+
+
+
+@code {
+    string userName = "";
+    string password = "";
+    bool rememberMe = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        userName = "";
+        password = "";
+    }
+
+
+
+    async void OnLogin(LoginArgs args, string name)
+    {
+        SessionResponse result = await LoginService.Login(new SessionRequest() { UserName = args.Username, Password = args.Password });
+        
+        if (result.status == "OK")
+        {
+            //await sessionStorage.SetItemAsStringAsync("jwt", result.token);
+            await sessionStorage.SetItemAsStringAsync("UserName", result.userName);
+            await authStateProvider.SetTokenAsync(result.token);
+            Navigation.NavigateTo($"");
+        }
+        else
+        {
+            AppUtils.ShowNotify(result.errorMessage, "ERROR", Ns);
+        }
+
+    }
+
+    void OnRegister(string name)
+    {
+        Console.WriteLine($"{name} -> Register");
+    }
+
+    void OnResetPassword(string value, string name)
+    {
+        Console.WriteLine($"{name} -> ResetPassword for user: {value}");
+    }
+}

@@ -1,5 +1,6 @@
 ﻿@page "/votantesnew"
-@page "/votantesnew/{id:int}"   
+@page "/votantesnew/{id:int}"  
+@attribute [Authorize]
 @using votClient.Components.Votantes
 
 <VotantesNew id="@id"></VotantesNew>
