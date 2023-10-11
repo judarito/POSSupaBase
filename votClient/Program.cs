@@ -9,6 +9,7 @@ using votClient.HttpMessageHandler;
 using votClient.Services.Lideres;
 using votClient.Services.Login;
 using votClient.Services.Puestos;
+using votClient.Services.ResumenVotosSer;
 using votClient.Services.Votantes;
 using votClient.Shared.Services;
 
@@ -45,5 +46,6 @@ builder.Services.AddScoped<ILideresService, LideresService>();
 builder.Services.AddScoped<IVotantesService, VotantesService>();
 builder.Services.AddScoped<IPuestosService, PuestosService>();
 builder.Services.AddScoped<ILoginService, LoginService>();
+builder.Services.AddScoped<IResumenVotosService, ResumenVotosService>();
 
 await builder.Build().RunAsync();

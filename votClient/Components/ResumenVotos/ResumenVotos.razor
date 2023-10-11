@@ -1,0 +1,105 @@
+﻿
+@using System.Linq;
+@using votClient.Models.ResumenVotos;
+@using votClient.Services.ResumenVotosSer;
+@inject IResumenVotosService resumenVotosService
+
+<RadzenStack Orientation="Orientation.Vertical" Gap="20px" JustifyContent="JustifyContent.Normal" AlignItems="AlignItems.Normal" Wrap="FlexWrap.NoWrap" Style="height: 100vh">
+    <RadzenCard Variant="@variant" Class="rz-my-12 rz-mx-auto" Style="max-width: 470px">
+        <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Start" Gap="1rem">
+            <div class="card" style="width: 20rem">
+                <div class="card-body">
+                    <div class="lead">Total Votos</div>
+                    <h2 class="card-title">@resumenVotos?.Votos</h2>
+                    <p class="small text-muted">@DateTime.Now.ToShortDateString()<i class="fa fa-globe"></i> </p>
+                </div>
+            </div>
+        </RadzenStack>
+    </RadzenCard>
+     <RadzenFieldset >
+        <HeaderTemplate>
+            <span class="d-inline-flex align-items-center align-middle">
+                <RadzenIcon Icon="account_box" class="me-1" /><b>Votos por líder</b>
+            </span>
+        </HeaderTemplate>
+        <ChildContent>
+            @if (lstlideresVotos == null)
+            {
+                <p><em>Cargando datos del lider...</em></p>
+            }
+            else
+            {
+                <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="10" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                            Data="@lstlideresVotos" TItem="SumaryVotes" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="SumaryVotes" Property="Nombre" Title="Nombre" Frozen="true" Width="160px" />
+                        <RadzenDataGridColumn TItem="SumaryVotes" Property="Votos" Title="Votos" Frozen="true" Width="160px" />
+                    </Columns>
+                </RadzenDataGrid>
+            }
+        </ChildContent>
+     </RadzenFieldset>
+    
+     <RadzenFieldset >
+         <HeaderTemplate>
+            <span class="d-inline-flex align-items-center align-middle">
+                <RadzenIcon Icon="account_balance" class="me-1" /><b>Votos por puesto de votación</b>
+            </span>
+        </HeaderTemplate>
+        <ChildContent>
+            @if (lstPuesVotos == null)
+            {
+                <p><em>Cargando datos los puesto de votación...</em></p>
+            }
+            else
+            {
+                <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="10" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                            Data="@lstPuesVotos" TItem="SumaryVotes" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="SumaryVotes" Property="Nombre" Title="Nombre" Frozen="true" Width="160px" />
+                        <RadzenDataGridColumn TItem="SumaryVotes" Property="Votos" Title="Votos" Frozen="true" Width="160px" />
+                    </Columns>
+                </RadzenDataGrid>
+            }
+        </ChildContent>
+     
+     </RadzenFieldset>
+    
+    
+  
+</RadzenStack>
+
+
+
+@code {
+    Variant variant = Variant.Filled;
+    private ResumenVotosModel? resumenVotos;
+    private int totalvotos = 0;
+    private List<SumaryVotes>? lstlideresVotos;
+    private List<SumaryVotes>? lstPuesVotos;
+
+   
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        try
+        {
+            await LoadData();
+        }
+        catch (Exception ex)
+        {
+            AppUtils.ShowNotify(ex.Message, "ERROR", Ns);
+        }
+
+    }
+
+    public async Task LoadData()
+    {
+        resumenVotos = await resumenVotosService.GetResumenVotos();
+        totalvotos = resumenVotos.Votos;
+
+        lstlideresVotos = resumenVotos?.LideresVotos.ToList<SumaryVotes>();
+        lstPuesVotos = resumenVotos?.PuestosVotos.ToList<SumaryVotes>();
+    }
+}

@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using Microsoft.AspNetCore.Components.Authorization;
+@using votClient.Components.ResumenVotos
 @using votClient.Shared.Services;
 @attribute [Authorize]
 @inject TokenServerAuthenticationStateProvider authStateProvider
@@ -9,6 +10,8 @@
 
 <p>Este es el sistema de gestión de votantes y agenda para candidatos políticos</p>
 
+
+<ResumenVotos></ResumenVotos>
 
 @code{
     [CascadingParameter]

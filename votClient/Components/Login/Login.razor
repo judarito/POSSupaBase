@@ -30,21 +30,29 @@
 
     async void OnLogin(LoginArgs args, string name)
     {
-        SessionResponse result = await LoginService.Login(new SessionRequest() { UserName = args.Username, Password = args.Password });
-        
-        if (result.status == "OK")
+        try
         {
-            //await sessionStorage.SetItemAsStringAsync("jwt", result.token);
-            await sessionStorage.SetItemAsStringAsync("UserName", result.userName);
-            await sessionStorage.SetItemAsStringAsync("DisplayName", result.displayName);
-            await authStateProvider.SetTokenAsync(result.token);
-            Navigation.NavigateTo($"");
-        }
-        else
-        {
-            AppUtils.ShowNotify(result.errorMessage, "ERROR", Ns);
-        }
+            SessionResponse result = await LoginService.Login(new SessionRequest() { UserName = args.Username, Password = args.Password });
 
+            if (result.status == "OK")
+            {
+                //await sessionStorage.SetItemAsStringAsync("jwt", result.token);
+                await sessionStorage.SetItemAsStringAsync("UserName", result.userName);
+                await sessionStorage.SetItemAsStringAsync("DisplayName", result.displayName);
+                await authStateProvider.SetTokenAsync(result.token);
+                Navigation.NavigateTo($"");
+            }
+            else
+            {
+                AppUtils.ShowNotify(result.errorMessage, "ERROR", Ns);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            AppUtils.ShowNotify(ex.Message, "ERROR", Ns);
+        }
+       
     }
 
     void OnRegister(string name)
