@@ -116,6 +116,16 @@ else
 
                                 </RadzenColumn>
                             </RadzenRow>
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenLabel Text="Mesa" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <RadzenTextBox Style="width: 100%;" Name="mesa" @bind-Value="votante.Mesa" MaxLength="5" />
+                                    <RadzenLengthValidator Component="mesa" Max="5" Text="La mesa de votación debe tener como máximo 5 caracteres." Popup=@popup Style="position: relative" />
+                                    <RadzenCustomValidator Component="mesa" Validator="@(() => ValidateOnlyNumber(votante.Mesa))" Text="Solo puede escribir numeros" Popup=@popup Style="position: relative" />
+                                </RadzenColumn>
+                            </RadzenRow>
                         </RadzenStack>
                     </RadzenFieldset>
 

@@ -53,16 +53,21 @@ else
                                     <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Telefono</RadzenText>
                                     <RadzenText TextStyle="TextStyle.Body2">@(Votante.Telefono)</RadzenText>
                                 </RadzenColumn>
-                                <RadzenColumn Size="12" SizeMD="6" SizeLG="5">
+                                <RadzenColumn Size="12" SizeMD="6" SizeLG="4">
                                     <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">E-mail</RadzenText>
                                     <RadzenText TextStyle="TextStyle.Body2">@(Votante.Email)</RadzenText>
                                 </RadzenColumn>
-                                <RadzenColumn Size="12" SizeMD="6" SizeLG="5">
+                                <RadzenColumn Size="12" SizeMD="6" SizeLG="3">
+                                    <RadzenBadge BadgeStyle="BadgeStyle.Secondary" Shade="Shade.Lighter" class="price-badge" Text="@(Votante.NombrePuesto.ToString())" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="6" SizeLG="2">
+                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Mesa</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Body2">@(Votante.Mesa)</RadzenText>
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="6" SizeLG="3" Class="rz-text-align-start rz-text-align-lg-start">
                                     <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Lider</RadzenText>
                                     <RadzenText TextStyle="TextStyle.Body2">@(Votante.NombreLider)</RadzenText>
-                                </RadzenColumn>
-                                <RadzenColumn Size="12" SizeMD="6" SizeLG="3" Class="rz-text-align-start rz-text-align-lg-end">
-                                    <RadzenBadge BadgeStyle="BadgeStyle.Secondary" Shade="Shade.Lighter" class="price-badge" Text="@(Votante.NombrePuesto.ToString())" />
+                                    
                                 </RadzenColumn>
                             </RadzenRow>
                         </RadzenColumn>

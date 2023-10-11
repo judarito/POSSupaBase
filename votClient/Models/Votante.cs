@@ -13,5 +13,6 @@
         public string Direccion { get; set; }
         public int IdPuesto { get; set; }
         public string NombrePuesto { get; set; }
+        public string Mesa { get; set; }
     }
 }
