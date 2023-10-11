@@ -1,4 +1,6 @@
-﻿using votClient.Models;
+﻿using System.Collections.Generic;
+using votClient.Models;
+using votClient.Models.Votantes;
 
 namespace votClient.Services.Votantes
 {
@@ -7,7 +9,9 @@ namespace votClient.Services.Votantes
         Task<HttpResponseMessage> Create(Votante votante);
         Task<Votante[]> GetAll();
 
-        Task<Votante[]> GetByCeculaOrNombre(string  criteria);
+        Task<DataPaginationVotantes> GetPaginationAll(int? Limit, int? Offset);
+
+        Task<DataPaginationVotantes> GetByCriteria(string criteria,int? Limit, int? Offset);
 
         Task<Votante> GetById(int? id);
 

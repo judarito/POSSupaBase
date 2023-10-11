@@ -1,6 +1,8 @@
 ﻿using Microsoft.VisualBasic;
+using System.Collections.Generic;
 using System.Net.Http.Json;
 using votClient.Models;
+using votClient.Models.Votantes;
 
 namespace votClient.Services.Votantes
 {
@@ -21,7 +23,11 @@ namespace votClient.Services.Votantes
 
         public async Task<Votante[]> GetByCeculaOrNombre(string criteria) => await _http.GetFromJsonAsync<Votante[]>($"Votantes/GetByCedulaAsync/{criteria}");
 
+        public async Task<DataPaginationVotantes> GetByCriteria(string criteria, int? Limit, int? Offset) => await _http.GetFromJsonAsync<DataPaginationVotantes>($"Votantes/GetAllByCriteria/{criteria}/{Limit}/{Offset}");
+
         public async Task<Votante> GetById(int? id) => await _http.GetFromJsonAsync<Votante>($"Votantes/GetById/{id}");
+
+        public async Task<DataPaginationVotantes> GetPaginationAll(int? Limit, int? Offset) => await _http.GetFromJsonAsync<DataPaginationVotantes>($"Votantes/GetAllAPagingsync/{Limit}/{Offset}");
 
         public async Task<HttpResponseMessage> Update(Votante votante) => await _http.PutAsJsonAsync("Votantes/Update", votante);
     }

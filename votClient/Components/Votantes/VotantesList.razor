@@ -1,4 +1,5 @@
 ﻿@using votClient.Models;
+@using votClient.Models.Votantes;
 @using votClient.Services.Votantes;
 @inject IVotantesService votantesService
 
@@ -34,9 +35,27 @@ else
         <RadzenButton Text="Nuevo" Icon="add" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Large" Click="@IrANuevo" />
     </RadzenStack>
 
+    <RadzenFieldset>
+        <HeaderTemplate>
+            <span class="d-inline-flex align-items-center align-middle">
+                <RadzenIcon Icon="account_box" class="me-1" /><b>Filtrar</b>
+            </span>
+        </HeaderTemplate>
+        <ChildContent>
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Gap="1rem" Wrap="FlexWrap.Wrap">
+                <RadzenTextBox Placeholder="Buscar..." class="w-100" @bind-Value=@creteria />
+            </RadzenStack>
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.End" Gap="1rem" Wrap="FlexWrap.Wrap">
+                <RadzenButton ButtonStyle="ButtonStyle.Secondary" Text="Buscar" Style="max-width:30%; margin-top:5px" Click="@(()=>Buscar())" />
+                <RadzenButton ButtonStyle="ButtonStyle.Warning" Text="Limpiar" Style="max-width:30%; margin-top:5px" Click="@(()=>Limpiar())" />
+            </RadzenStack>
+        </ChildContent>
+    </RadzenFieldset>
+
+
     <RadzenDataList AllowVirtualization=@allowVirtualization Style="@(allowVirtualization ? "height:400px;overflow:auto;" : "")"
-                WrapItems="@(!allowVirtualization)" AllowPaging="@(!allowVirtualization)"
-                Data="@votantes" TItem="Votante" PageSize="5" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true">
+                WrapItems="@(!allowVirtualization)" AllowPaging="@(!allowVirtualization)" IsLoading=@isLoading LoadData=@LoadData Count=@count
+                Data="@votantes" TItem="Votante" PageSize=@PageSize PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true">
         <Template Context="Votante">
             <RadzenCard Style="width: 100%; padding: 0;">
                 <RadzenRow Gap="0">
@@ -57,8 +76,12 @@ else
                                     <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">E-mail</RadzenText>
                                     <RadzenText TextStyle="TextStyle.Body2">@(Votante.Email)</RadzenText>
                                 </RadzenColumn>
-                                <RadzenColumn Size="12" SizeMD="6" SizeLG="3">
-                                    <RadzenBadge BadgeStyle="BadgeStyle.Secondary" Shade="Shade.Lighter" class="price-badge" Text="@(Votante.NombrePuesto.ToString())" />
+                                <RadzenColumn Size="12" SizeMD="6" SizeLG="3" >
+                                    <div class="price-badge">
+                                        @(Votante.NombrePuesto.ToString())
+                                       
+                                   </div>
+                                   
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" SizeMD="6" SizeLG="2">
                                     <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Mesa</RadzenText>
@@ -67,17 +90,17 @@ else
                                 <RadzenColumn Size="12" SizeMD="6" SizeLG="3" Class="rz-text-align-start rz-text-align-lg-start">
                                     <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Lider</RadzenText>
                                     <RadzenText TextStyle="TextStyle.Body2">@(Votante.NombreLider)</RadzenText>
-                                    
+
                                 </RadzenColumn>
                             </RadzenRow>
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeLG="2" Class="rz-p-4">
                             <RadzenRow Gap="0">
                                 <RadzenColumn Size="12" SizeMD="8" SizeLG="8">
-                                    <RadzenButton Text="Editar" Style="width: 100%" Click="@(()=> EditarLider(Votante.Id))" />
+                                    <RadzenButton Text="Editar" Style="max-width:100%" Click="@(()=> EditarLider(Votante.Id))" />
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" SizeMD="8" SizeLG="8">
-                                    <RadzenButton Text="Eliminar" Style="width: 100%" Click="@(()=> DeteteLider(Votante.Id))" ButtonStyle="ButtonStyle.Danger" />
+                                    <RadzenButton Text="Eliminar" Style="max-width:100%" Click="@(()=> DeteteLider(Votante.Id))" ButtonStyle="ButtonStyle.Danger" />
                                 </RadzenColumn>
                             </RadzenRow>
 
@@ -100,20 +123,30 @@ else
         font-weight: bold;
         line-height: 20px;
         padding: 8px;
+        max-width: 420px;
+        white-space: break-word;
+        background-color: #e5ecfe;
+        color: #618cf7;
     }
+
+   
 </style>
 
 
 @code {
     bool allowVirtualization;
-    private Votante[]? votantes;
+    private int PageSize = 5;
+    int count;
+    bool isLoading;
+    private string? creteria;
+    private IEnumerable<Votante>? votantes;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         try
         {
-            await LoadData();
+            await LoadInitialData();
         }
         catch (Exception ex)
         {
@@ -128,7 +161,7 @@ else
         if ((bool)result)
         {
             var response = await votantesService.Delete(id);
-            await LoadData();
+            await LoadInitialData();
             StateHasChanged();
             AppUtils.ShowNotify("Votante Eliminado exitosamente", "OK", Ns);
             return;
@@ -144,9 +177,48 @@ else
     {
         Navigation.NavigateTo("votantesnew");
     }
-    public async Task LoadData()
+    public async Task LoadInitialData()
     {
-        votantes = await votantesService.GetAll();
+        await LoadPaginationData(PageSize, 0);
+    }
+
+    async Task LoadData(LoadDataArgs args)
+    {
+        await LoadPaginationData(args?.Top, args?.Skip);
+    }
+
+    public async Task LoadPaginationData(int? Top, int? Skip)
+    {
+        isLoading = true;
+        DataPaginationVotantes result= new DataPaginationVotantes();
+        creteria = creteria?.Trim();
+        if (string.IsNullOrEmpty(creteria))
+        {
+            result = await votantesService.GetPaginationAll(Top, Skip);
+        }
+        else
+        {
+            result = await votantesService.GetByCriteria(creteria, Top, Skip);
+        }
+
+        // Update the Data property
+        votantes = (IEnumerable<Votante>)result.Votantes;
+        // Update the count
+        count = result.TotalCount;
+
+        isLoading = false;
+    }
+
+    public async void Buscar()
+    {
+        await LoadPaginationData(PageSize, 0);
+        StateHasChanged();
+    }
+
+    public void Limpiar()
+    {
+        this.creteria = string.Empty;
+        Buscar();
     }
 
 }
