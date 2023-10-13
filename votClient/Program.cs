@@ -13,7 +13,8 @@ using votClient.Services.ResumenVotosSer;
 using votClient.Services.Votantes;
 using votClient.Shared.Services;
 
-const string ApiUrlBase = "https://vot20231005162706.azurewebsites.net/api/";
+const string ApiUrlBase = "https://jricardo0822-001-site1.ftempurl.com/api/";
+//const string ApiUrlBase = "https://vot20231005162706.azurewebsites.net/api/";
 //const string ApiUrlBase = "https://localhost:7010/api/";
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
