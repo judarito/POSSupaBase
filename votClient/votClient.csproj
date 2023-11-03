@@ -15,4 +15,9 @@
     <PackageReference Include="Radzen.Blazor" Version="4.16.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CommonBase\CommonBase.csproj" />
+    <ProjectReference Include="..\CommonComponents\CommonComponents.csproj" />
+  </ItemGroup>
+
 </Project>
