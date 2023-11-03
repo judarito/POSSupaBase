@@ -1,7 +1,8 @@
 ﻿@page "/"
+@using CommonHomeComponents.Dominio.ResumenVotos
 @using Microsoft.AspNetCore.Components.Authorization;
-@using votClient.Components.ResumenVotos
-@using votClient.Shared.Services;
+
+@using CommonBase.Shared.Services;
 @attribute [Authorize]
 @inject TokenServerAuthenticationStateProvider authStateProvider
 <PageTitle>Index</PageTitle>

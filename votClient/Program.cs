@@ -7,14 +7,15 @@ using Radzen;
 using votClient;
 using votClient.HttpMessageHandler;
 //using votClient.Services.Lideres;
-using votClient.Services.Login;
+//using votClient.Services.Login;
 //using votClient.Services.Puestos;
-using votClient.Services.ResumenVotosSer;
+using CommonBase.Services.ResumenVotosSer;
 //using votClient.Services.Votantes;
-using votClient.Shared.Services;
+using CommonBase.Shared.Services;
 using CommonBase.Services.Lideres;
 using CommonBase.Services.Votantes;
 using CommonBase.Services.Puestos;
+using CommonBase.Services.Login;
 
 const string ApiUrlBase = "https://jricardo0822-001-site1.ftempurl.com/api/";
 //const string ApiUrlBase = "https://vot20231005162706.azurewebsites.net/api/";

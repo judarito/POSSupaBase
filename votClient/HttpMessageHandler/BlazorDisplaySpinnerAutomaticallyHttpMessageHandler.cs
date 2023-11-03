@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Components;
 using Radzen;
 using System.Net;
-using votClient.Shared.Services;
-using votClient.Shared.Utils;
+using CommonBase.Shared.Services;
+using CommonBase.Shared.Utils;
 
 namespace votClient.HttpMessageHandler
 {

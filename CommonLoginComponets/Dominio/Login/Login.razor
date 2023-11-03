@@ -1,6 +1,7 @@
-﻿@using votClient.Models.Login;
-@using votClient.Services.Login;
-@using votClient.Shared.Services;
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using CommonBase.Models.Login;
+@using CommonBase.Services.Login;
+@using CommonBase.Shared.Services;
 @inject ILoginService LoginService
 @inject TokenServerAuthenticationStateProvider authStateProvider
 
