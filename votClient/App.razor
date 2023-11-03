@@ -44,13 +44,9 @@
             if (args.Path.Contains("login") || args.Path=="")
             {
                 var assemblies = await AssemblyLoader.LoadAssembliesAsync(
-                    new[] { "CommonLoginComponets.dll" });
+                    new[] { "CommonLoginComponets.dll", "CommonHomeComponents.dll" });
             }
-            if (args.Path == "")
-            {
-                var assemblies = await AssemblyLoader.LoadAssembliesAsync(
-                    new[] { "CommonHomeComponents.dll" });
-            }
+           
         }
         catch (Exception ex)
         {
