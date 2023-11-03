@@ -2,7 +2,7 @@
 using CommonBase.Models;
 using CommonBase.Models.Votantes;
 
-namespace votClient.Services.Votantes
+namespace CommonBase.Services.Votantes
 {
     public interface IVotantesService
     {

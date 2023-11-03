@@ -4,7 +4,7 @@ using System.Net.Http.Json;
 using CommonBase.Models;
 using CommonBase.Models.Votantes;
 
-namespace votClient.Services.Votantes
+namespace CommonBase.Services.Votantes
 {
     public class VotantesService : IVotantesService
     {

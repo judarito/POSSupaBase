@@ -13,11 +13,14 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.14" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.14" PrivateAssets="all" />
     <PackageReference Include="Radzen.Blazor" Version="4.16.4" />
+    <BlazorWebAssemblyLazyLoad Include="CommonComponents.dll" />
+    <BlazorWebAssemblyLazyLoad Include="CommonVotantesComponents.dll" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CommonBase\CommonBase.csproj" />
     <ProjectReference Include="..\CommonComponents\CommonComponents.csproj" />
+    <ProjectReference Include="..\CommonVotantesComponents\CommonVotantesComponents.csproj" />
   </ItemGroup>
 
 </Project>

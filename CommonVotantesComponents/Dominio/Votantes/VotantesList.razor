@@ -1,6 +1,6 @@
-﻿@using votClient.Models;
-@using votClient.Models.Votantes;
-@using votClient.Services.Votantes;
+﻿@using CommonBase.Models;
+@using CommonBase.Models.Votantes;
+@using CommonBase.Services.Votantes;
 @inject IVotantesService votantesService
 
 <PageTitle>Votantes</PageTitle>
@@ -14,19 +14,7 @@
     <p><em>Loading...</em></p>
 }
 else
-{@*
-    <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
-                Data="@lideres" TItem="Lider" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
-        <Columns>
-            <RadzenDataGridColumn TItem="Lider" Property="id" Filterable="false" Title="ID" Frozen="true" Width="80px" TextAlign="TextAlign.Center" />
-            <RadzenDataGridColumn TItem="Lider" Property="nombre" Title="Nombre" Frozen="true" Width="160px" />
-            <RadzenDataGridColumn TItem="Lider" Property="cedula" Title="Cedula" Width="160px" />
-            <RadzenDataGridColumn TItem="Lider" Property="telefono" Title="Telefono" Width="200px" />
-            <RadzenDataGridColumn TItem="Lider" Property="referido" Title="Referido" Width="120px" />
-        </Columns>
-    </RadzenDataGrid>*@
-
-
+{
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem" Class="rz-p-2">
         <RadzenCheckBox @bind-Value="@allowVirtualization" Name="allowVirtualization" />
         <RadzenLabel Text="Permitir virtualización" Component="allowVirtualization" />
