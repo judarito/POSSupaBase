@@ -1,40 +1,58 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
+﻿using Blazored.SessionStorage;
+using Microsoft.AspNetCore.Components.Authorization;
+using Supabase.Gotrue;
 using System.Security.Claims;
 using System.Text.Json;
 
 namespace votClient.Providers
 {
-    public class CustomAuthStateProvider: AuthenticationStateProvider
+    public class CustomAuthStateProvider : AuthenticationStateProvider
     {
 
-        
+
         private readonly Supabase.Client _client;
 
         private readonly ILogger<CustomAuthStateProvider> _logger;
+        private readonly ISessionStorageService _localStorage;
 
         public CustomAuthStateProvider(
             Supabase.Client client,
+            ISessionStorageService localStorage,
             ILogger<CustomAuthStateProvider> logger
         )
         {
             logger.LogInformation("------------------- CONSTRUCTOR -------------------");
             _client = client;
             _logger = logger;
+            _localStorage = localStorage;
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
             _logger.LogInformation("------------------- GetAuthenticationStateAsync -------------------");
 
+            var sessionData = await _localStorage.GetItemAsync<Session>("SUPABASE_SESSION");
+                                  
+            Session currentSession = null;
+            if (sessionData != null)
+            {
+                currentSession = sessionData?.ExpiresAt() <= DateTime.Now ? null : sessionData;
+            }
+            
             // Sets client auth and connects to realtime (if enabled)
-            await _client.InitializeAsync();
+            if (currentSession == null)
+            {
+                await _client.InitializeAsync();
+                currentSession = _client.Auth.CurrentSession;
+            }
+
 
             var identity = new ClaimsIdentity();
             // _http.DefaultRequestHeaders.Authorization = null;
 
-            if (!string.IsNullOrEmpty(_client.Auth.CurrentSession?.AccessToken))
+            if (!string.IsNullOrEmpty(currentSession?.AccessToken))
             {
-                identity = new ClaimsIdentity(ParseClaimsFromJwt(_client.Auth.CurrentSession.AccessToken), "jwt");
+                identity = new ClaimsIdentity(ParseClaimsFromJwt(currentSession.AccessToken), "jwt");
                 // _http.DefaultRequestHeaders.Authorization =
                 //     new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
             }

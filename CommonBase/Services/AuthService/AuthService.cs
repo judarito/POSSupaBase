@@ -24,8 +24,6 @@ namespace CommonBase.Services.AuthService
             ILogger<AuthService> logger
         )
         {
-            logger.LogInformation("------------------- CONSTRUCTOR -------------------");
-
             _client = client;
             _customAuthStateProvider = customAuthStateProvider;
             _localStorage = localStorage;
@@ -34,13 +32,7 @@ namespace CommonBase.Services.AuthService
 
         public async Task Login(string email, string password)
         {
-            _logger.LogInformation("METHOD: Login");
-
             var session = await _client.Auth.SignIn(email, password);
-
-            _logger.LogInformation("------------------- User logged in -------------------");
-            // logger.LogInformation($"instance.Auth.CurrentUser.Id {client?.Auth?.CurrentUser?.Id}");
-            _logger.LogInformation($"client.Auth.CurrentUser.Email {_client?.Auth?.CurrentUser?.Email}");
 
             await _customAuthStateProvider.GetAuthenticationStateAsync();
         }
@@ -52,7 +44,7 @@ namespace CommonBase.Services.AuthService
             await _customAuthStateProvider.GetAuthenticationStateAsync();
         }
 
-        public async Task<User?> GetUser()
+        public async Task<Supabase.Gotrue.User?> GetUser()
         {
             var session = await _client.Auth.RetrieveSessionAsync();
             return session?.User;

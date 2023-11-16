@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -19,14 +19,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CommonBase\CommonBase.csproj" />
-    <ProjectReference Include="..\CommonHomeComponents\CommonHomeComponents.csproj" />
     <ProjectReference Include="..\CommonLoginComponets\CommonLoginComponets.csproj" />
   </ItemGroup>
 
   <ItemGroup>
   
     <BlazorWebAssemblyLazyLoad Include="CommonLoginComponets.dll" />
-    <BlazorWebAssemblyLazyLoad Include="CommonHomeComponents.dll" />
+    
   </ItemGroup>
 
 </Project>

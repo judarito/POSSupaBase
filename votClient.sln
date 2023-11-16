@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonBase", "CommonBase\Co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonLoginComponets", "CommonLoginComponets\CommonLoginComponets.csproj", "{4B8F3E90-92A2-4501-8A91-5C5C3C8E97CB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonHomeComponents", "CommonHomeComponents\CommonHomeComponents.csproj", "{5F8E5B71-4EBD-4A96-91B3-6DCF05F6A2A9}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{4B8F3E90-92A2-4501-8A91-5C5C3C8E97CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B8F3E90-92A2-4501-8A91-5C5C3C8E97CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B8F3E90-92A2-4501-8A91-5C5C3C8E97CB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5F8E5B71-4EBD-4A96-91B3-6DCF05F6A2A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5F8E5B71-4EBD-4A96-91B3-6DCF05F6A2A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5F8E5B71-4EBD-4A96-91B3-6DCF05F6A2A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5F8E5B71-4EBD-4A96-91B3-6DCF05F6A2A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

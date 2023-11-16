@@ -34,22 +34,8 @@ namespace votClient.HttpMessageHandler
             _spinnerService.Show();
             try
             {
-               /* string jwtToken = await _sessionStorage.GetItemAsync<string>("jwt");
-
-                if (!string.IsNullOrWhiteSpace(jwtToken))
-                {
-                    request.Headers.Add("Authorization", $"Bearer {jwtToken}");
-                }*/
-                // Add whatever headers you want here
-
-
-               /* response = await base.SendAsync(request, cancellationToken);
-
-                if (response.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    await _authService.Logout();
-                    _navigationManager.NavigateTo("/login");
-                }*/
+             
+              
 
             }
             catch (Exception ex)

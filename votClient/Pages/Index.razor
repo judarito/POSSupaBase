@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/home"
 @using CommonBase.Services.AuthService;
 @using Microsoft.AspNetCore.Components.Authorization;
 @using Supabase.Gotrue;
@@ -26,4 +26,6 @@
         User? user= await AuthService.GetUser();
         DisplayName = user != null ? user.Email: "";
     }
+
+    
 }

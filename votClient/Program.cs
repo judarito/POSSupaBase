@@ -6,19 +6,15 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Radzen;
 using votClient;
 using votClient.HttpMessageHandler;
-//using votClient.Services.Lideres;
-//using votClient.Services.Login;
-//using votClient.Services.Puestos;
-using CommonBase.Services.ResumenVotosSer;
-//using votClient.Services.Votantes;
+
 using CommonBase.Shared.Services;
-using CommonBase.Services.Lideres;
-using CommonBase.Services.Votantes;
-using CommonBase.Services.Puestos;
+
 using CommonBase.Services.Login;
 using votClient.Providers;
 using CommonBase.Services.AuthService;
 using CommonBase.Services.DatabaseService;
+using Microsoft.Extensions.DependencyInjection;
+using CommonBase.Services.User;
 
 const string ApiUrlBase = "https://jricardo0822-001-site1.ftempurl.com/api/";
 //const string ApiUrlBase = "https://vot20231005162706.azurewebsites.net/api/";
@@ -36,11 +32,13 @@ builder.Services.AddBlazoredSessionStorage();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>(
     provider => new CustomAuthStateProvider(
         provider.GetRequiredService<Supabase.Client>(),
+        provider.GetRequiredService<ISessionStorageService>(),
         provider.GetRequiredService<ILogger<CustomAuthStateProvider>>()
     )
 )
     ;
 builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<IUserService, UserService>();
 
 
 builder.Services.AddScoped(s =>
@@ -70,9 +68,11 @@ builder.Services.AddScoped<Supabase.Client>(
             AutoRefreshToken = true,
             AutoConnectRealtime = true,
             SessionHandler = new CustomSupabaseSessionHandler(
+               // provider.GetRequiredService<IUserService>(),
                 provider.GetRequiredService<ISessionStorageService>(),
                 provider.GetRequiredService<ILogger<CustomSupabaseSessionHandler>>()
             )
+            
         }
     )
 );
@@ -83,7 +83,7 @@ builder.Services.AddScoped<DialogService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<TooltipService>();
 builder.Services.AddScoped<SpinnerService>();
-//builder.Services.AddScoped<ILideresService, LideresService>();
+
 //builder.Services.AddScoped<IVotantesService, VotantesService>();
 //builder.Services.AddScoped<IPuestosService, PuestosService>();
 builder.Services.AddScoped<ILoginService, LoginService>();

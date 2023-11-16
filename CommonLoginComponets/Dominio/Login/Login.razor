@@ -35,31 +35,21 @@
 
     async void OnLogin(LoginArgs args, string name)
     {
+        spinnerService.Show();
         try
         {
             await AuthService.Login(args.Username, args.Password);
-            Navigation.NavigateTo($"/");
-           /* SessionResponse result = await LoginService.Login(new SessionRequest() { UserName = args.Username, Password = args.Password });
-
-            if (result.status == "OK")
-            {
-                //await sessionStorage.SetItemAsStringAsync("jwt", result.token);
-                await sessionStorage.SetItemAsStringAsync("UserName", result.userName);
-                await sessionStorage.SetItemAsStringAsync("DisplayName", result.displayName);
-                await authStateProvider.SetTokenAsync(result.token);
-                Navigation.NavigateTo($"");
-            }
-            else
-            {
-                AppUtils.ShowNotify(result.errorMessage, "ERROR", Ns);
-            }*/
-
+            Navigation.NavigateTo($"/home");
         }
         catch (Exception ex)
         {
             AppUtils.ShowNotify(ex.Message, "ERROR", Ns);
         }
-       
+        finally
+        {
+            spinnerService.Hide();
+        }
+
     }
 
     void OnRegister(string name)
