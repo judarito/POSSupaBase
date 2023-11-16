@@ -1,10 +1,16 @@
 ﻿@page "/login";
+@using CommonBase.Models.Tenant;
 @using CommonLoginComponets.Dominio.Login
 @layout LoginLayout
+@inject Supabase.Client _client
+
 
 
 <Login></Login>
 
 @code {
-
+    protected override async Task OnInitializedAsync()
+    {
+        //var result = await _client.From<TenantModel>().Get();
+    }
 }

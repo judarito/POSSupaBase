@@ -1,9 +1,13 @@
-﻿@using Microsoft.AspNetCore.Components.Authorization
+﻿@using CommonBase.Services.AuthService;
+@using Microsoft.AspNetCore.Components.Authorization
 @using CommonBase.Models.Login;
 @using CommonBase.Services.Login;
 @using CommonBase.Shared.Services;
 @inject ILoginService LoginService
-@inject TokenServerAuthenticationStateProvider authStateProvider
+@inject AuthService AuthService
+@inject NavigationManager Navigation
+
+
 
 <RadzenCard class="rz-my-12 rz-mx-auto rz-p-4 rz-p-md-12" style="max-width: 600px;">
     <RadzenTemplateForm Data=@("SimpleLogin")>
@@ -33,7 +37,9 @@
     {
         try
         {
-            SessionResponse result = await LoginService.Login(new SessionRequest() { UserName = args.Username, Password = args.Password });
+            await AuthService.Login(args.Username, args.Password);
+            Navigation.NavigateTo($"/");
+           /* SessionResponse result = await LoginService.Login(new SessionRequest() { UserName = args.Username, Password = args.Password });
 
             if (result.status == "OK")
             {
@@ -46,7 +52,7 @@
             else
             {
                 AppUtils.ShowNotify(result.errorMessage, "ERROR", Ns);
-            }
+            }*/
 
         }
         catch (Exception ex)

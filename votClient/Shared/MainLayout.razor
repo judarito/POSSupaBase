@@ -1,9 +1,10 @@
-﻿@using Microsoft.AspNetCore.Components.Authorization;
+﻿@using CommonBase.Services.AuthService;
+@using Microsoft.AspNetCore.Components.Authorization;
 @using votClient.Shared.Components;
 @using CommonBase.Shared.Services;
 @inherits LayoutComponentBase
 @inject NavigationManager navigationManager
-@inject TokenServerAuthenticationStateProvider authStateProvider
+@inject AuthService AuthService;
 
 <div class="page">
     
@@ -35,7 +36,7 @@
     
     async Task LogoutClick()
     {
-        await authStateProvider.Logout();
+        await AuthService.Logout();
         navigationManager.NavigateTo("/login");
     }
 

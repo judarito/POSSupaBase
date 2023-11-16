@@ -4,6 +4,7 @@
 
 @inject LazyAssemblyLoader AssemblyLoader
 @inject ILogger<App> Logger
+<CascadingAuthenticationState>
 <Router AppAssembly="@typeof(App).Assembly" OnNavigateAsync="@OnNavigateAsync">
     <Found Context="routeData">
        @* <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />*@
@@ -25,22 +26,14 @@
         </LayoutView>
     </NotFound>
 </Router>
+</CascadingAuthenticationState>
 
 @code{
     private async Task OnNavigateAsync(NavigationContext args)
     {
         try
         {
-            if (args.Path.Contains("lideres"))
-            {
-                var assemblies = await AssemblyLoader.LoadAssembliesAsync(
-                    new[] { "CommonComponents.dll" });
-            }
-            if (args.Path.Contains("votantes"))
-            {
-                var assemblies = await AssemblyLoader.LoadAssembliesAsync(
-                    new[] { "CommonVotantesComponents.dll" });
-            }
+           
             if (args.Path.Contains("login") || args.Path=="")
             {
                 var assemblies = await AssemblyLoader.LoadAssembliesAsync(

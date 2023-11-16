@@ -4,6 +4,7 @@ using Radzen;
 using System.Net;
 using CommonBase.Shared.Services;
 using CommonBase.Shared.Utils;
+using CommonBase.Services.AuthService;
 
 namespace votClient.HttpMessageHandler
 {
@@ -11,18 +12,18 @@ namespace votClient.HttpMessageHandler
     {
         private readonly SpinnerService _spinnerService;
         private readonly ISessionStorageService _sessionStorage;
-        private readonly TokenServerAuthenticationStateProvider _authStateProvider;
+        private readonly AuthService _authService;
         private readonly NavigationManager _navigationManager;
         private readonly NotificationService _notificationService;
         public BlazorDisplaySpinnerAutomaticallyHttpMessageHandler(SpinnerService spinnerService,
                                                             ISessionStorageService sessionStorage,
-                                                            TokenServerAuthenticationStateProvider authStateProvider,
+                                                            AuthService authService,
                                                             NavigationManager navigationManager,
                                                             NotificationService notificationService)
         {
             _spinnerService = spinnerService;
             _sessionStorage = sessionStorage;
-            _authStateProvider = authStateProvider;
+            _authService = authService;
             _navigationManager = navigationManager;
             _notificationService = notificationService;
         }
@@ -33,22 +34,22 @@ namespace votClient.HttpMessageHandler
             _spinnerService.Show();
             try
             {
-                string jwtToken = await _sessionStorage.GetItemAsync<string>("jwt");
+               /* string jwtToken = await _sessionStorage.GetItemAsync<string>("jwt");
 
                 if (!string.IsNullOrWhiteSpace(jwtToken))
                 {
                     request.Headers.Add("Authorization", $"Bearer {jwtToken}");
-                }
+                }*/
                 // Add whatever headers you want here
 
 
-                response = await base.SendAsync(request, cancellationToken);
+               /* response = await base.SendAsync(request, cancellationToken);
 
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    await _authStateProvider.Logout();
+                    await _authService.Logout();
                     _navigationManager.NavigateTo("/login");
-                }
+                }*/
 
             }
             catch (Exception ex)

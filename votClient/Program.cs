@@ -16,6 +16,9 @@ using CommonBase.Services.Lideres;
 using CommonBase.Services.Votantes;
 using CommonBase.Services.Puestos;
 using CommonBase.Services.Login;
+using votClient.Providers;
+using CommonBase.Services.AuthService;
+using CommonBase.Services.DatabaseService;
 
 const string ApiUrlBase = "https://jricardo0822-001-site1.ftempurl.com/api/";
 //const string ApiUrlBase = "https://vot20231005162706.azurewebsites.net/api/";
@@ -29,7 +32,17 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(ApiUrlBase) });
 builder.Services.AddScoped<BlazorDisplaySpinnerAutomaticallyHttpMessageHandler>();
 builder.Services.AddBlazoredSessionStorage();
+// ---------- BLAZOR AUTH
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>(
+    provider => new CustomAuthStateProvider(
+        provider.GetRequiredService<Supabase.Client>(),
+        provider.GetRequiredService<ILogger<CustomAuthStateProvider>>()
+    )
+)
+    ;
 builder.Services.AddAuthorizationCore();
+
+
 builder.Services.AddScoped(s =>
 {
     var accessTokenHandler = s.GetRequiredService<BlazorDisplaySpinnerAutomaticallyHttpMessageHandler>();
@@ -41,16 +54,39 @@ builder.Services.AddScoped(s =>
         BaseAddress = new Uri(ApiUrlBase)
     };
 });
-builder.Services.AddScoped<TokenServerAuthenticationStateProvider>();
-builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<TokenServerAuthenticationStateProvider>());
+
+
+
+// ---------- SUPABASE
+var url = "https://pylvavifkbhxqgubnksg.supabase.co";
+var key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB5bHZhdmlma2JoeHFndWJua3NnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDAwNTQwMDYsImV4cCI6MjAxNTYzMDAwNn0.VEMSDcQ-095_GZmSAMge5_Wxv9bNr6a25TZeKt4Awfk";
+
+builder.Services.AddScoped<Supabase.Client>(
+    provider => new Supabase.Client(
+        url,
+        key,
+        new Supabase.SupabaseOptions
+        {
+            AutoRefreshToken = true,
+            AutoConnectRealtime = true,
+            SessionHandler = new CustomSupabaseSessionHandler(
+                provider.GetRequiredService<ISessionStorageService>(),
+                provider.GetRequiredService<ILogger<CustomSupabaseSessionHandler>>()
+            )
+        }
+    )
+);
+
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<DatabaseService>();
 builder.Services.AddScoped<DialogService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<TooltipService>();
 builder.Services.AddScoped<SpinnerService>();
-builder.Services.AddScoped<ILideresService, LideresService>();
-builder.Services.AddScoped<IVotantesService, VotantesService>();
-builder.Services.AddScoped<IPuestosService, PuestosService>();
+//builder.Services.AddScoped<ILideresService, LideresService>();
+//builder.Services.AddScoped<IVotantesService, VotantesService>();
+//builder.Services.AddScoped<IPuestosService, PuestosService>();
 builder.Services.AddScoped<ILoginService, LoginService>();
-builder.Services.AddScoped<IResumenVotosService, ResumenVotosService>();
+//builder.Services.AddScoped<IResumenVotosService, ResumenVotosService>();
 
 await builder.Build().RunAsync();
