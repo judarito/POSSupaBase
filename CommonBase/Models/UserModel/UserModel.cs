@@ -10,8 +10,6 @@ namespace CommonBase.Models.UserModel
     [Table("public.User")]
     public class UserModel : BaseModelApp
     {
-        [PrimaryKey("idUser")]
-        public int idUser { get; set; }
         [Column("DisplayName")]
         public string DisplayName { get; set; }
         [Column("UserName")]

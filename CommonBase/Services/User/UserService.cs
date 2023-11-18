@@ -17,7 +17,7 @@ namespace CommonBase.Services.User
         {
             var modeledResponse = await _client
                  .From<UserModel>()
-                 .Where(x=>x.idUser == id)
+                 .Where(x=>x.Id == id)
                  .Get();
             return modeledResponse?.Models?.FirstOrDefault();
         }

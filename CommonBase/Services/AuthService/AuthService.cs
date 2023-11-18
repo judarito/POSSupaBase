@@ -1,4 +1,6 @@
 ﻿using Blazored.SessionStorage;
+using CommonBase.Models.UserModel;
+using CommonBase.Services.User;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Logging;
 using Supabase.Gotrue;
@@ -15,12 +17,14 @@ namespace CommonBase.Services.AuthService
         private readonly Supabase.Client _client;
         private readonly AuthenticationStateProvider _customAuthStateProvider;
         private readonly ISessionStorageService _localStorage;
+        private readonly IUserService _userService;
         private readonly ILogger<AuthService> _logger;
 
         public AuthService(
             Supabase.Client client,
             AuthenticationStateProvider customAuthStateProvider,
             ISessionStorageService localStorage,
+            IUserService userService,
             ILogger<AuthService> logger
         )
         {
@@ -28,12 +32,17 @@ namespace CommonBase.Services.AuthService
             _customAuthStateProvider = customAuthStateProvider;
             _localStorage = localStorage;
             _logger = logger;
+            _userService=userService;
         }
 
         public async Task Login(string email, string password)
         {
             var session = await _client.Auth.SignIn(email, password);
-
+            var userinfo= await _userService.GetUserByIdSupabase(Guid.Parse(session?.User.Id));
+            if (userinfo != null)
+            {
+                _localStorage.SetItemAsync("USER_INFO", new UserInfoLocalStorage() { DisplayName= userinfo.DisplayName,TenantId= userinfo.idTenant });
+            }
             await _customAuthStateProvider.GetAuthenticationStateAsync();
         }
 

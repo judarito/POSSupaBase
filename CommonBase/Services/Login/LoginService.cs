@@ -6,11 +6,11 @@ using CommonBase.Models.Login;
 
 namespace CommonBase.Services.Login
 {
-    public class LoginService : ServiceBase, ILoginService
+    public class LoginService : ILoginService
     {
         private HttpClient _http;
 
-        public LoginService(HttpClient http) : base(http)
+        public LoginService(HttpClient http) 
         {
             _http = http;
         }

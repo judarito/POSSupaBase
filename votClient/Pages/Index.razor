@@ -1,11 +1,13 @@
 ﻿@page "/home"
+@using Blazored.SessionStorage;
+@using CommonBase.Models.UserModel;
 @using CommonBase.Services.AuthService;
 @using Microsoft.AspNetCore.Components.Authorization;
 @using Supabase.Gotrue;
 
 @using CommonBase.Shared.Services;
 @attribute [Authorize]
-@inject AuthService AuthService;
+@inject ISessionStorageService _localStorage;
 <PageTitle>Index</PageTitle>
 
 <h1>Te damos la bienvenida @DisplayName !!</h1>
@@ -23,8 +25,8 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        User? user= await AuthService.GetUser();
-        DisplayName = user != null ? user.Email: "";
+        var userinfo = await _localStorage.GetItemAsync<UserInfoLocalStorage>("USER_INFO");
+        DisplayName = userinfo != null ? userinfo.DisplayName : "";
     }
 
     
