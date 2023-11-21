@@ -9,10 +9,8 @@ using System.Threading.Tasks;
 
 namespace CommonBase.Services.ProductCategoryService
 {
-    public class ServicioPrueba : ServiceBase<UserModel>
+    public class ServicioPrueba 
     {
-        public ServicioPrueba(Client client) : base(client)
-        {
-        }
+      
     }
 }

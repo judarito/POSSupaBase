@@ -1,0 +1,23 @@
+﻿@using CommonBase.Models.ProductCategory;
+@using CommonBase.Services.ProductCategoryService;
+@inject ProductCategoryService productCategoryService
+
+<PageTitle>Categoría de productos</PageTitle>
+
+<h1>Categoría de productos</h1>
+
+<p>En esta pagina puedes gestionar los datos de las Categoría de productos.</p>
+
+
+
+
+
+@code {
+   private bool allowVirtualization;
+    private List<ProductCategory>? productCategory;
+
+    public void IrANuevo()
+    {
+      //  Navigation.NavigateTo("lideresnew");
+    }
+}

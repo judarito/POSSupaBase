@@ -16,6 +16,7 @@ using CommonBase.Services.DatabaseService;
 using Microsoft.Extensions.DependencyInjection;
 using CommonBase.Services.User;
 using CommonBase.Services.ProductCategoryService;
+using AutoMapper;
 
 const string ApiUrlBase = "https://jricardo0822-001-site1.ftempurl.com/api/";
 //const string ApiUrlBase = "https://vot20231005162706.azurewebsites.net/api/";
@@ -25,7 +26,7 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(ApiUrlBase) });
 builder.Services.AddScoped<BlazorDisplaySpinnerAutomaticallyHttpMessageHandler>();
 builder.Services.AddBlazoredSessionStorage();

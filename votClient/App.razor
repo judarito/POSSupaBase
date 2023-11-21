@@ -44,6 +44,11 @@
                 var assemblies = await AssemblyLoader.LoadAssembliesAsync(
                     new[] { "CommonLoginComponets.dll" });
             }
+            if (args.Path.Contains("productcategory"))
+            {
+                var assemblies = await AssemblyLoader.LoadAssembliesAsync(
+                    new[] { "Component.ProductCategory.dll" });
+            }
            
         }
         catch (Exception ex)

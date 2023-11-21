@@ -1,4 +1,6 @@
-﻿using CommonBase.Models.ProductCategory;
+﻿using AutoMapper;
+using CommonBase.Dtos.ProductCategory;
+using CommonBase.Models.ProductCategory;
 using Supabase;
 using System;
 using System.Collections.Generic;
@@ -10,9 +12,9 @@ using static Postgrest.Constants;
 
 namespace CommonBase.Services.ProductCategoryService
 {
-    public class ProductCategoryService : ServiceBase<ProductCategory>
+    public class ProductCategoryService : ServiceBase<ProductCategory, ProductCategoryDto>
     {
-        public ProductCategoryService(Client client) : base(client)
+        public ProductCategoryService(Client client, IMapper mapper) : base(client, mapper)
         {
         }
     }

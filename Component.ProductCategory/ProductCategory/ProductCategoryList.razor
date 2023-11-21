@@ -1,0 +1,85 @@
+﻿@using CommonBase.Dtos.ProductCategory;
+@using CommonBase.Services.ProductCategoryService;
+@inject ProductCategoryService productCategoryService
+
+
+<PageTitle>Categoría de productos</PageTitle>
+
+<h1>Categoría de productos</h1>
+
+<p>En esta pagina puedes gestionar los datos de las categoría de productos.</p>
+
+
+
+@if (productCategories == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+
+  
+    <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.End" Gap="1rem" Wrap="FlexWrap.Wrap">
+        <RadzenButton Text="Nuevo" Icon="add" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Large" Click="@IrANuevo" />
+    </RadzenStack>
+
+    <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                Data="@productCategories" TItem="ProductCategoryDto" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+        <Columns>
+            <RadzenDataGridColumn TItem="ProductCategoryDto" Property="Id" Filterable="false" Title="ID" Frozen="true" Width="30px" TextAlign="TextAlign.Center" />
+            <RadzenDataGridColumn TItem="ProductCategoryDto" Property="Name" Title="Nombre" Frozen="true" Width="160px" />
+        </Columns>
+    </RadzenDataGrid>
+}
+
+<style>
+    .product-title {
+        min-height: 72px;
+        background-color: var(--rz-secondary-lighter);
+    }
+
+    .price-badge {
+        font-size: 16px;
+        font-weight: bold;
+        line-height: 20px;
+        padding: 8px;
+    }
+</style>
+
+
+
+
+@code {
+    bool allowVirtualization;
+    private List<ProductCategoryDto>? productCategories;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        try
+        {
+            await LoadData();
+        }
+        catch (Exception ex)
+        {
+            AppUtils.ShowNotify(ex.Message, "ERROR", Ns);
+        }
+
+    }
+
+    public async void Editar(int id)
+    {
+        Navigation.NavigateTo($"lideresnew/{id}");
+    }
+
+    public void IrANuevo()
+    {
+        Navigation.NavigateTo("lideresnew");
+    }
+
+    public async Task LoadData()
+    {
+        productCategories = await productCategoryService.GetAll();
+    }
+}

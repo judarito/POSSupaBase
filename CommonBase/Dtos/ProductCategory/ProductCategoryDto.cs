@@ -10,10 +10,10 @@ namespace CommonBase.Dtos.ProductCategory
 {
     public class ProductCategoryDto
     {
-        public int idProductCategory { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public bool Active { get; set; }
-        public Guid IdTenant { get; set; }
+        public int IdTenant { get; set; }
 
     }
 
