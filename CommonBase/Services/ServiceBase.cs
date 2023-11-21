@@ -33,11 +33,18 @@ namespace CommonBase.Services
               .Delete();
         }
 
-        public async Task<List<TDto>> GetAll()
+        public async Task<List<TDto>> GetAll(int? from, int? to)
         {
-            var modeledResponse = await _client.From<T>().Get();
+            var modeledResponse = await  _client.From<T>().Select("*").Range((int)from, (int)to).Get();
             var mapModel=this._mapper.Map<List<TDto>>(modeledResponse.Models);
             return mapModel;
+        }
+
+        public async Task<int> GetCount()
+        {
+            //var modeledResponse = await _client.From<T>().Select("Id").Get();
+            var modeledResponse =  await _client.Rpc("getcountproductcategory", null);
+            return Convert.ToInt32(modeledResponse.Content.ToString());
         }
 
         public async Task<TDto> GetById(int id)
@@ -61,35 +68,5 @@ namespace CommonBase.Services
             var mapModel = this._mapper.Map<T>(Entity);
             await _client.From<T>().Upsert(mapModel);
         }
-        /* public async Task Delete(int id)
-{
-    await _client.From<T>()
-        .Where(x => x.Id == id)
-        .Delete();
-}
-
-public async Task<List<T>> GetAll()
-{
-    var modeledResponse = await _client.From<T>().Get();
-    return modeledResponse.Models;
-}
-
-public async Task<T> GetById(int id)
-{
-    var modeledResponse = await _client.From<T>()
-       .Where(x => x.Id == id)
-       .Get();
-    return modeledResponse.Models.FirstOrDefault();
-}
-
-public async Task Save(T Entity)
-{
-    await _client.From<T>().Insert(Entity);
-}
-
-public async Task Update(T Entity)
-{
-    await _client.From<T>().Upsert(Entity);
-}*/
     }
 }

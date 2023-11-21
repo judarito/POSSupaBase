@@ -18,18 +18,52 @@
 else
 {
 
-  
+
     <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.End" Gap="1rem" Wrap="FlexWrap.Wrap">
         <RadzenButton Text="Nuevo" Icon="add" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Large" Click="@IrANuevo" />
     </RadzenStack>
 
-    <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
-                Data="@productCategories" TItem="ProductCategoryDto" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
-        <Columns>
-            <RadzenDataGridColumn TItem="ProductCategoryDto" Property="Id" Filterable="false" Title="ID" Frozen="true" Width="30px" TextAlign="TextAlign.Center" />
-            <RadzenDataGridColumn TItem="ProductCategoryDto" Property="Name" Title="Nombre" Frozen="true" Width="160px" />
-        </Columns>
-    </RadzenDataGrid>
+
+    <RadzenDataList IsLoading=@isLoading
+                LoadData=@LoadDataGrig
+                Count=@count
+                Data="@productCategories"
+                TItem="ProductCategoryDto"
+                PageSize="@PageSize"
+                PagerHorizontalAlign="HorizontalAlign.Left"
+                ShowPagingSummary="true"
+                AllowPaging="true">
+        <Template Context="ProductCategoryDto">
+            <RadzenCard Style="width: 100%; padding: 0;">
+                <RadzenRow Gap="0">
+                    <RadzenColumn Size="12" SizeLG="3" Class="rz-p-4 product-title">
+                        <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class="rz-color-secondary">@(ProductCategoryDto.Name)</RadzenText>
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeLG="7" Class="rz-p-4">
+                            <RadzenRow Gap="0">
+                                <RadzenColumn Size="12" SizeMD="6" SizeLG="2">
+                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">ID</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Body2">@(ProductCategoryDto.Id)</RadzenText>
+                                </RadzenColumn>
+
+                            </RadzenRow>
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeLG="2" Class="rz-p-4">
+                            <RadzenRow Gap="0">
+                                <RadzenColumn Size="12" SizeMD="8" SizeLG="8">
+                                    <RadzenButton Text="Editar" Style="width: 100%" Click="@(()=> Editar(ProductCategoryDto.Id))" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="8" SizeLG="8">
+                                    <RadzenButton Text="Eliminar" Style="width: 100%" Click="@(()=> Detete(ProductCategoryDto.Id))" ButtonStyle="ButtonStyle.Danger" />
+                                </RadzenColumn>
+                            </RadzenRow>
+
+
+                        </RadzenColumn>
+                    </RadzenRow>
+                </RadzenCard>
+            </Template>
+        </RadzenDataList>
 }
 
 <style>
@@ -51,15 +85,19 @@ else
 
 @code {
     bool allowVirtualization;
+    bool isLoading;
     private List<ProductCategoryDto>? productCategories;
-
+    private int from = 0;
+    private int to = 0;
+    private int PageSize = 5;
+    int count;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         try
         {
-            await LoadData();
+            await LoadInitialData();
         }
         catch (Exception ex)
         {
@@ -78,8 +116,34 @@ else
         Navigation.NavigateTo("lideresnew");
     }
 
-    public async Task LoadData()
+    public async Task LoadData(int? from, int? to)
     {
-        productCategories = await productCategoryService.GetAll();
+        count = await productCategoryService.GetCount();
+        productCategories = await productCategoryService.GetAll(from, to);
+    }
+
+    public async Task LoadDataGrig(LoadDataArgs args)
+    {
+        from = (int)args?.Skip;
+        to = from + (int)args?.Top;
+        await LoadData(from, to - 1);
+    }
+
+    public async void Detete(int id)
+    {
+        var result = await AppUtils.ShowConfirm("Eliminar la categoría de producto", "Está seguro de querer eliminar la categoría de producto?", DialogService);
+
+        if ((bool)result)
+        {
+            await productCategoryService.Delete(id);
+            await LoadData(from, to);
+            StateHasChanged();
+            AppUtils.ShowNotify("categoría de producto Eliminada exitósamente", "OK", Ns);
+            return;
+        }
+    }
+    public async Task LoadInitialData()
+    {
+        await LoadData(0, PageSize - 1);
     }
 }
