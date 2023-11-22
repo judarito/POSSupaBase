@@ -124,9 +124,10 @@ else
 
     public async Task LoadDataGrig(LoadDataArgs args)
     {
-        from = (int)args?.Skip;
-        to = from + (int)args?.Top;
-        await LoadData(from, to - 1);
+        isLoading = true;
+        var fromTo = AppUtils.GetFromTo(args?.Top, args?.Skip);
+        await LoadData(fromTo.From, fromTo.To);
+        isLoading = false;
     }
 
     public async void Detete(int id)
@@ -135,10 +136,12 @@ else
 
         if ((bool)result)
         {
+            isLoading = true;
             await productCategoryService.Delete(id);
             await LoadData(from, to);
             StateHasChanged();
             AppUtils.ShowNotify("categoría de producto Eliminada exitósamente", "OK", Ns);
+            isLoading = false;
             return;
         }
     }

@@ -14,5 +14,6 @@ namespace CommonBase.Services
         Task Update(TModel Entity);
         Task Delete(int id);
         Task<TModel> GetById(int id);
+        Task<int> GetCount();
     }
 }

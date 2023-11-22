@@ -42,9 +42,8 @@ namespace CommonBase.Services
 
         public async Task<int> GetCount()
         {
-            //var modeledResponse = await _client.From<T>().Select("Id").Get();
-            var modeledResponse =  await _client.Rpc("getcountproductcategory", null);
-            return Convert.ToInt32(modeledResponse.Content.ToString());
+            var modeledResponse = await _client.From<T>().Count(Postgrest.Constants.CountType.Exact);
+            return Convert.ToInt32(modeledResponse);
         }
 
         public async Task<TDto> GetById(int id)

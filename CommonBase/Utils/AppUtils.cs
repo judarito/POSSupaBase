@@ -32,5 +32,10 @@ namespace CommonBase.Shared.Utils
             }
 
         }
+
+        public static (int From, int To) GetFromTo(int? PageSize, int? PageIndexLimit) {
+            return ((int)PageIndexLimit, ((int)PageIndexLimit + (int)PageSize)-1);
+        }
+       
     }
 }
