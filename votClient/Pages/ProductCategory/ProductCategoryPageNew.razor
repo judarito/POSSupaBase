@@ -1,7 +1,7 @@
 ﻿@page "/productcategorynew"
 @page "/productcategorynew/{id:int}"
+@attribute [Authorize]
 @using Component.ProductCategory.ProductCategory
-
 <ProductCategoryNew id="@id"></ProductCategoryNew>
 
 @code {

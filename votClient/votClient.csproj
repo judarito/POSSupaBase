@@ -27,7 +27,7 @@
 
   <ItemGroup>
 
-    <BlazorWebAssemblyLazyLoad Include="CommonLoginComponets.dll" />
+   
     <BlazorWebAssemblyLazyLoad Include="Component.ProductCategory.dll" />
     
   </ItemGroup>

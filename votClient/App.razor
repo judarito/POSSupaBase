@@ -34,16 +34,16 @@
         try
         {
            
-            if (args.Path.Contains("login") || args.Path=="")
-            {
-                var assemblies = await AssemblyLoader.LoadAssembliesAsync(
-                    new[] { "CommonLoginComponets.dll" });
-            }
-            if (args.Path.Contains("home"))
-            {
-                var assemblies = await AssemblyLoader.LoadAssembliesAsync(
-                    new[] { "CommonLoginComponets.dll" });
-            }
+            //if (args.Path.Contains("login") || args.Path=="")
+            //{
+            //    var assemblies = await AssemblyLoader.LoadAssembliesAsync(
+            //        new[] { "CommonLoginComponets.dll" });
+            //}
+            //if (args.Path.Contains("home"))
+            //{
+            //    var assemblies = await AssemblyLoader.LoadAssembliesAsync(
+            //        new[] { "CommonLoginComponets.dll" });
+            //}
             if (args.Path.Contains("productcategory"))
             {
                 var assemblies = await AssemblyLoader.LoadAssembliesAsync(
