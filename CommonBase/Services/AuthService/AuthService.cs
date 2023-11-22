@@ -50,6 +50,8 @@ namespace CommonBase.Services.AuthService
         {
             await _client.Auth.SignOut();
             await _localStorage.RemoveItemAsync("token");
+            await _localStorage.RemoveItemAsync("USER_INFO");
+            await _localStorage.RemoveItemAsync("SUPABASE_SESSION");
             await _customAuthStateProvider.GetAuthenticationStateAsync();
         }
 

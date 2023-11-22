@@ -57,8 +57,9 @@
     }
     async Task LogoutClick()
     {
-        navigationManager.NavigateTo("/login");
         await AuthService.Logout();
+        navigationManager.NavigateTo("/login");
+        
         
     }
 }
