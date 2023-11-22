@@ -1,0 +1,10 @@
+﻿@page "/productcategorynew"
+@page "/productcategorynew/{id:int}"
+@using Component.ProductCategory.ProductCategory
+
+<ProductCategoryNew id="@id"></ProductCategoryNew>
+
+@code {
+    [Parameter]
+    public int? id { get; set; }
+}

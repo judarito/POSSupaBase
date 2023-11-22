@@ -6,10 +6,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Radzen;
 using votClient;
 using votClient.HttpMessageHandler;
-
 using CommonBase.Shared.Services;
-
-using CommonBase.Services.Login;
 using votClient.Providers;
 using CommonBase.Services.AuthService;
 using CommonBase.Services.DatabaseService;
@@ -86,11 +83,5 @@ builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<TooltipService>();
 builder.Services.AddScoped<SpinnerService>();
 builder.Services.AddScoped<ProductCategoryService>();
-builder.Services.AddScoped<ServicioPrueba>();
-
-//builder.Services.AddScoped<IVotantesService, VotantesService>();
-//builder.Services.AddScoped<IPuestosService, PuestosService>();
-builder.Services.AddScoped<ILoginService, LoginService>();
-//builder.Services.AddScoped<IResumenVotosService, ResumenVotosService>();
 
 await builder.Build().RunAsync();

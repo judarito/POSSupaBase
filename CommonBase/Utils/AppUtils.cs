@@ -1,4 +1,5 @@
 ﻿using Radzen;
+using System.Text.RegularExpressions;
 
 namespace CommonBase.Shared.Utils
 {
@@ -36,6 +37,26 @@ namespace CommonBase.Shared.Utils
         public static (int From, int To) GetFromTo(int? PageSize, int? PageIndexLimit) {
             return ((int)PageIndexLimit, ((int)PageIndexLimit + (int)PageSize)-1);
         }
-       
+
+        public static bool ValidateSpaces(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return false;
+            }
+            return value.Trim().Length > 0;
+        }
+
+        public static bool ValidateOnlyNumber(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return false;
+            }
+            Regex regex = new Regex("^[0-9]+$");
+            Match match = regex.Match(value);
+            Console.WriteLine(match.Success);
+            return match.Success;
+        }
     }
 }

@@ -1,23 +1,121 @@
-﻿@using CommonBase.Models.ProductCategory;
+﻿@using Blazored.SessionStorage;
+@using CommonBase.Dtos.ProductCategory;
+@using CommonBase.Models.ProductCategory;
+@using CommonBase.Models.UserModel;
 @using CommonBase.Services.ProductCategoryService;
 @inject ProductCategoryService productCategoryService
+@inject ISessionStorageService localStorage
 
 <PageTitle>Categoría de productos</PageTitle>
 
-<h1>Categoría de productos</h1>
+<h1>Nueva Categoría de productos</h1>
 
-<p>En esta pagina puedes gestionar los datos de las Categoría de productos.</p>
 
+@if (ProductCategory == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <RadzenTemplateForm Data="@ProductCategory" Submit="@((ProductCategoryDto args) => { Submit(args); })">
+        <RadzenRow Gap="2rem" Class="rz-p-0 rz-p-lg-4">
+            <RadzenColumn Size="12" SizeMD="11">
+                <RadzenStack>
+                    <RadzenFieldset Text="Datos de la Categoría de productos">
+                        <RadzenStack Gap="1rem">
+
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenLabel Text="Nombre" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <RadzenTextBox Style="width: 100%;" Name="nombre" @bind-Value="ProductCategory.Name" MaxLength="50" />
+                                    <RadzenLengthValidator Component="nombre" Max="50" Text="El nombre debe tener como máximo 50 caracteres." Popup=@popup Style="position: relative" />
+                                    <RadzenCustomValidator Component="nombre" Validator="@(() => AppUtils.ValidateSpaces(ProductCategory.Name))" Text="Nombre es requerido" Popup=@popup Style="position: relative" />
+                                </RadzenColumn>
+                            </RadzenRow>
+
+                       
+                        </RadzenStack>
+                    </RadzenFieldset>
+
+                </RadzenStack>
+            </RadzenColumn>
+
+        </RadzenRow>
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="1rem" Class="rz-mt-8 rz-mb-4">
+            <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large" Icon="save" Text="Save" />
+            <RadzenButton ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Large" Icon="cancel" Text="Cancel" Click="@Cancel" />
+        </RadzenStack>
+    </RadzenTemplateForm>
+}
 
 
 
 
 @code {
-   private bool allowVirtualization;
-    private List<ProductCategory>? productCategory;
+    [Parameter]
+    public int? id { get; set; }
+    private ProductCategoryDto? ProductCategory;
+    bool popup = true;
 
-    public void IrANuevo()
+    protected override async Task OnInitializedAsync()
     {
-      //  Navigation.NavigateTo("lideresnew");
+        await base.OnInitializedAsync();
+        ProductCategory = new ProductCategoryDto();
+
+        if (id != null && id > 0)
+        {
+            try
+            {
+                ProductCategory = await productCategoryService.GetById((int)id);
+            }
+            catch (Exception ex)
+            {
+                AppUtils.ShowNotify(ex.Message, "ERROR", Ns);
+            }
+
+        }
+
+
     }
+
+
+    async void Submit(ProductCategoryDto arg)
+    {
+        spinnerService.Show();
+        try
+        {
+            if (arg?.Id != null && arg?.Id > 0)
+            {
+                await productCategoryService.Update(arg);
+            }
+            else
+            {
+                var UserInfo = await localStorage.GetItemAsync<UserInfoLocalStorage>("USER_INFO");
+                arg.Active = true;
+                arg.IdTenant = UserInfo.TenantId;
+                arg.dt_Created = DateTime.Now;
+                await productCategoryService.Save(arg);
+            }
+
+            ProductCategory = new ProductCategoryDto();
+            AppUtils.ShowNotify("Información guardada de manera exitosa", "OK", Ns);
+            Navigation.NavigateTo("productcategory");
+        }
+        catch (Exception ex)
+        {
+            AppUtils.ShowNotify($"ERROR : {ex.Message} ", "WARNING", Ns);
+        }
+        finally
+        {
+            spinnerService.Hide();
+        }
+    }
+
+    void Cancel()
+    {
+        Navigation.NavigateTo("productcategory");
+    }
+
 }

@@ -108,12 +108,12 @@ else
 
     public async void Editar(int id)
     {
-        Navigation.NavigateTo($"lideresnew/{id}");
+        Navigation.NavigateTo($"productcategorynew/{id}");
     }
 
     public void IrANuevo()
     {
-        Navigation.NavigateTo("lideresnew");
+        Navigation.NavigateTo("productcategorynew");
     }
 
     public async Task LoadData(int? from, int? to)
@@ -136,13 +136,23 @@ else
 
         if ((bool)result)
         {
-            isLoading = true;
-            await productCategoryService.Delete(id);
-            await LoadData(from, to);
-            StateHasChanged();
-            AppUtils.ShowNotify("categoría de producto Eliminada exitósamente", "OK", Ns);
-            isLoading = false;
-            return;
+            spinnerService.Show();
+            try
+            {
+                await productCategoryService.Delete(id);
+                await LoadInitialData();
+                StateHasChanged();
+                AppUtils.ShowNotify("categoría de producto Eliminada exitósamente", "OK", Ns);
+            }
+            catch (Exception ex)
+            {
+                AppUtils.ShowNotify($"ERROR : {ex.Message} ", "WARNING", Ns);
+            }
+            finally
+            {
+                spinnerService.Hide();
+            }
+
         }
     }
     public async Task LoadInitialData()

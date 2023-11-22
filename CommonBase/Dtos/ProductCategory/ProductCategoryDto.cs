@@ -8,9 +8,8 @@ using System.Threading.Tasks;
 
 namespace CommonBase.Dtos.ProductCategory
 {
-    public class ProductCategoryDto
+    public class ProductCategoryDto: DtosBase
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public bool Active { get; set; }
         public int IdTenant { get; set; }

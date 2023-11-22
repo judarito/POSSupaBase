@@ -4,6 +4,7 @@ using CommonBase.Models.ProductCategory;
 using Postgrest.Models;
 using Postgrest.Responses;
 using Supabase;
+using static Postgrest.Constants;
 
 namespace CommonBase.Services
 {
@@ -35,7 +36,7 @@ namespace CommonBase.Services
 
         public async Task<List<TDto>> GetAll(int? from, int? to)
         {
-            var modeledResponse = await  _client.From<T>().Select("*").Range((int)from, (int)to).Get();
+            var modeledResponse = await  _client.From<T>().Select("*").Range((int)from, (int)to).Order(x => x.Id, Ordering.Descending).Get();
             var mapModel=this._mapper.Map<List<TDto>>(modeledResponse.Models);
             return mapModel;
         }
