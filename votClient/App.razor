@@ -8,7 +8,7 @@
 <Router AppAssembly="@typeof(App).Assembly" OnNavigateAsync="@OnNavigateAsync">
     <Found Context="routeData">
        @* <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />*@
-        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" >
+        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainRadzenLayout)" >
             <NotAuthorized >
                   <RedirectToLogin></RedirectToLogin>
             </NotAuthorized>
@@ -21,7 +21,7 @@
     </Found>
     <NotFound>
         <PageTitle>Not found</PageTitle>
-        <LayoutView Layout="@typeof(MainLayout)">
+            <LayoutView Layout="@typeof(MainRadzenLayout)">
             <p role="alert">Sorry, there's nothing at this address.</p>
         </LayoutView>
     </NotFound>

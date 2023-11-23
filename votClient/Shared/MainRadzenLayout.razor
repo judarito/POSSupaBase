@@ -1,0 +1,59 @@
+﻿@using CommonBase.Services.AuthService;
+@using Microsoft.AspNetCore.Components.Authorization;
+@using votClient.Shared.Components;
+@using CommonBase.Shared.Services;
+@inherits LayoutComponentBase
+@inject NavigationManager navigationManager
+@inject AuthService AuthService;
+
+<RadzenLayout style="height: 99vh">
+    <RadzenHeader>
+
+       
+       
+        <RadzenRow >
+            <RadzenColumn >
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+                    <RadzenSidebarToggle Click="@(() => sidebar1Expanded = !sidebar1Expanded)" />
+                    <RadzenLabel Text="POS Pymes" />
+                </RadzenStack>
+            </RadzenColumn>
+            <RadzenColumn >
+                <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.End" Gap="0" >
+                    <RadzenButton Style="margin-right: 10px; margin-top: 5px;" 
+                    Click=@(args => LogoutClick()) 
+                    Icon="exit_to_app" 
+                    ButtonStyle="ButtonStyle.Primary" />
+                </RadzenStack>
+            </RadzenColumn>
+          
+        </RadzenRow>
+
+    </RadzenHeader>
+    <RadzenSidebar @bind-Expanded="@sidebar1Expanded">
+        <RadzenPanelMenu>
+            <RadzenPanelMenuItem Text="Inicio" Icon="home" Path="home" />
+            <RadzenPanelMenuItem Text="Cat.Productos" Icon="done_all" Path="productcategory" />
+            <RadzenPanelMenuItem Text="Salir" Icon="exit_to_app" Click="@(()=>LogoutClick())" />
+        </RadzenPanelMenu>
+       
+    </RadzenSidebar>
+    <RadzenBody>
+        <div class="rz-p-4">
+            @Body
+        </div>
+    </RadzenBody>
+   
+</RadzenLayout>
+
+@code {
+    bool sidebar1Expanded = true;
+
+    async Task LogoutClick()
+    {
+        await AuthService.Logout();
+        navigationManager.NavigateTo("/login");
+
+
+    }
+}

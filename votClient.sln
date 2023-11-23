@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonLoginComponets", "Com
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{7F1365C6-0DC8-4F0E-8107-31AC0049D53C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Component.ProductCategory", "Component.ProductCategory\Component.ProductCategory.csproj", "{4EB882F5-2AD6-4219-96DA-9F022CA03BFF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Component.ProductCategory", "Component.ProductCategory\Component.ProductCategory.csproj", "{4EB882F5-2AD6-4219-96DA-9F022CA03BFF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
