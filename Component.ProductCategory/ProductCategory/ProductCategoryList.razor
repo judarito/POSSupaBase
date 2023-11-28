@@ -20,7 +20,8 @@ else
 
 
     <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.End" Gap="1rem" Wrap="FlexWrap.Wrap">
-        <RadzenButton Text="Nuevo" Icon="add" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Large" Click="@IrANuevo" />
+       @* <RadzenButton Text="Nuevo" Icon="add" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Large" Click="@IrANuevo" />*@
+        <RadzenButton Click=@(args => IrANuevo()) Icon="add" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Large" class="rz-border-radius-10 rz-shadow-10" />
     </RadzenStack>
 
 
@@ -37,29 +38,50 @@ else
             <RadzenCard Style="width: 100%; padding: 0;">
                 <RadzenRow Gap="0">
                     <RadzenColumn Size="12" SizeLG="3" Class="rz-p-4 product-title">
-                        <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class="rz-color-secondary">@(ProductCategoryDto.Name)</RadzenText>
-                        </RadzenColumn>
-                        <RadzenColumn Size="12" SizeLG="7" Class="rz-p-4">
-                            <RadzenRow Gap="0">
-                                <RadzenColumn Size="12" SizeMD="6" SizeLG="2">
-                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">ID</RadzenText>
-                                    <RadzenText TextStyle="TextStyle.Body2">@(ProductCategoryDto.Id)</RadzenText>
-                                </RadzenColumn>
+                         <RadzenRow >
+                            <RadzenColumn>
+                                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0" >
+                                    <RadzenLink Path="javascript:void(0)"  Text="Go to url" onclick="@(()=> Editar(ProductCategoryDto.Id))"><RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class="rz-color-secondary">@(ProductCategoryDto.Name)</RadzenText>  </RadzenLink>
+                                    </RadzenStack>
+                            </RadzenColumn>
+                            <RadzenColumn>
+                                <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.End" Gap="0">
+                                        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Gap="8">
+                                            <button type="button" onclick="@(()=> Editar(ProductCategoryDto.Id))" class="btn btn-secondary"><spam class="fa fa-pencil-square-o" aria-hidden="true"></spam></button>
+                                            <button type="button" onclick="@(()=> Detete(ProductCategoryDto.Id))" class="btn btn-danger"><spam class="fa fa-trash-o" aria-hidden="true"></spam></button>
+                                           @* <RadzenButton Click=@(args =>Detete(ProductCategoryDto.Id)) Icon="delete_forever" ButtonStyle="ButtonStyle.Danger" >
+                                                <spam class="fa fa-pencil-square-o" aria-hidden="true"></spam>
+                                            </RadzenButton>
+                                            <RadzenButton Click=@(args =>Detete(ProductCategoryDto.Id)) Icon="delete_forever" ButtonStyle="ButtonStyle.Danger" />*@
+                                        </RadzenStack>
+                                  
+                                        
+                                </RadzenStack>
+                            </RadzenColumn>
+                         </RadzenRow>
+                       
+                     </RadzenColumn>
+                    <RadzenColumn Size="12" SizeLG="7" Class="rz-p-4">
+                        <RadzenRow Gap="0">
+                            <RadzenColumn Size="12" SizeMD="6" SizeLG="2">
+                                <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">ID</RadzenText>
+                                <RadzenText TextStyle="TextStyle.Body2">@(ProductCategoryDto.Id)</RadzenText>
+                            </RadzenColumn>
 
-                            </RadzenRow>
-                        </RadzenColumn>
-                        <RadzenColumn Size="12" SizeLG="2" Class="rz-p-4">
-                            <RadzenRow Gap="0">
-                                <RadzenColumn Size="12" SizeMD="8" SizeLG="8">
-                                    <RadzenButton Text="Editar" Style="width: 100%" Click="@(()=> Editar(ProductCategoryDto.Id))" />
-                                </RadzenColumn>
-                                <RadzenColumn Size="12" SizeMD="8" SizeLG="8">
-                                    <RadzenButton Text="Eliminar" Style="width: 100%" Click="@(()=> Detete(ProductCategoryDto.Id))" ButtonStyle="ButtonStyle.Danger" />
-                                </RadzenColumn>
-                            </RadzenRow>
+                        </RadzenRow>
+                    </RadzenColumn>
+                  @*  <RadzenColumn Size="12" SizeLG="2" Class="rz-p-4">
+                        <RadzenRow Gap="0">
+                            <RadzenColumn Size="12" SizeMD="8" SizeLG="8">
+                                <RadzenButton Text="Editar" Style="width: 100%" Click="@(()=> Editar(ProductCategoryDto.Id))" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="8" SizeLG="8">
+                                <RadzenButton Text="Eliminar" Style="width: 100%" Click="@(()=> Detete(ProductCategoryDto.Id))" ButtonStyle="ButtonStyle.Danger" />
+                            </RadzenColumn>
+                        </RadzenRow>
 
 
-                        </RadzenColumn>
+                    </RadzenColumn>*@
                     </RadzenRow>
                 </RadzenCard>
             </Template>
@@ -132,7 +154,17 @@ else
 
     public async void Detete(int id)
     {
-        var result = await AppUtils.ShowConfirm("Eliminar la categoría de producto", "Está seguro de querer eliminar la categoría de producto?", DialogService);
+        bool result = false;
+        try
+        {
+             result = await AppUtils.ShowConfirm("Eliminar la categoría de producto", "Está seguro de querer eliminar la categoría de producto?", DialogService);
+          
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        
 
         if ((bool)result)
         {

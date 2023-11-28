@@ -10,10 +10,8 @@ using CommonBase.Shared.Services;
 using votClient.Providers;
 using CommonBase.Services.AuthService;
 using CommonBase.Services.DatabaseService;
-using Microsoft.Extensions.DependencyInjection;
 using CommonBase.Services.User;
 using CommonBase.Services.ProductCategoryService;
-using AutoMapper;
 
 const string ApiUrlBase = "https://jricardo0822-001-site1.ftempurl.com/api/";
 //const string ApiUrlBase = "https://vot20231005162706.azurewebsites.net/api/";
