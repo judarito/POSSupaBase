@@ -9,11 +9,11 @@ namespace CommonBase.Services
 {
     public interface InterfaceBaseCrud<TModel> where TModel : class
     {
-        Task<List<TModel>> GetAll(int? from,int? to);
+        Task<List<TModel>> GetAll(int? from,int? to, string? searchCrieria);
         Task Save(TModel Entity);
         Task Update(TModel Entity);
         Task Delete(int id);
         Task<TModel> GetById(int id);
-        Task<int> GetCount();
+        Task<int> GetCount(string? searchCrieria);
     }
 }

@@ -34,16 +34,22 @@ namespace CommonBase.Services
               .Delete();
         }
 
-        public async Task<List<TDto>> GetAll(int? from, int? to)
+        public async Task<List<TDto>> GetAll(int? from, int? to, string? searchCrieria)
         {
-            var modeledResponse = await  _client.From<T>().Select("*").Range((int)from, (int)to).Order(x => x.Id, Ordering.Descending).Get();
+           
+            var modeledResponse = String.IsNullOrWhiteSpace(searchCrieria)
+                    ? await _client.From<T>().Select("*").Range((int)from, (int)to).Order(x => x.Id, Ordering.Descending).Get()
+                    : await _client.From<T>().Select("*").Filter(x=> x.Name, Operator.Like, $"%{searchCrieria}%").Range((int)from, (int)to).Order(x => x.Id, Ordering.Descending).Get();
             var mapModel=this._mapper.Map<List<TDto>>(modeledResponse.Models);
             return mapModel;
         }
 
-        public async Task<int> GetCount()
+        public async Task<int> GetCount(string? searchCrieria)
         {
-            var modeledResponse = await _client.From<T>().Count(Postgrest.Constants.CountType.Exact);
+            var modeledResponse = String.IsNullOrWhiteSpace(searchCrieria)
+                   ? await _client.From<T>().Count(Postgrest.Constants.CountType.Exact)
+                   : await _client.From<T>().Filter(x => x.Name, Operator.Like, $"%{searchCrieria}%").Count(Postgrest.Constants.CountType.Exact);
+            
             return Convert.ToInt32(modeledResponse);
         }
 

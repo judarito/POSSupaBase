@@ -10,8 +10,6 @@ namespace CommonBase.Models.ProductCategory
     [Table("public.ProductCategory")]
     public class ProductCategory : BaseModelApp
     {
-        [Column("Name")]
-        public string Name { get; set; }
 
         [Column("Active")]
         public bool Active { get; set; }

@@ -13,6 +13,9 @@ namespace CommonBase.Models
         [PrimaryKey("Id")]
         public int Id { get; set; }
 
+        [Column("Name")]
+        public string? Name { get; set; }
+
         [Column("dt_Created")]
         public DateTime? dt_Created { get; set; }
     }
