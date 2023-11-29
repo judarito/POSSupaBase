@@ -21,8 +21,14 @@ else
     <RadzenRow>
         <RadzenColumn Size="11">
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Gap="1rem">
-                <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="find_in_page" Style="max-width:30%;" Click="@(()=>Buscar())" />
-                <RadzenTextBox Placeholder="Buscar..." Style="width:100%!important" @bind-Value="searchCriteria" />
+                <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="find_in_page" Style="max-width:30%;"  Click="@(()=>Buscar())" />
+                <RadzenTextBox Placeholder="Buscar..." 
+                    Style="width:100%!important" 
+                 
+                    @bind-Value="searchCriteria" 
+                    @oninput=@(args => OnChange(args.Value.ToString())) 
+                    @onkeypress=@(e=> SearchInputKeyPressed(e))
+                    />
             </RadzenStack>
         </RadzenColumn>
         <RadzenColumn>
@@ -195,4 +201,22 @@ else
         await LoadInitialData();
         StateHasChanged();
     }
+    private async void OnChange(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            searchCriteria = "";
+            await LoadInitialData();
+            StateHasChanged();
+        }
+    }
+
+    private async Task SearchInputKeyPressed(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter")
+        {
+          await Buscar();
+        }
+    }
+
 }
