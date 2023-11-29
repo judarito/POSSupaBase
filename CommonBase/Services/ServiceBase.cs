@@ -39,7 +39,7 @@ namespace CommonBase.Services
            
             var modeledResponse = String.IsNullOrWhiteSpace(searchCrieria)
                     ? await _client.From<T>().Select("*").Range((int)from, (int)to).Order(x => x.Id, Ordering.Descending).Get()
-                    : await _client.From<T>().Select("*").Filter(x=> x.Name, Operator.Like, $"%{searchCrieria}%").Range((int)from, (int)to).Order(x => x.Id, Ordering.Descending).Get();
+                    : await _client.From<T>().Select("*").Filter(x=> x.Name, Operator.ILike, $"%{searchCrieria}%").Range((int)from, (int)to).Order(x => x.Id, Ordering.Descending).Get();
             var mapModel=this._mapper.Map<List<TDto>>(modeledResponse.Models);
             return mapModel;
         }
