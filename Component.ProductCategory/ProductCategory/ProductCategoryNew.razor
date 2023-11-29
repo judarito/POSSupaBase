@@ -4,7 +4,6 @@
 @using CommonBase.Models.UserModel;
 @using CommonBase.Services.ProductCategoryService;
 @inject ProductCategoryService productCategoryService
-@inject ISessionStorageService localStorage
 
 <PageTitle>Categoría de productos</PageTitle>
 
@@ -92,9 +91,7 @@ else
             }
             else
             {
-                var UserInfo = await localStorage.GetItemAsync<UserInfoLocalStorage>("USER_INFO");
                 arg.Active = true;
-                arg.IdTenant = UserInfo.TenantId;
                 arg.dt_Created = DateTime.Now;
                 await productCategoryService.Save(arg);
             }

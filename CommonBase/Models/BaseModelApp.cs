@@ -16,6 +16,9 @@ namespace CommonBase.Models
         [Column("Name")]
         public string? Name { get; set; }
 
+        [Column("IdTenant")]
+        public int IdTenant { get; set; }
+
         [Column("dt_Created")]
         public DateTime? dt_Created { get; set; }
     }

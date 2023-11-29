@@ -13,5 +13,7 @@ namespace CommonBase.Dtos
         public string? Name { get; set; }
 
         public DateTime? dt_Created { get; set; }
+
+        public int IdTenant { get; set; }
     }
 }

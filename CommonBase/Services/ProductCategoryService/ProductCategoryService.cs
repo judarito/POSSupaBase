@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Blazored.SessionStorage;
 using CommonBase.Dtos.ProductCategory;
 using CommonBase.Models.ProductCategory;
 using Supabase;
@@ -14,7 +15,7 @@ namespace CommonBase.Services.ProductCategoryService
 {
     public class ProductCategoryService : ServiceBase<ProductCategory, ProductCategoryDto>
     {
-        public ProductCategoryService(Client client, IMapper mapper) : base(client, mapper)
+        public ProductCategoryService(Client client, IMapper mapper, ISessionStorageService localStorage) : base(client, mapper, localStorage)
         {
         }
     }

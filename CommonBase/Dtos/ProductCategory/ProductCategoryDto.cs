@@ -11,8 +11,7 @@ namespace CommonBase.Dtos.ProductCategory
     public class ProductCategoryDto: DtosBase
     {
         public bool Active { get; set; }
-        public int IdTenant { get; set; }
-
+        
     }
 
 }

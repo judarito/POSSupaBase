@@ -14,8 +14,7 @@ namespace CommonBase.Models.ProductCategory
         [Column("Active")]
         public bool Active { get; set; }
 
-        [Column("IdTenant")]
-        public int IdTenant { get; set; }
+        
 
     }
 }
