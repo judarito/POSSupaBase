@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Components.Authorization;
 @using votClient.Shared.Components;
 @using CommonBase.Shared.Services;
+@using PSC.Blazor.Components.BrowserDetect
 @inherits LayoutComponentBase
 @inject NavigationManager navigationManager
 @inject AuthService AuthService;
@@ -32,8 +33,8 @@
     </RadzenHeader>
     <RadzenSidebar @bind-Expanded="@sidebar1Expanded">
         <RadzenPanelMenu>
-            <RadzenPanelMenuItem Text="Inicio" Icon="home" Path="home" />
-            <RadzenPanelMenuItem Text="Cat.Productos" Icon="done_all" Path="productcategory" />
+            <RadzenPanelMenuItem Text="Inicio" Icon="home" Path="home" Click="@(() =>ShowOrHideMenu())" />
+            <RadzenPanelMenuItem Text="Cat.Productos" Icon="done_all" Path="productcategory" Click="@(() => ShowOrHideMenu())" />
             <RadzenPanelMenuItem Text="Salir" Icon="exit_to_app" Click="@(()=>LogoutClick())" />
         </RadzenPanelMenu>
        
@@ -49,14 +50,36 @@
 <RadzenNotification />
 <RadzenTooltip />
 
+<BrowserDetect @bind-BrowserInfo="@Info"
+               OSArchitectureUpdate="OSArchitectureString"
+               OSVersionUpdate="OSUpdateString" />
+
 @code {
+    public BrowserInfo? Info { get; set; }
+    public string? OSInfo { get; set; } = "";
+    public string? OSCPUInfoString { get; set; }
     bool sidebar1Expanded = true;
 
     async Task LogoutClick()
     {
         await AuthService.Logout();
         navigationManager.NavigateTo("/login");
+    }
 
+    private void OSArchitectureString(string cpu)
+    {
+        OSCPUInfoString = cpu;
+    }
 
+    private void OSUpdateString(string version)
+    {
+        OSInfo = version;
+    }
+
+    private bool ShowOrHideMenu()
+    {
+        if((bool)Info.IsMobile)
+            return sidebar1Expanded = !sidebar1Expanded;
+        return false;
     }
 }
