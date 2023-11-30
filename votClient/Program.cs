@@ -12,6 +12,7 @@ using CommonBase.Services.AuthService;
 using CommonBase.Services.DatabaseService;
 using CommonBase.Services.User;
 using CommonBase.Services.ProductCategoryService;
+using CommonBase.Services.UnidadMedidaService;
 
 const string ApiUrlBase = "https://jricardo0822-001-site1.ftempurl.com/api/";
 //const string ApiUrlBase = "https://vot20231005162706.azurewebsites.net/api/";
@@ -80,6 +81,7 @@ builder.Services.AddScoped<DialogService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<TooltipService>();
 builder.Services.AddScoped<SpinnerService>();
-builder.Services.AddScoped<ProductCategoryService>();
+builder.Services.AddScoped<ProductCategoryService>(); 
+builder.Services.AddScoped<UnidadMedidaService>(); 
 
 await builder.Build().RunAsync();

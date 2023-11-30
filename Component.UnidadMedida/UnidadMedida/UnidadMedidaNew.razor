@@ -1,0 +1,126 @@
+﻿@using Blazored.SessionStorage;
+@using CommonBase.Dtos.UnidadMedida;
+@using CommonBase.Models.UnidadMedida;
+@using CommonBase.Services.UnidadMedidaService;
+@inject UnidadMedidaService unidadMedidaService
+
+<PageTitle>Unidades de medida</PageTitle>
+
+<h3>Nueva Unidad de medida</h3>
+
+@if (unidadMedida == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <RadzenTemplateForm Data="@unidadMedida" Submit="@((UnidadMedidaDto args) => { Submit(args); })">
+        <RadzenRow Gap="2rem" Class="rz-p-0 rz-p-lg-4">
+            <RadzenColumn Size="12" SizeMD="11">
+                <RadzenStack>
+                    <RadzenFieldset Text="Datos de la Categoría de productos">
+                        <RadzenStack Gap="1rem">
+
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenLabel Text="Nombre" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <RadzenTextBox Style="width: 100%;" Name="nombre" @bind-Value="unidadMedida.Name" MaxLength="50" />
+                                    <RadzenLengthValidator Component="nombre" Max="50" Text="El nombre debe tener como máximo 50 caracteres." Popup=@popup Style="position: relative" />
+                                    <RadzenCustomValidator Component="nombre" Validator="@(() => AppUtils.ValidateSpaces(unidadMedida.Name))" Text="Nombre es requerido" Popup=@popup Style="position: relative" />
+                                </RadzenColumn>
+                            </RadzenRow>
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenLabel Text="Codigo" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <RadzenTextBox Style="width: 100%;" Name="Codigo" @bind-Value="unidadMedida.Code" MaxLength="10" />
+                                    <RadzenLengthValidator Component="Codigo" Max="10" Text="El código debe tener como máximo 50 caracteres." Popup=@popup Style="position: relative" />
+                                    <RadzenCustomValidator Component="Codigo" Validator="@(() => AppUtils.ValidateSpaces(unidadMedida.Code))" Text="Nombre es requerido" Popup=@popup Style="position: relative" />
+                                </RadzenColumn>
+                            </RadzenRow>
+
+
+                        </RadzenStack>
+                    </RadzenFieldset>
+
+                </RadzenStack>
+            </RadzenColumn>
+
+        </RadzenRow>
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="1rem" Class="rz-mt-8 rz-mb-4">
+            <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large" Icon="save" Text="Save" />
+            <RadzenButton ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Large" Icon="cancel" Text="Cancel" Click="@Cancel" />
+        </RadzenStack>
+    </RadzenTemplateForm>
+}
+
+
+
+
+
+@code {
+    [Parameter]
+    public int? id { get; set; }
+    private UnidadMedidaDto? unidadMedida;
+    bool popup = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        unidadMedida = new UnidadMedidaDto();
+
+        if (id != null && id > 0)
+        {
+            try
+            {
+                unidadMedida = await unidadMedidaService.GetById((int)id);
+            }
+            catch (Exception ex)
+            {
+                AppUtils.ShowNotify(ex.Message, "ERROR", Ns);
+            }
+
+        }
+
+
+    }
+
+    async void Submit(UnidadMedidaDto arg)
+    {
+        spinnerService.Show();
+        try
+        {
+            if (arg?.Id != null && arg?.Id > 0)
+            {
+                await unidadMedidaService.Update(arg);
+            }
+            else
+            {
+                arg.Active = true;
+                arg.dt_Created = DateTime.Now;
+                await unidadMedidaService.Save(arg);
+            }
+
+            unidadMedida = new UnidadMedidaDto();
+            AppUtils.ShowNotify("Información guardada de manera exitosa", "OK", Ns);
+            Navigation.NavigateTo("unidadmedidalist");
+        }
+        catch (Exception ex)
+        {
+            AppUtils.ShowNotify($"ERROR : {ex.Message} ", "WARNING", Ns);
+        }
+        finally
+        {
+            spinnerService.Hide();
+        }
+    }
+
+    void Cancel()
+    {
+        Navigation.NavigateTo("unidadmedidalist");
+    }
+
+}

@@ -49,6 +49,12 @@
                 var assemblies = await AssemblyLoader.LoadAssembliesAsync(
                     new[] { "Component.ProductCategory.dll" });
             }
+
+            if (args.Path.Contains("unidadmedida"))
+            {
+                var assemblies = await AssemblyLoader.LoadAssembliesAsync(
+                    new[] { "Component.UnidadMedida.dll" });
+            }
            
         }
         catch (Exception ex)

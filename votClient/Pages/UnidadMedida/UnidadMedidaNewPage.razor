@@ -1,0 +1,10 @@
+﻿@page "/unidamedidanew"
+@page "/unidamedidanew/{id:int}"
+@attribute [Authorize]
+@using Component.UnidadMedida.UnidadMedida
+<UnidadMedidaNew id="@id"></UnidadMedidaNew>
+
+@code {
+    [Parameter]
+    public int? id { get; set; }
+}

@@ -1,17 +1,15 @@
-﻿@using CommonBase.Dtos.ProductCategory;
-@using CommonBase.Services.ProductCategoryService;
-@inject ProductCategoryService productCategoryService
+﻿@using CommonBase.Dtos.UnidadMedida;
+@using CommonBase.Services.UnidadMedidaService;
+@inject UnidadMedidaService unidadMedidaService
+
+<PageTitle>Unidades de medida</PageTitle>
+
+<h2>Unidades de medida</h2>
+
+<p>En esta pagina puedes gestionar los datos de las Unidades de medida.</p>
 
 
-<PageTitle>Categoría de productos</PageTitle>
-
-<h2>Categoría de productos</h2>
-
-<p>En esta pagina puedes gestionar los datos de las categoría de productos.</p>
-
-
-
-@if (productCategories == null)
+@if (unidadMedidas == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -21,14 +19,12 @@ else
     <RadzenRow>
         <RadzenColumn Size="11">
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Gap="1rem">
-                <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="find_in_page" Style="max-width:30%;"  Click="@(()=>Buscar())" />
-                <RadzenTextBox Placeholder="Buscar..." 
-                    Style="width:100%!important" 
-                 
-                    @bind-Value="searchCriteria" 
-                    @oninput=@(args => OnChange(args.Value.ToString())) 
-                    @onkeypress=@(e=> SearchInputKeyPressed(e))
-                    />
+                <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="find_in_page" Style="max-width:30%;" Click="@(()=>Buscar())" />
+                <RadzenTextBox Placeholder="Buscar..."
+                           Style="width:100%!important"
+                           @bind-Value="searchCriteria"
+                           @oninput=@(args => OnChange(args.Value.ToString()))
+                           @onkeypress=@(e=> SearchInputKeyPressed(e)) />
             </RadzenStack>
         </RadzenColumn>
         <RadzenColumn>
@@ -42,27 +38,27 @@ else
     <RadzenDataList IsLoading=@isLoading
                 LoadData=@LoadDataGrig
                 Count=@count
-                Data="@productCategories"
-                TItem="ProductCategoryDto"
+                Data="@unidadMedidas"
+                TItem="UnidadMedidaDto"
                 PageSize="@PageSize"
                 PagerHorizontalAlign="HorizontalAlign.Left"
                 ShowPagingSummary="true"
                 AllowPaging="true">
-        <Template Context="ProductCategoryDto">
+        <Template Context="UnidadMedidaDto">
             <RadzenCard Style="width: 100%; padding: 0;">
                 <RadzenRow Gap="0">
                     <RadzenColumn Size="12" SizeLG="3" Class="rz-p-4 product-title">
                         <RadzenRow>
                             <RadzenColumn>
                                 <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
-                                    <RadzenLink Path="javascript:void(0)" Text="Go to url" onclick="@(()=> Editar(ProductCategoryDto.Id))"><RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class="rz-color-secondary">@(ProductCategoryDto.Id)</RadzenText>  </RadzenLink>
+                                    <RadzenLink Path="javascript:void(0)" Text="Go to url" onclick="@(()=> Editar(UnidadMedidaDto.Id))"><RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class="rz-color-secondary">@(UnidadMedidaDto.Id)</RadzenText>  </RadzenLink>
                                     </RadzenStack>
                                 </RadzenColumn>
                                 <RadzenColumn>
                                     <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.End" Gap="0">
                                         <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Gap="8">
-                                            <button type="button" onclick="@(()=> Editar(ProductCategoryDto.Id))" class="btn btn-secondary"><spam class="fa fa-pencil-square-o" aria-hidden="true"></spam></button>
-                                            <button type="button" onclick="@(()=> Detete(ProductCategoryDto.Id))" class="btn btn-danger"><spam class="fa fa-trash-o" aria-hidden="true"></spam></button>
+                                            <button type="button" onclick="@(()=> Editar(UnidadMedidaDto.Id))" class="btn btn-secondary"><spam class="fa fa-pencil-square-o" aria-hidden="true"></spam></button>
+                                            <button type="button" onclick="@(()=> Detete(UnidadMedidaDto.Id))" class="btn btn-danger"><spam class="fa fa-trash-o" aria-hidden="true"></spam></button>
                                         </RadzenStack>
 
 
@@ -73,9 +69,13 @@ else
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeLG="7" Class="rz-p-4">
                             <RadzenRow Gap="0">
-                                <RadzenColumn Size="12" SizeMD="6" SizeLG="2">
+                                <RadzenColumn Size="6" SizeMD="6" SizeLG="2">
                                     <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Nombre:</RadzenText>
-                                    <RadzenText TextStyle="TextStyle.Body2">@(ProductCategoryDto.Name)</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Body2">@(UnidadMedidaDto.Name)</RadzenText>
+                                </RadzenColumn>
+                                <RadzenColumn Size="6" SizeMD="6" SizeLG="2">
+                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Codigo:</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Body2">@(UnidadMedidaDto.Code)</RadzenText>
                                 </RadzenColumn>
 
                             </RadzenRow>
@@ -100,18 +100,15 @@ else
     }
 </style>
 
-
-
-
 @code {
     bool allowVirtualization;
     bool isLoading;
-    private List<ProductCategoryDto>? productCategories;
+    private List<UnidadMedidaDto>? unidadMedidas;
     private int from = 0;
     private int to = 0;
     private int PageSize = 5;
     int count;
-    private string searchCriteria = "";
+    private string searchCriteria { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -119,6 +116,7 @@ else
         try
         {
             await LoadInitialData();
+            StateHasChanged();
         }
         catch (Exception ex)
         {
@@ -128,19 +126,19 @@ else
     }
     public async void Editar(int id)
     {
-        Navigation.NavigateTo($"productcategorynew/{id}");
+        Navigation.NavigateTo($"unidamedidanew/{id}");
     }
     public void IrANuevo()
     {
-        Navigation.NavigateTo("productcategorynew");
+        Navigation.NavigateTo("unidamedidanew");
     }
     public async Task LoadData(int? from, int? to)
     {
         isLoading = true;
         try
         {
-            count = await productCategoryService.GetCount(searchCriteria);
-            productCategories = await productCategoryService.GetAll(from, to, searchCriteria);
+            count = await unidadMedidaService.GetCount(searchCriteria);
+            unidadMedidas = await unidadMedidaService.GetAll(from, to, searchCriteria);
         }
         catch (Exception ex)
         {
@@ -162,7 +160,7 @@ else
         bool result = false;
         try
         {
-            result = await AppUtils.ShowConfirm("Eliminar la categoría de producto", "Está seguro de querer eliminar la categoría de producto?", DialogService);
+            result = await AppUtils.ShowConfirm("Eliminar la unidad de medida", "Está seguro de querer eliminar la unidad de medida?", DialogService);
 
         }
         catch (Exception ex)
@@ -176,10 +174,10 @@ else
             spinnerService.Show();
             try
             {
-                await productCategoryService.Delete(id);
+                await unidadMedidaService.Delete(id);
                 await LoadInitialData();
                 StateHasChanged();
-                AppUtils.ShowNotify("categoría de producto Eliminada exitósamente", "OK", Ns);
+                AppUtils.ShowNotify("Unidad de medida Eliminada exitósamente", "OK", Ns);
             }
             catch (Exception ex)
             {
@@ -214,8 +212,9 @@ else
     {
         if (args.Key == "Enter")
         {
-          await Buscar();
+            await Buscar();
         }
     }
+
 
 }

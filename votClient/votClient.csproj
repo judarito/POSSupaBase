@@ -24,12 +24,14 @@
     <ProjectReference Include="..\CommonBase\CommonBase.csproj" />
     <ProjectReference Include="..\CommonLoginComponets\CommonLoginComponets.csproj" />
     <ProjectReference Include="..\Component.ProductCategory\Component.ProductCategory.csproj" />
+    <ProjectReference Include="..\Component.UnidadMedida\Component.UnidadMedida.csproj" />
   </ItemGroup>
 
   <ItemGroup>
 
-   
+
     <BlazorWebAssemblyLazyLoad Include="Component.ProductCategory.dll" />
+    <BlazorWebAssemblyLazyLoad Include="Component.UnidadMedida.dll" />
     
   </ItemGroup>
 
