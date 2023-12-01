@@ -1,0 +1,224 @@
+﻿@using CommonBase.Dtos.Productos;
+@using CommonBase.Services.ProductosService;
+@inject ProductosService productosService
+
+<PageTitle>Productos</PageTitle>
+
+<h2>Productos</h2>
+
+<p>En esta pagina puedes gestionar los datos de los productos.</p>
+
+
+@if (productos == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+
+    <RadzenRow>
+        <RadzenColumn Size="11">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Gap="1rem">
+                <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="find_in_page" Style="max-width:30%;" Click="@(()=>Buscar())" />
+                <RadzenTextBox Placeholder="Buscar..."
+                           Style="width:100%!important"
+                           @bind-Value="searchCriteria"
+                           @oninput=@(args => OnChange(args.Value.ToString()))
+                           @onkeypress=@(e=> SearchInputKeyPressed(e)) />
+            </RadzenStack>
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.End" Gap="1rem" Wrap="FlexWrap.Wrap">
+                <RadzenButton Click=@(args => IrANuevo()) Icon="add" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Large" class="rz-border-radius-10 rz-shadow-10" />
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+
+
+    <RadzenDataList IsLoading=@isLoading
+                LoadData=@LoadDataGrig
+                Count=@count
+                Data="@productos"
+                TItem="ProductosDto"
+                PageSize="@PageSize"
+                PagerHorizontalAlign="HorizontalAlign.Left"
+                ShowPagingSummary="true"
+                AllowPaging="true">
+        <Template Context="ProductosDto">
+            <RadzenCard Style="width: 100%; padding: 0;">
+                <RadzenRow Gap="0">
+                    <RadzenColumn Size="12" SizeLG="3" Class="rz-p-4 product-title">
+                        <RadzenRow>
+                            <RadzenColumn>
+                                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+                                    <RadzenLink Path="javascript:void(0)" Text="Go to url" onclick="@(()=> Editar(ProductosDto.Id))"><RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class="rz-color-secondary">@(ProductosDto.Id)</RadzenText>  </RadzenLink>
+                                    </RadzenStack>
+                                </RadzenColumn>
+                                <RadzenColumn>
+                                    <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.End" Gap="0">
+                                        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Gap="8">
+                                            <button type="button" onclick="@(()=> Editar(ProductosDto.Id))" class="btn btn-secondary"><spam class="fa fa-pencil-square-o" aria-hidden="true"></spam></button>
+                                            <button type="button" onclick="@(()=> Detete(ProductosDto.Id))" class="btn btn-danger"><spam class="fa fa-trash-o" aria-hidden="true"></spam></button>
+                                        </RadzenStack>
+
+
+                                    </RadzenStack>
+                                </RadzenColumn>
+                            </RadzenRow>
+
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeLG="7" Class="rz-p-4">
+                            <RadzenRow Gap="1">
+                                <RadzenColumn Size="4" SizeMD="6" SizeLG="2">
+                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Nombre:</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Body2">@(ProductosDto.Name)</RadzenText>
+                                </RadzenColumn>
+                                <RadzenColumn Size="4" SizeMD="6" SizeLG="2">
+                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Descripción:</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Body2">@(ProductosDto.Description)</RadzenText>
+                                </RadzenColumn>
+                                <RadzenColumn Size="4" SizeMD="6" SizeLG="2">
+                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Cant. Min:</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Body2">@(ProductosDto.MinQuantity)</RadzenText>
+                                </RadzenColumn>
+                            </RadzenRow>
+                        </RadzenColumn>
+                    </RadzenRow>
+                </RadzenCard>
+            </Template>
+        </RadzenDataList>
+}
+
+<style>
+    .product-title {
+        min-height: 72px;
+        background-color: var(--rz-secondary-lighter);
+    }
+
+    .price-badge {
+        font-size: 16px;
+        font-weight: bold;
+        line-height: 20px;
+        padding: 8px;
+    }
+</style>
+
+
+@code {
+
+    bool allowVirtualization;
+    bool isLoading;
+    private List<ProductosDto>? productos;
+    private int from = 0;
+    private int to = 0;
+    private int PageSize = 5;
+    int count;
+    private string searchCriteria = "";
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        try
+        {
+            await LoadInitialData();
+        }
+        catch (Exception ex)
+        {
+            AppUtils.ShowNotify(ex.Message, "ERROR", Ns);
+        }
+
+    }
+    public async void Editar(int id)
+    {
+        Navigation.NavigateTo($"productosnew/{id}");
+    }
+    public void IrANuevo()
+    {
+        Navigation.NavigateTo("productosnew");
+    }
+    public async Task LoadData(int? from, int? to)
+    {
+        isLoading = true;
+        try
+        {
+            count = await productosService.GetCount(searchCriteria);
+            productos = await productosService.GetAll(from, to, searchCriteria);
+        }
+        catch (Exception ex)
+        {
+            AppUtils.ShowNotify($"ERROR : {ex.Message} ", "WARNING", Ns);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+
+    }
+    public async Task LoadDataGrig(LoadDataArgs args)
+    {
+        var fromTo = AppUtils.GetFromTo(args?.Top, args?.Skip);
+        await LoadData(fromTo.From, fromTo.To);
+    }
+    public async void Detete(int id)
+    {
+        bool result = false;
+        try
+        {
+            result = await AppUtils.ShowConfirm("Eliminar el producto", "Está seguro de querer eliminar el producto?", DialogService);
+
+        }
+        catch (Exception ex)
+        {
+            AppUtils.ShowNotify($"ERROR : {ex.Message} ", "WARNING", Ns);
+        }
+
+
+        if ((bool)result)
+        {
+            spinnerService.Show();
+            try
+            {
+                await productosService.Delete(id);
+                await LoadInitialData();
+                StateHasChanged();
+                AppUtils.ShowNotify("Producto eliminado exitósamente", "OK", Ns);
+            }
+            catch (Exception ex)
+            {
+                AppUtils.ShowNotify($"ERROR : {ex.Message} ", "WARNING", Ns);
+            }
+            finally
+            {
+                spinnerService.Hide();
+            }
+
+        }
+    }
+    public async Task LoadInitialData()
+    {
+        await LoadData(0, PageSize - 1);
+    }
+    public async Task Buscar()
+    {
+        await LoadInitialData();
+        StateHasChanged();
+    }
+    private async void OnChange(string value)
+    {
+        searchCriteria = value;
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            await Buscar();
+        }
+    }
+
+    private async Task SearchInputKeyPressed(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter")
+        {
+            await Buscar();
+        }
+    }
+
+}

@@ -29,13 +29,14 @@
             </RadzenColumn>
           
         </RadzenRow>
-
+        
     </RadzenHeader>
     <RadzenSidebar @bind-Expanded="@sidebar1Expanded">
         <RadzenPanelMenu>
             <RadzenPanelMenuItem Text="Inicio" Icon="home" Path="home" Click="@(() =>ShowOrHideMenu())" />
             <RadzenPanelMenuItem Text="Cat.Productos" Icon="done_all" Path="productcategory" Click="@(() => ShowOrHideMenu())" />
             <RadzenPanelMenuItem Text="Unidades medida" Icon="assessment" Path="unidadmedidalist" Click="@(() => ShowOrHideMenu())" />
+            <RadzenPanelMenuItem Text="Productos" Icon="description" Path="productoslist" Click="@(() => ShowOrHideMenu())" />
             <RadzenPanelMenuItem Text="Salir" Icon="exit_to_app" Click="@(()=>LogoutClick())" />
         </RadzenPanelMenu>
        

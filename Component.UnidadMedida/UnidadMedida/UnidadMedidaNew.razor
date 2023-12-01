@@ -38,7 +38,7 @@ else
                                 <RadzenColumn Size="12" SizeMD="9">
                                     <RadzenTextBox Style="width: 100%;" Name="Codigo" @bind-Value="unidadMedida.Code" MaxLength="10" />
                                     <RadzenLengthValidator Component="Codigo" Max="10" Text="El código debe tener como máximo 50 caracteres." Popup=@popup Style="position: relative" />
-                                    <RadzenCustomValidator Component="Codigo" Validator="@(() => AppUtils.ValidateSpaces(unidadMedida.Code))" Text="Nombre es requerido" Popup=@popup Style="position: relative" />
+                                    <RadzenCustomValidator Component="Codigo" Validator="@(() => AppUtils.ValidateSpaces(unidadMedida.Code))" Text="Código es requerido" Popup=@popup Style="position: relative" />
                                 </RadzenColumn>
                             </RadzenRow>
 

@@ -1,0 +1,209 @@
+﻿@using Blazored.SessionStorage;
+@using CommonBase.Dtos.ProductCategory;
+@using CommonBase.Dtos.Productos;
+@using CommonBase.Dtos.UnidadMedida;
+@using CommonBase.Models.Productos;
+@using CommonBase.Services.ProductCategoryService;
+@using CommonBase.Services.ProductosService;
+@using CommonBase.Services.UnidadMedidaService;
+@inject ProductosService productosService
+@inject ProductCategoryService productCategoryService
+@inject UnidadMedidaService unidadMedidaService
+ 
+<PageTitle>Producto</PageTitle>
+
+<h3>Actualiza o crea nuevo Producto</h3>
+
+
+@if (producto == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <RadzenTemplateForm Data="@producto" Submit="@((ProductosDto args) => { Submit(args); })">
+        <RadzenRow Gap="2rem" Class="rz-p-0 rz-p-lg-4">
+            <RadzenColumn Size="12" SizeMD="11">
+                <RadzenStack>
+                    <RadzenFieldset Text="Datos de la Categoría de productos">
+                        <RadzenStack Gap="1rem">
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenLabel Text="Categoria" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    @if (ListProductCategies == null)
+                                    {
+                                        <p><em>Cargando categorias...</em></p>
+                                    }
+                                    else
+                                    {
+                                        <RadzenDropDown Name="categoria" @bind-Value=@currentProductCategory TValue="ProductCategoryDto" Data=@ListProductCategies TextProperty="Name" Style="width: 100%; max-width: 400px;" />
+                                        <RadzenRequiredValidator Component="categoria" Text="Categoria es requerida" Popup=@popup Style="position: relative" />
+                                    }
+
+                                </RadzenColumn>
+                            </RadzenRow>
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenLabel Text="Categoria" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    @if (ListUnidadMedida == null)
+                                    {
+                                        <p><em>Cargando unidades...</em></p>
+                                    }
+                                    else
+                                    {
+                                        <RadzenDropDown Name="unidad" @bind-Value=@currentUnidadMedida TValue="UnidadMedidaDto" Data=@ListUnidadMedida TextProperty="Name" Style="width: 100%; max-width: 400px;" />
+                                        <RadzenRequiredValidator Component="unidad" Text="Unidades de medida es requerida" Popup=@popup Style="position: relative" />
+                                    }
+
+                                </RadzenColumn>
+                            </RadzenRow>
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenLabel Text="Nombre" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <RadzenTextBox Style="width: 100%;" Name="nombre" @bind-Value="producto.Name" MaxLength="50" />
+                                    <RadzenLengthValidator Component="nombre" Max="50" Text="El nombre debe tener como máximo 50 caracteres." Popup=@popup Style="position: relative" />
+                                    <RadzenCustomValidator Component="nombre" Validator="@(() => AppUtils.ValidateSpaces(producto.Name))" Text="Nombre es requerido" Popup=@popup Style="position: relative" />
+                                </RadzenColumn>
+                            </RadzenRow>
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenLabel Text="Codigo" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <RadzenTextBox Style="width: 100%;" Name="Codigo" @bind-Value="producto.Code" MaxLength="10" />
+                                    <RadzenLengthValidator Component="Codigo" Max="10" Text="El código debe tener como máximo 50 caracteres." Popup=@popup Style="position: relative" />
+                                    <RadzenCustomValidator Component="Codigo" Validator="@(() => AppUtils.ValidateSpaces(producto.Code))" Text="Código es requerido" Popup=@popup Style="position: relative" />
+                                </RadzenColumn>
+                            </RadzenRow>
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenLabel Text="Descripción" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <RadzenTextBox Style="width: 100%;" Name="descripcion" @bind-Value="producto.Description" MaxLength="100" />
+                                    <RadzenLengthValidator Component="descripcion" Max="100" Text="La descripción debe tener como máximo 50 caracteres." Popup=@popup Style="position: relative" />
+                                    <RadzenCustomValidator Component="descripcion" Validator="@(() => AppUtils.ValidateSpaces(producto.Description))" Text="Descripción es requerido" Popup=@popup Style="position: relative" />
+                                </RadzenColumn>
+                            </RadzenRow>
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenLabel Text="stock Mínimo" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <RadzenNumeric Style="width: 100%;" Name="MinQuantity" @bind-Value="producto.MinQuantity" MaxLength="100" />
+                                    <RadzenCustomValidator Component="MinQuantity" Validator="@(() => AppUtils.ValidateSpaces(producto.MinQuantity.ToString()))" Text="stock Mínimo es requerido" Popup=@popup Style="position: relative" />
+                                    <RadzenCustomValidator Component="MinQuantity" Validator="@(() => AppUtils.ValidateOnlyNumber(producto.MinQuantity.ToString()))" Text="stock Mínimo es requerido" Popup=@popup Style="position: relative" />
+                                </RadzenColumn>
+                            </RadzenRow>
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenLabel Text="Maneja stock?" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <RadzenSwitch @bind-Value=@producto.UseStok />
+                                </RadzenColumn>
+                            </RadzenRow>
+
+
+                        </RadzenStack>
+                    </RadzenFieldset>
+
+                </RadzenStack>
+            </RadzenColumn>
+
+        </RadzenRow>
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="1rem" Class="rz-mt-8 rz-mb-4">
+            <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large" Icon="save" Text="Save" />
+            <RadzenButton ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Large" Icon="cancel" Text="Cancel" Click="@Cancel" />
+        </RadzenStack>
+    </RadzenTemplateForm>
+}
+
+@code {
+    [Parameter]
+    public int? id { get; set; }
+    private ProductosDto? producto;
+    private ProductCategoryDto currentProductCategory;
+    private List<ProductCategoryDto> ListProductCategies;
+
+    private UnidadMedidaDto currentUnidadMedida;
+    private List<UnidadMedidaDto> ListUnidadMedida;
+
+    bool popup = true;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        producto = new ProductosDto();
+        currentProductCategory = null;
+        currentUnidadMedida = null;
+
+        ListProductCategies = await productCategoryService.GetAll(0, 1000, "");
+        ListUnidadMedida = await unidadMedidaService.GetAll(0, 1000, "");
+
+        if (id != null && id > 0)
+        {
+            try
+            {
+                producto = await productosService.GetById((int)id);
+                currentProductCategory = ListProductCategies.FirstOrDefault(x => x.Id == producto.IdProductCategory);
+                currentUnidadMedida = ListUnidadMedida.FirstOrDefault(x => x.Id == producto.IdUnidadMedida);
+            }
+            catch (Exception ex)
+            {
+                AppUtils.ShowNotify(ex.Message, "ERROR", Ns);
+            }
+
+        }
+
+
+    }
+
+    async void Submit(ProductosDto arg)
+    {
+        spinnerService.Show();
+        try
+        {
+            arg.IdProductCategory = currentProductCategory.Id;
+            arg.IdUnidadMedida = currentUnidadMedida.Id;
+
+            if (arg?.Id != null && arg?.Id > 0)
+            {
+                await productosService.Update(arg);
+            }
+            else
+            {
+                arg.Active = true;
+                arg.dt_Created = DateTime.Now;
+                await productosService.Save(arg);
+            }
+
+            producto = new ProductosDto();
+            currentProductCategory = null;
+            currentUnidadMedida = null;
+            AppUtils.ShowNotify("Información guardada de manera exitosa", "OK", Ns);
+            Navigation.NavigateTo("productoslist");
+        }
+        catch (Exception ex)
+        {
+            AppUtils.ShowNotify($"ERROR : {ex.Message} ", "WARNING", Ns);
+        }
+        finally
+        {
+            spinnerService.Hide();
+        }
+    }
+
+    void Cancel()
+    {
+        Navigation.NavigateTo("productoslist");
+    }
+
+}

@@ -1,0 +1,10 @@
+﻿@page "/productosnew"
+@page "/productosnew/{id:int}"
+@using Component.Productos.Productos
+@attribute [Authorize]
+<ProductosNew id="@id"></ProductosNew>
+
+@code {
+    [Parameter]
+    public int? id { get; set; }
+}
