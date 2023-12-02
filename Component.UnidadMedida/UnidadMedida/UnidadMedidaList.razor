@@ -1,6 +1,8 @@
-﻿@using CommonBase.Dtos.UnidadMedida;
-@using CommonBase.Services.UnidadMedidaService;
-@inject UnidadMedidaService unidadMedidaService
+﻿@using CommonBase.ComponentBase;
+@using CommonBase.Dtos.UnidadMedida;
+@using CommonBase.Models.UnidadMedida;
+@inherits CustomComponentBase<UnidadMedida,UnidadMedidaDto>
+
 
 <PageTitle>Unidades de medida</PageTitle>
 
@@ -9,7 +11,7 @@
 <p>En esta pagina puedes gestionar los datos de las Unidades de medida.</p>
 
 
-@if (unidadMedidas == null)
+@if (DataList == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -38,7 +40,7 @@ else
     <RadzenDataList IsLoading=@isLoading
                 LoadData=@LoadDataGrig
                 Count=@count
-                Data="@unidadMedidas"
+                Data="@DataList"
                 TItem="UnidadMedidaDto"
                 PageSize="@PageSize"
                 PagerHorizontalAlign="HorizontalAlign.Left"
@@ -101,120 +103,12 @@ else
 </style>
 
 @code {
-    bool allowVirtualization;
-    bool isLoading;
-    private List<UnidadMedidaDto>? unidadMedidas;
-    private int from = 0;
-    private int to = 0;
-    private int PageSize = 5;
-    int count;
-    private string searchCriteria { get; set; }
-
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        try
-        {
-            await LoadInitialData();
-            StateHasChanged();
-        }
-        catch (Exception ex)
-        {
-            AppUtils.ShowNotify(ex.Message, "ERROR", Ns);
-        }
-
+        this.pathRedirectNew = "unidamedidanew";
+        this.MsjDeleteIttem = "Está seguro de querer eliminar la unidad de medida?";
+        this.MsjDeleteIttemTitle = "Eliminar la unidad de medida";
+        this.MsjDeleteIttemOK = "Unidad de medida Eliminada exitósamente";
     }
-    public async void Editar(int id)
-    {
-        Navigation.NavigateTo($"unidamedidanew/{id}");
-    }
-    public void IrANuevo()
-    {
-        Navigation.NavigateTo("unidamedidanew");
-    }
-    public async Task LoadData(int? from, int? to)
-    {
-        isLoading = true;
-        try
-        {
-            count = await unidadMedidaService.GetCount(searchCriteria);
-            unidadMedidas = await unidadMedidaService.GetAll(from, to, searchCriteria);
-        }
-        catch (Exception ex)
-        {
-            AppUtils.ShowNotify($"ERROR : {ex.Message} ", "WARNING", Ns);
-        }
-        finally
-        {
-            isLoading = false;
-        }
-
-    }
-    public async Task LoadDataGrig(LoadDataArgs args)
-    {
-        var fromTo = AppUtils.GetFromTo(args?.Top, args?.Skip);
-        await LoadData(fromTo.From, fromTo.To);
-    }
-    public async void Detete(int id)
-    {
-        bool result = false;
-        try
-        {
-            result = await AppUtils.ShowConfirm("Eliminar la unidad de medida", "Está seguro de querer eliminar la unidad de medida?", DialogService);
-
-        }
-        catch (Exception ex)
-        {
-            AppUtils.ShowNotify($"ERROR : {ex.Message} ", "WARNING", Ns);
-        }
-
-
-        if ((bool)result)
-        {
-            spinnerService.Show();
-            try
-            {
-                await unidadMedidaService.Delete(id);
-                await LoadInitialData();
-                StateHasChanged();
-                AppUtils.ShowNotify("Unidad de medida Eliminada exitósamente", "OK", Ns);
-            }
-            catch (Exception ex)
-            {
-                AppUtils.ShowNotify($"ERROR : {ex.Message} ", "WARNING", Ns);
-            }
-            finally
-            {
-                spinnerService.Hide();
-            }
-
-        }
-    }
-    public async Task LoadInitialData()
-    {
-        await LoadData(0, PageSize - 1);
-    }
-    public async Task Buscar()
-    {
-        await LoadInitialData();
-        StateHasChanged();
-    }
-    private async void OnChange(string value)
-    {
-        searchCriteria = value;
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            await Buscar();
-        }
-    }
-
-    private async Task SearchInputKeyPressed(KeyboardEventArgs args)
-    {
-        if (args.Key == "Enter")
-        {
-            await Buscar();
-        }
-    }
-
-
 }

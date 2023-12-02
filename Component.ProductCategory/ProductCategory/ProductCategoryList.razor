@@ -1,7 +1,7 @@
-﻿@using CommonBase.Dtos.ProductCategory;
-@using CommonBase.Services.ProductCategoryService;
-@inject ProductCategoryService productCategoryService
-
+﻿@using CommonBase.ComponentBase;
+@using CommonBase.Dtos.ProductCategory;
+@using CommonBase.Models.ProductCategory;
+@inherits CustomComponentBase<ProductCategory,ProductCategoryDto>
 
 <PageTitle>Categoría de productos</PageTitle>
 
@@ -11,7 +11,7 @@
 
 
 
-@if (productCategories == null)
+@if (DataList == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -42,7 +42,7 @@ else
     <RadzenDataList IsLoading=@isLoading
                 LoadData=@LoadDataGrig
                 Count=@count
-                Data="@productCategories"
+                Data="@DataList"
                 TItem="ProductCategoryDto"
                 PageSize="@PageSize"
                 PagerHorizontalAlign="HorizontalAlign.Left"
@@ -104,118 +104,13 @@ else
 
 
 @code {
-    bool allowVirtualization;
-    bool isLoading;
-    private List<ProductCategoryDto>? productCategories;
-    private int from = 0;
-    private int to = 0;
-    private int PageSize = 5;
-    int count;
-    private string searchCriteria = "";
-
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        try
-        {
-            await LoadInitialData();
-        }
-        catch (Exception ex)
-        {
-            AppUtils.ShowNotify(ex.Message, "ERROR", Ns);
-        }
-
+        
+        this.pathRedirectNew = "productcategorynew";
+        this.MsjDeleteIttem = "Está seguro de querer eliminar la categoría de producto?";
+        this.MsjDeleteIttemTitle = "Eliminar la categoría de producto";
+        this.MsjDeleteIttemOK = "Categoría de producto Eliminada exitósamente";
     }
-    public async void Editar(int id)
-    {
-        Navigation.NavigateTo($"productcategorynew/{id}");
-    }
-    public void IrANuevo()
-    {
-        Navigation.NavigateTo("productcategorynew");
-    }
-    public async Task LoadData(int? from, int? to)
-    {
-        isLoading = true;
-        try
-        {
-            count = await productCategoryService.GetCount(searchCriteria);
-            productCategories = await productCategoryService.GetAll(from, to, searchCriteria);
-        }
-        catch (Exception ex)
-        {
-            AppUtils.ShowNotify($"ERROR : {ex.Message} ", "WARNING", Ns);
-        }
-        finally
-        {
-            isLoading = false;
-        }
-
-    }
-    public async Task LoadDataGrig(LoadDataArgs args)
-    {
-        var fromTo = AppUtils.GetFromTo(args?.Top, args?.Skip);
-        await LoadData(fromTo.From, fromTo.To);
-    }
-    public async void Detete(int id)
-    {
-        bool result = false;
-        try
-        {
-            result = await AppUtils.ShowConfirm("Eliminar la categoría de producto", "Está seguro de querer eliminar la categoría de producto?", DialogService);
-
-        }
-        catch (Exception ex)
-        {
-            AppUtils.ShowNotify($"ERROR : {ex.Message} ", "WARNING", Ns);
-        }
-
-
-        if ((bool)result)
-        {
-            spinnerService.Show();
-            try
-            {
-                await productCategoryService.Delete(id);
-                await LoadInitialData();
-                StateHasChanged();
-                AppUtils.ShowNotify("categoría de producto Eliminada exitósamente", "OK", Ns);
-            }
-            catch (Exception ex)
-            {
-                AppUtils.ShowNotify($"ERROR : {ex.Message} ", "WARNING", Ns);
-            }
-            finally
-            {
-                spinnerService.Hide();
-            }
-
-        }
-    }
-    public async Task LoadInitialData()
-    {
-        await LoadData(0, PageSize - 1);
-    }
-    public async Task Buscar()
-    {
-        await LoadInitialData();
-        StateHasChanged();
-    }
-    private async void OnChange(string value)
-    {
-        searchCriteria = value;
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            await Buscar();
-        }
-    }
-
-    private async Task SearchInputKeyPressed(KeyboardEventArgs args)
-    {
-        if (args.Key == "Enter")
-        {
-          await Buscar();
-        }
-    }
-
 }

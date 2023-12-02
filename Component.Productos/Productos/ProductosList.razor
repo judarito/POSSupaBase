@@ -1,6 +1,7 @@
-﻿@using CommonBase.Dtos.Productos;
-@using CommonBase.Services.ProductosService;
-@inject ProductosService productosService
+﻿@using CommonBase.ComponentBase;
+@using CommonBase.Dtos.Productos;
+@using CommonBase.Models.Productos;
+@inherits CustomComponentBase<Productos,ProductosDto>
 
 <PageTitle>Productos</PageTitle>
 
@@ -9,7 +10,7 @@
 <p>En esta pagina puedes gestionar los datos de los productos.</p>
 
 
-@if (productos == null)
+@if (DataList == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -38,7 +39,7 @@ else
     <RadzenDataList IsLoading=@isLoading
                 LoadData=@LoadDataGrig
                 Count=@count
-                Data="@productos"
+                Data="@DataList"
                 TItem="ProductosDto"
                 PageSize="@PageSize"
                 PagerHorizontalAlign="HorizontalAlign.Left"
@@ -106,119 +107,18 @@ else
 
 @code {
 
-    bool allowVirtualization;
-    bool isLoading;
-    private List<ProductosDto>? productos;
-    private int from = 0;
-    private int to = 0;
-    private int PageSize = 5;
-    int count;
-    private string searchCriteria = "";
+  
 
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        try
-        {
-            await LoadInitialData();
-        }
-        catch (Exception ex)
-        {
-            AppUtils.ShowNotify(ex.Message, "ERROR", Ns);
-        }
+        this.pathRedirectNew = "productosnew";
+        this.MsjDeleteIttem = "Está seguro de querer eliminar el producto?";
+        this.MsjDeleteIttemTitle = "Eliminar el producto";
+        this.MsjDeleteIttemOK = "Producto eliminado exitósamente";
 
     }
-    public async void Editar(int id)
-    {
-        Navigation.NavigateTo($"productosnew/{id}");
-    }
-    public void IrANuevo()
-    {
-        Navigation.NavigateTo("productosnew");
-    }
-    public async Task LoadData(int? from, int? to)
-    {
-        isLoading = true;
-        try
-        {
-            count = await productosService.GetCount(searchCriteria);
-            productos = await productosService.GetAll(from, to, searchCriteria);
-        }
-        catch (Exception ex)
-        {
-            AppUtils.ShowNotify($"ERROR : {ex.Message} ", "WARNING", Ns);
-        }
-        finally
-        {
-            isLoading = false;
-        }
-
-    }
-    public async Task LoadDataGrig(LoadDataArgs args)
-    {
-        var fromTo = AppUtils.GetFromTo(args?.Top, args?.Skip);
-        await LoadData(fromTo.From, fromTo.To);
-    }
-    public async void Detete(int id)
-    {
-        bool result = false;
-        try
-        {
-            result = await AppUtils.ShowConfirm("Eliminar el producto", "Está seguro de querer eliminar el producto?", DialogService);
-
-        }
-        catch (Exception ex)
-        {
-            AppUtils.ShowNotify($"ERROR : {ex.Message} ", "WARNING", Ns);
-        }
-
-
-        if ((bool)result)
-        {
-            spinnerService.Show();
-            try
-            {
-                await productosService.Delete(id);
-                await LoadInitialData();
-                StateHasChanged();
-                AppUtils.ShowNotify("Producto eliminado exitósamente", "OK", Ns);
-            }
-            catch (Exception ex)
-            {
-                AppUtils.ShowNotify($"ERROR : {ex.Message} ", "WARNING", Ns);
-            }
-            finally
-            {
-                spinnerService.Hide();
-            }
-
-        }
-    }
-    public async Task LoadInitialData()
-    {
-        await LoadData(0, PageSize - 1);
-    }
-    public async Task Buscar()
-    {
-        await LoadInitialData();
-        StateHasChanged();
-    }
-    private async void OnChange(string value)
-    {
-        searchCriteria = value;
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            await Buscar();
-        }
-    }
-
-    private async Task SearchInputKeyPressed(KeyboardEventArgs args)
-    {
-        if (args.Key == "Enter")
-        {
-            await Buscar();
-        }
-    }
+   
 
 }
