@@ -148,7 +148,7 @@ namespace CommonBase.ComponentBase
         {
             await LoadData(0, PageSize - 1);
         }
-        protected async Task Buscar()
+        protected virtual async Task Buscar()
         {
             await LoadInitialData();
             StateHasChanged();

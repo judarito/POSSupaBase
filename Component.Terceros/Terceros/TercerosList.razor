@@ -18,7 +18,7 @@ else
     <h2>Proveedores</h2>
 
     <p>En esta pagina puedes gestionar los datos de los Proveedores.</p>
-    
+
 }
 
 @if (DataList == null)
@@ -130,7 +130,7 @@ else
         await base.OnInitializedAsync();
 
         this.pathRedirectNew = $"tercerosnew";
-       
+
         this.MsjDeleteIttem = "Está seguro de querer eliminar el proveedor?";
         this.MsjDeleteIttemTitle = "Eliminar proveedor";
         this.MsjDeleteIttemOK = "Proveedor eliminado exitósamente";
@@ -156,13 +156,28 @@ else
     {
         base.OnParametersSet();
         this.AditionalParamUrl = TipoTercero;
-        if (!string.IsNullOrEmpty(TipoTercero))
-        {
-            DataList = DataListterceros.Where(x => x.Type == TipoTercero).ToList();
-        }
-        StateHasChanged();
+        FilterByTipo();
     }
 
-   
+
+
+    protected override async Task Buscar()
+    {
+        await base.Buscar();
+        FilterByTipo();
+        Console.WriteLine($"searchCriteria = {this.searchCriteria}");
+    }
+
+    private void FilterByTipo()
+    {
+        if (!string.IsNullOrEmpty(TipoTercero))
+        {
+            DataList = DataList.Where(x => x.Type == TipoTercero).ToList();
+        }
+        StateHasChanged();
+
+
+    }
+
 
 }
