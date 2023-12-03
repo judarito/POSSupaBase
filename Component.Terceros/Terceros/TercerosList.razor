@@ -1,0 +1,168 @@
+﻿@using CommonBase.ComponentBase;
+@using CommonBase.Dtos.Terceros;
+@using CommonBase.Models.Terceros;
+@inherits CustomComponentBase<Terceros,TercerosDto>
+
+@if (TipoTercero == "CLIENTE")
+{
+    <PageTitle>Clientes</PageTitle>
+
+    <h2>Clientes</h2>
+
+    <p>En esta pagina puedes gestionar los datos de los clientes.</p>
+}
+else
+{
+    <PageTitle>Proveedores</PageTitle>
+
+    <h2>Proveedores</h2>
+
+    <p>En esta pagina puedes gestionar los datos de los Proveedores.</p>
+    
+}
+
+@if (DataList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+
+    <RadzenRow>
+        <RadzenColumn Size="11">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Gap="1rem">
+                <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="find_in_page" Style="max-width:30%;" Click="@(()=>Buscar())" />
+                <RadzenTextBox Placeholder="Buscar..."
+                           Style="width:100%!important"
+                           @bind-Value="searchCriteria"
+                           @oninput=@(args => OnChange(args.Value.ToString()))
+                           @onkeypress=@(e=> SearchInputKeyPressed(e)) />
+            </RadzenStack>
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.End" Gap="1rem" Wrap="FlexWrap.Wrap">
+                <RadzenButton Click=@(args => IrANuevo()) Icon="add" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Large" class="rz-border-radius-10 rz-shadow-10" />
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+
+
+    <RadzenDataList IsLoading=@isLoading
+                LoadData=@LoadDataGrig
+                Count=@count
+                Data="@DataList"
+                TItem="TercerosDto"
+                PageSize="@PageSize"
+                PagerHorizontalAlign="HorizontalAlign.Left"
+                ShowPagingSummary="true"
+                AllowPaging="true">
+        <Template Context="TercerosDto">
+            <RadzenCard Style="width: 100%; padding: 0;">
+                <RadzenRow Gap="0">
+                    <RadzenColumn Size="12" SizeLG="3" Class="rz-p-4 product-title">
+                        <RadzenRow>
+                            <RadzenColumn>
+                                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+                                    <RadzenLink Path="javascript:void(0)" Text="Go to url" onclick="@(()=> Editar(TercerosDto.Id))"><RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class="rz-color-secondary">@(TercerosDto.Id)</RadzenText>  </RadzenLink>
+                                    </RadzenStack>
+                                </RadzenColumn>
+                                <RadzenColumn>
+                                    <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.End" Gap="0">
+                                        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Gap="8">
+                                            <button type="button" onclick="@(()=> Editar(TercerosDto.Id))" class="btn btn-secondary"><spam class="fa fa-pencil-square-o" aria-hidden="true"></spam></button>
+                                            <button type="button" onclick="@(()=> Detete(TercerosDto.Id))" class="btn btn-danger"><spam class="fa fa-trash-o" aria-hidden="true"></spam></button>
+                                        </RadzenStack>
+
+
+                                    </RadzenStack>
+                                </RadzenColumn>
+                            </RadzenRow>
+
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeLG="7" Class="rz-p-4">
+                            <RadzenRow Gap="1">
+                                <RadzenColumn Size="12" SizeMD="6" SizeLG="2">
+                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Nombre:</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Body2">@(TercerosDto.Name)</RadzenText>
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD=" 6" SizeLG="2">
+                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Telefono:</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Body2">@(TercerosDto.Telefono)</RadzenText>
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="6" SizeLG="2">
+                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Email:</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Body2">@(TercerosDto.Email)</RadzenText>
+                                </RadzenColumn>
+                            </RadzenRow>
+                        </RadzenColumn>
+                    </RadzenRow>
+                </RadzenCard>
+            </Template>
+        </RadzenDataList>
+}
+
+<style>
+    .product-title {
+        min-height: 72px;
+        background-color: var(--rz-secondary-lighter);
+    }
+
+    .price-badge {
+        font-size: 16px;
+        font-weight: bold;
+        line-height: 20px;
+        padding: 8px;
+    }
+</style>
+
+
+
+
+@code {
+    [Parameter]
+    public string? TipoTercero { get; set; }
+
+    private List<TercerosDto> DataListterceros;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        this.pathRedirectNew = $"tercerosnew";
+       
+        this.MsjDeleteIttem = "Está seguro de querer eliminar el proveedor?";
+        this.MsjDeleteIttemTitle = "Eliminar proveedor";
+        this.MsjDeleteIttemOK = "Proveedor eliminado exitósamente";
+
+        if (TipoTercero == "CLIENTE")
+        {
+            this.MsjDeleteIttem = "Está seguro de querer eliminar el cliente?";
+            this.MsjDeleteIttemTitle = "Eliminar cliente";
+            this.MsjDeleteIttemOK = "cliente eliminado exitósamente";
+        }
+
+        if (!string.IsNullOrEmpty(TipoTercero))
+        {
+            DataListterceros = DataList.ToList();
+            DataList = DataListterceros.Where(x => x.Type == TipoTercero).ToList();
+            StateHasChanged();
+        }
+
+    }
+
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        this.AditionalParamUrl = TipoTercero;
+        if (!string.IsNullOrEmpty(TipoTercero))
+        {
+            DataList = DataListterceros.Where(x => x.Type == TipoTercero).ToList();
+        }
+        StateHasChanged();
+    }
+
+   
+
+}

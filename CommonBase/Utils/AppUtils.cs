@@ -58,5 +58,17 @@ namespace CommonBase.Shared.Utils
             Console.WriteLine(match.Success);
             return match.Success;
         }
+
+        public static bool ValidateNewEmail(string email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                return true;
+            }
+            Regex regex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
+            Match match = regex.Match(email);
+            Console.WriteLine(match.Success);
+            return match.Success;
+        }
     }
 }

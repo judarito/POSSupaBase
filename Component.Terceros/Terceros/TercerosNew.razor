@@ -1,0 +1,160 @@
+﻿@using Blazored.SessionStorage;
+@using CommonBase.Dtos.Terceros;
+@using CommonBase.Models.Terceros;
+@using CommonBase.Services.TercerosSevice;
+@inject TercerosService tercerosService
+
+
+@if (TipoTercero == "CLIENTE")
+{
+    <PageTitle>Cliente</PageTitle>
+
+    <h3>Nuevo cliente</h3>
+
+}
+else
+{
+    <PageTitle>Proveedor</PageTitle>
+
+    <h3>Nuevo proveedor</h3>
+}
+
+@if (tercero == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <RadzenTemplateForm Data="@tercero" Submit="@((TercerosDto args) => { Submit(args); })">
+        <RadzenRow Gap="2rem" Class="rz-p-0 rz-p-lg-4">
+            <RadzenColumn Size="12" SizeMD="11">
+                <RadzenStack>
+                    <RadzenFieldset Text="Datos del tercero">
+                        <RadzenStack Gap="1rem">
+
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenLabel Text="Nombre" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <RadzenTextBox Style="width: 100%;" Name="nombre" @bind-Value="tercero.Name" MaxLength="50" />
+                                    <RadzenLengthValidator Component="nombre" Max="50" Text="El nombre debe tener como máximo 50 caracteres." Popup=@popup Style="position: relative" />
+                                    <RadzenCustomValidator Component="nombre" Validator="@(() => AppUtils.ValidateSpaces(tercero.Name))" Text="Nombre es requerido" Popup=@popup Style="position: relative" />
+                                </RadzenColumn>
+                            </RadzenRow>
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenLabel Text="Telefono" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <RadzenTextBox Style="width: 100%;" Name="telefono" @bind-Value="tercero.Telefono" MaxLength="100" />
+                                    <RadzenLengthValidator Component="telefono" Max="100" Text="La descripción debe tener como máximo 50 caracteres." Popup=@popup Style="position: relative" />
+                                    <RadzenCustomValidator Component="telefono" Validator="@(() => AppUtils.ValidateSpaces(tercero.Telefono))" Text="Telefono es requerido" Popup=@popup Style="position: relative" />
+                                </RadzenColumn>
+                            </RadzenRow>
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenLabel Text="Email" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <RadzenTextBox Style="width: 100%;" Name="Email" @bind-Value="tercero.Email" MaxLength="100" />
+                                    <RadzenLengthValidator Component="Email" Max="100" Text="La descripción debe tener como máximo 50 caracteres." Popup=@popup Style="position: relative" />
+                                    <RadzenCustomValidator Component="Email" Validator="@(() => AppUtils.ValidateSpaces(tercero.Email))" Text="Email es requerido" Popup=@popup Style="position: relative" />
+                                    <RadzenCustomValidator Component="Email" Validator="@(() =>AppUtils.ValidateNewEmail(tercero.Email))" Text="Email Invalido" Popup=@popup Style="position: relative" />
+                                </RadzenColumn>
+                            </RadzenRow>
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenLabel Text="Cupo limite de credito $" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <RadzenNumeric Style="width: 100%;" Name="Cupo" @bind-Value="tercero.Cupo" MaxLength="100" />
+                                    <RadzenCustomValidator Component="Cupo" Validator="@(() => AppUtils.ValidateSpaces(tercero.Cupo.ToString()))" Text="Cupo es requerido" Popup=@popup Style="position: relative" />
+                                    <RadzenCustomValidator Component="Cupo" Validator="@(() => AppUtils.ValidateOnlyNumber(tercero.Cupo.ToString()))" Text="Cupo es requerido" Popup=@popup Style="position: relative" />
+                                    
+                                </RadzenColumn>
+                            </RadzenRow>
+
+                        </RadzenStack>
+                    </RadzenFieldset>
+
+                </RadzenStack>
+            </RadzenColumn>
+
+        </RadzenRow>
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="1rem" Class="rz-mt-8 rz-mb-4">
+            <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large" Icon="save" Text="Save" />
+            <RadzenButton ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Large" Icon="cancel" Text="Cancel" Click="@Cancel" />
+        </RadzenStack>
+    </RadzenTemplateForm>
+}
+
+
+@code {
+    [Parameter]
+    public int? id { get; set; }
+    [Parameter]
+    public string? TipoTercero { get; set; }
+
+    private TercerosDto? tercero;
+    bool popup = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        tercero = new TercerosDto();
+
+        if (id != null && id > 0)
+        {
+            try
+            {
+                tercero = await tercerosService.GetById((int)id);
+            }
+            catch (Exception ex)
+            {
+                AppUtils.ShowNotify(ex.Message, "ERROR", Ns);
+            }
+
+        }
+
+
+    }
+
+
+    async void Submit(TercerosDto arg)
+    {
+        spinnerService.Show();
+        try
+        {
+            arg.Type = TipoTercero;
+
+            if (arg?.Id != null && arg?.Id > 0)
+            {
+                await tercerosService.Update(arg);
+            }
+            else
+            {
+                arg.Active = true;
+                arg.dt_Created = DateTime.Now;
+                await tercerosService.Save(arg);
+            }
+
+            tercero = new TercerosDto();
+            AppUtils.ShowNotify("Información guardada de manera exitosa", "OK", Ns);
+            Navigation.NavigateTo($"terceros/{TipoTercero}");
+        }
+        catch (Exception ex)
+        {
+            AppUtils.ShowNotify($"ERROR : {ex.Message} ", "WARNING", Ns);
+        }
+        finally
+        {
+            spinnerService.Hide();
+        }
+    }
+
+    void Cancel()
+    {
+        Navigation.NavigateTo($"terceros/{TipoTercero}");
+    }
+}

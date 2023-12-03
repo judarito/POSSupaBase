@@ -47,6 +47,7 @@ namespace CommonBase.ComponentBase
         protected string MsjDeleteIttem { get; set; } = "";
         protected string MsjDeleteIttemOK { get; set; } = "";
         protected string MsjDeleteIttemTitle { get; set; } = "";
+        protected string AditionalParamUrl { get; set; } = "";
 
 
         protected override async Task OnInitializedAsync()
@@ -64,11 +65,26 @@ namespace CommonBase.ComponentBase
         }
         protected async void Editar(int id)
         {
-            Navigation.NavigateTo($"{pathRedirectNew}/{id}");
+            if (string.IsNullOrWhiteSpace(AditionalParamUrl))
+            {
+                Navigation.NavigateTo($"{pathRedirectNew}/{id}");
+            }
+            else { 
+                Navigation.NavigateTo($"{pathRedirectNew}/{id}/{AditionalParamUrl}");
+            }
+
         }
         protected void IrANuevo()
         {
-            Navigation.NavigateTo(pathRedirectNew);
+            if (string.IsNullOrWhiteSpace(AditionalParamUrl))
+            {
+                Navigation.NavigateTo(pathRedirectNew);
+            }
+            else
+            {
+                Navigation.NavigateTo($"{pathRedirectNew}/{AditionalParamUrl}");
+            }
+            
         }
         protected async Task LoadData(int? from, int? to)
         {

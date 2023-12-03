@@ -1,0 +1,15 @@
+﻿@page "/tercerosnew/{TipoTercero}"
+@page "/tercerosnew/{id:int}/{TipoTercero}"
+@using Component.Terceros.Terceros
+@attribute [Authorize]
+
+<TercerosNew id="@id" TipoTercero="@TipoTercero"></TercerosNew>
+
+@code {
+    [Parameter]
+    public int? id { get; set; }
+
+    [Parameter]
+    public string? TipoTercero { get; set; }
+}
+

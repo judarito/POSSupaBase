@@ -1,0 +1,11 @@
+﻿@page "/terceros/{TipoTercero}"
+@using Component.Terceros.Terceros
+@attribute [Authorize]
+
+<TercerosList TipoTercero="@TipoTercero"></TercerosList>
+
+@code{
+    [Parameter]
+    public string? TipoTercero { get; set; }
+}
+

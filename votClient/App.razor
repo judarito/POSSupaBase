@@ -61,6 +61,12 @@
                 var assemblies = await AssemblyLoader.LoadAssembliesAsync(
                     new[] { "Component.Productos.dll" });
             }
+
+            if (args.Path.Contains("terceros"))
+            {
+                var assemblies = await AssemblyLoader.LoadAssembliesAsync(
+                    new[] { "Component.Terceros.dll" });
+            }
             
         }
         catch (Exception ex)
