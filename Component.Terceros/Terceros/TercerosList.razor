@@ -52,7 +52,7 @@ else
                 Count=@count
                 Data="@DataList"
                 TItem="TercerosDto"
-                PageSize="@PageSize"
+                PageSize="@PageSizeGrid"
                 PagerHorizontalAlign="HorizontalAlign.Left"
                 ShowPagingSummary="true"
                 AllowPaging="true">
@@ -123,13 +123,17 @@ else
     public string? TipoTercero { get; set; }
 
     private List<TercerosDto> DataListterceros;
-
+    private int PageSizeGrid = 5;
+    private Dictionary<string, string> AditionalParmFilter = new Dictionary<string, string>();
 
     protected override async Task OnInitializedAsync()
     {
-        await base.OnInitializedAsync();
 
+
+        await base.OnInitializedAsync();
         this.pathRedirectNew = $"tercerosnew";
+        //this.PageSize = 1000;
+
 
         this.MsjDeleteIttem = "Está seguro de querer eliminar el proveedor?";
         this.MsjDeleteIttemTitle = "Eliminar proveedor";
@@ -142,42 +146,33 @@ else
             this.MsjDeleteIttemOK = "cliente eliminado exitósamente";
         }
 
-        if (!string.IsNullOrEmpty(TipoTercero))
-        {
-            DataListterceros = DataList.ToList();
-            DataList = DataListterceros.Where(x => x.Type == TipoTercero).ToList();
-            StateHasChanged();
-        }
+        this.FieldExtraFilter = "Type";
+        this.ValueExtraFilter = TipoTercero;
 
     }
 
 
-    protected override void OnParametersSet()
+    protected override async void OnParametersSet()
     {
         base.OnParametersSet();
         this.AditionalParamUrl = TipoTercero;
-        FilterByTipo();
+        this.ValueExtraFilter = TipoTercero;
+        await this.LoadInitialData();
+        StateHasChanged();
     }
 
-
-
-    protected override async Task Buscar()
-    {
-        await base.Buscar();
-        FilterByTipo();
-        Console.WriteLine($"searchCriteria = {this.searchCriteria}");
-    }
 
     private void FilterByTipo()
     {
         if (!string.IsNullOrEmpty(TipoTercero))
         {
             DataList = DataList.Where(x => x.Type == TipoTercero).ToList();
+            this.count = DataList.Count;
         }
         StateHasChanged();
-
-
     }
+
+  
 
 
 }

@@ -48,6 +48,9 @@ namespace CommonBase.ComponentBase
         protected string MsjDeleteIttemOK { get; set; } = "";
         protected string MsjDeleteIttemTitle { get; set; } = "";
         protected string AditionalParamUrl { get; set; } = "";
+        protected Dictionary<string, string> AditionalParmFilter  { get; set; }
+        protected string FieldExtraFilter { get; set; } = "";
+        protected string ValueExtraFilter { get; set; } = "";
 
 
         protected override async Task OnInitializedAsync()
@@ -55,7 +58,7 @@ namespace CommonBase.ComponentBase
             await base.OnInitializedAsync();
             try
             {
-                await LoadInitialData();
+                  await LoadInitialData();
             }
             catch (Exception ex)
             {
@@ -86,13 +89,18 @@ namespace CommonBase.ComponentBase
             }
             
         }
-        protected async Task LoadData(int? from, int? to)
+        protected virtual async Task LoadData(int? from, int? to)
         {
             isLoading = true;
             try
             {
-                count = await _service.GetCount(searchCriteria);
-                DataList = await _service.GetAll(from, to, searchCriteria);
+                Dictionary<string, string> extraParm = null;
+                if (!string.IsNullOrWhiteSpace(FieldExtraFilter) && !string.IsNullOrWhiteSpace(ValueExtraFilter))
+                {
+                    extraParm = new Dictionary<string, string>() { { FieldExtraFilter, ValueExtraFilter } };
+                }
+                count = await _service.GetCount(searchCriteria, extraParm);
+                DataList = await _service.GetAll(from, to, searchCriteria, extraParm);
             }
             catch (Exception ex)
             {

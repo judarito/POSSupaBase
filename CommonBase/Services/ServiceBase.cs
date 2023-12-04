@@ -42,36 +42,86 @@ namespace CommonBase.Services
               .Delete();
         }
 
-        public async Task<List<TDto>> GetAll(int? from, int? to, string? searchCrieria)
+        public async Task<List<TDto>> GetAll(int? from, int? to, string? searchCrieria,Dictionary<string, string> AditionalParmFilter)
         {
             var UserInfo = await _localStorage.GetItemAsync<UserInfoLocalStorage>("USER_INFO");
 
-            var modeledResponse = String.IsNullOrWhiteSpace(searchCrieria)
-                                    ? await _client.From<T>()
-                                              .Select("*")
-                                              .Range((int)from, (int)to)
-                                              .Where(x=> x.IdTenant== UserInfo.TenantId)
-                                              .Order(x => x.Id, Ordering.Descending)
-                                              .Get()
-                                    : await _client.From<T>()
-                                              .Select("*")
-                                              .Where(x => x.IdTenant == UserInfo.TenantId)
-                                              .Filter(x=> x.Name, Operator.ILike, $"%{searchCrieria}%")
-                                              .Range((int)from, (int)to)
-                                              .Order(x => x.Id, Ordering.Descending)
-                                              .Get();
+            ModeledResponse<T> modeledResponse = null;
+            if (AditionalParmFilter == null)
+            {
+                modeledResponse = String.IsNullOrWhiteSpace(searchCrieria)
+                                  ? await _client.From<T>()
+                                            .Select("*")
+                                            .Range((int)from, (int)to)
+                                            .Where(x => x.IdTenant == UserInfo.TenantId)
+                                            .Order(x => x.Id, Ordering.Descending)
+                                            .Get()
+                                  : await _client.From<T>()
+                                            .Select("*")
+                                            .Where(x => x.IdTenant == UserInfo.TenantId)
+                                            .Filter(x => x.Name, Operator.ILike, $"%{searchCrieria}%")
+                                            .Range((int)from, (int)to)
+                                            .Order(x => x.Id, Ordering.Descending)
+                                            .Get();
+            }
+            else {
+                if (AditionalParmFilter?.Count > 0)
+                {
+                    modeledResponse = String.IsNullOrWhiteSpace(searchCrieria)
+                                 ? await _client.From<T>()
+                                           .Select("*")
+                                           .Range((int)from, (int)to)
+                                           .Where(x => x.IdTenant == UserInfo.TenantId)
+                                           .Match(AditionalParmFilter)
+                                           .Order(x => x.Id, Ordering.Descending)
+                                           .Get()
+                                 : await _client.From<T>()
+                                           .Select("*")
+                                           .Where(x => x.IdTenant == UserInfo.TenantId)
+                                           .Filter(x => x.Name, Operator.ILike, $"%{searchCrieria}%")
+                                           .Match(AditionalParmFilter)
+                                           .Range((int)from, (int)to)
+                                           .Order(x => x.Id, Ordering.Descending)
+                                           .Get();
+                }
+            }
+           
 
             var mapModel=this._mapper.Map<List<TDto>>(modeledResponse.Models);
             return mapModel;
         }
 
-        public async Task<int> GetCount(string? searchCrieria)
+        public async Task<int> GetCount(string? searchCrieria, Dictionary<string, string> AditionalParmFilter)
         {
             var UserInfo = await _localStorage.GetItemAsync<UserInfoLocalStorage>("USER_INFO");
-
-            var modeledResponse = String.IsNullOrWhiteSpace(searchCrieria)
-                   ? await _client.From<T>().Where(x => x.IdTenant == UserInfo.TenantId).Count(Postgrest.Constants.CountType.Exact)
-                   : await _client.From<T>().Where(x => x.IdTenant == UserInfo.TenantId).Filter(x => x.Name, Operator.Like, $"%{searchCrieria}%").Count(Postgrest.Constants.CountType.Exact);
+           int modeledResponse = 0;
+            if (AditionalParmFilter == null)
+            {
+                modeledResponse = String.IsNullOrWhiteSpace(searchCrieria)
+                  ? await _client.From<T>()
+                       .Where(x => x.IdTenant == UserInfo.TenantId)
+                       .Count(Postgrest.Constants.CountType.Exact)
+                  : await _client.From<T>()
+                       .Where(x => x.IdTenant == UserInfo.TenantId)
+                       .Filter(x => x.Name, Operator.Like, $"%{searchCrieria}%")
+                       .Count(Postgrest.Constants.CountType.Exact);
+            }
+            else {
+                if(AditionalParmFilter?.Count > 0)
+                {
+                    modeledResponse = String.IsNullOrWhiteSpace(searchCrieria)
+                     ? await _client.From<T>()
+                          .Where(x => x.IdTenant == UserInfo.TenantId)
+                          .Match(AditionalParmFilter)
+                          .Count(Postgrest.Constants.CountType.Exact)
+                     : await _client.From<T>()
+                          .Where(x => x.IdTenant == UserInfo.TenantId)
+                          .Filter(x => x.Name, Operator.Like, $"%{searchCrieria}%")
+                          .Match(AditionalParmFilter)
+                          .Count(Postgrest.Constants.CountType.Exact);
+                }
+               
+            }
             
             return Convert.ToInt32(modeledResponse);
         }

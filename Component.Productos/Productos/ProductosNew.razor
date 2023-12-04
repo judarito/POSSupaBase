@@ -145,8 +145,8 @@ else
         currentProductCategory = null;
         currentUnidadMedida = null;
 
-        ListProductCategies = await productCategoryService.GetAll(0, 1000, "");
-        ListUnidadMedida = await unidadMedidaService.GetAll(0, 1000, "");
+        ListProductCategies = await productCategoryService.GetAll(0, 1000, "",null);
+        ListUnidadMedida = await unidadMedidaService.GetAll(0, 1000, "", null);
 
         if (id != null && id > 0)
         {
