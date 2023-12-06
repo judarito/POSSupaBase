@@ -16,6 +16,9 @@ using CommonBase.Services.UnidadMedidaService;
 using CommonBase.Services.ProductosService;
 using CommonBase.Services;
 using CommonBase.Services.TercerosSevice;
+using CommonBase.Services.EstadoEntregaService;
+using CommonBase.Services.TipoPagoService;
+using CommonBase.Services.TipoMovimientoService;
 
 const string ApiUrlBase = "https://jricardo0822-001-site1.ftempurl.com/api/";
 //const string ApiUrlBase = "https://vot20231005162706.azurewebsites.net/api/";
@@ -88,6 +91,9 @@ builder.Services.AddScoped<ProductCategoryService>();
 builder.Services.AddScoped<UnidadMedidaService>();
 builder.Services.AddScoped<ProductosService>();
 builder.Services.AddScoped<TercerosService>();
+builder.Services.AddScoped<TipoMovimientoService>();
+builder.Services.AddScoped<TipoPagoService>();
+builder.Services.AddScoped<EstadoEntregaService>();
 builder.Services.AddScoped(typeof(ServiceBase<,>));
 
 await builder.Build().RunAsync();

@@ -148,18 +148,8 @@ namespace CommonBase.Services
         public async Task Update(TDto Entity)
         {
             var UserInfo = await _localStorage.GetItemAsync<UserInfoLocalStorage>("USER_INFO");
-
-            //var model = await _client
-            //              .From<T>()
-            //              .Where(x => x.Id == Entity.Id)
-            //              .Single();
-
-            //string UrlBase = model.BaseUrl;
             Entity.IdTenant = UserInfo.TenantId;
-
             var mapModel = this._mapper.Map<T>(Entity);
-            //model.BaseUrl = UrlBase;
-            //await model.Update<T>();
             await _client.From<T>().Update(mapModel);
         }
     }
