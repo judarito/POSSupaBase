@@ -1,4 +1,5 @@
 ﻿using CommonBase.Dtos;
+using CommonBase.Dtos.Facturas;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,16 +10,13 @@ namespace CommonBase.Services.Factura
 {
     public interface IFacturaService
     {
-        Task Save(FacturaDto facturaDto);
-
-        Task Update(FacturaDto facturaDto);
+        Task SaveOrUpdate(FacturaSaveModel facturaDto);
 
         Task Delete(int IdFactura);
 
-        Task<FacturaDto> GetById(int IdFactura);
+        Task<FacturaModel> GetById(int IdFactura);
 
-        Task<List<FacturaDto>> GetAll(int? from, int? to, string? searchCrieria, DateTime DtInicio, DateTime DtFin);
-
-        Task<int> GetCount(string? searchCrieria, DateTime DtInicio, DateTime DtFin);
+        Task<FacturasModel> GetAll(int? from, int? to, string? searchCrieria, DateTime DtInicio, DateTime DtFin);
+               
     }
 }

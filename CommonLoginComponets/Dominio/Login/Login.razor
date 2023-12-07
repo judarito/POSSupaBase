@@ -1,4 +1,5 @@
-﻿@using CommonBase.Services.AuthService;
+﻿@using CommonBase.Dtos.Facturas;
+@using CommonBase.Services.AuthService;
 @using CommonBase.Services.Factura;
 @using Microsoft.AspNetCore.Components.Authorization
 @using CommonBase.Models.Login;
@@ -31,14 +32,14 @@
             <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H2" Class="rz-mb-6">
                 Login
             </RadzenText>
-            <RadzenTemplateForm Data=@("SimpleLogin") >
-                <RadzenLogin AllowRegister="false" 
-                            AllowResetPassword="false" 
-                            Username=@userName 
-                            Password=@password 
-                            Login=@(args => OnLogin(args, "Login with default values")) 
-                            LoginText="Iniciar"
-                            PasswordText="Contraseña"
+            <RadzenTemplateForm Data=@("SimpleLogin")>
+                <RadzenLogin AllowRegister="false"
+                             AllowResetPassword="false"
+                             Username=@userName
+                             Password=@password
+                             Login=@(args => OnLogin(args, "Login with default values"))
+                             LoginText="Iniciar"
+                             PasswordText="Contraseña"
                              UserText="Usuario" />
 
             </RadzenTemplateForm>
@@ -68,7 +69,23 @@
         try
         {
             await AuthService.Login(args.Username, args.Password);
-            var a = facturaService.GetAll(5, 0, "a", DateTime.Parse("2023-12-01"), DateTime.Parse("2023-12-06"));
+            
+            
+            //FacturaSaveModel fac = new FacturaSaveModel();
+            //fac.Id = 7;
+            //fac.FechaFactura = "2023-12-07";
+            //fac.IdTipoMovimiento = 1;
+            //fac.IdTipoPago = 1;
+            //fac.IdTercero = 8;
+            //fac.IdEstadoEntrega = 1;
+            //fac.Detalle = new List<DetalleFacturaSaveModel>() {
+            //        new DetalleFacturaSaveModel() { cantidad=2, costo=8, pvp=80, idproducto=3 },
+            //        new DetalleFacturaSaveModel() { cantidad=5, costo=6, pvp=200, idproducto=2 },
+            //        new DetalleFacturaSaveModel() { cantidad=8, costo=6, pvp=7000, idproducto=2 }
+            //};
+            //var a = facturaService.SaveOrUpdate(fac);
+            //var a = facturaService.GetAll(5, 0, "", DateTime.Parse("2023-12-01"), DateTime.Parse("2023-12-06"));
+            
 
             Navigation.NavigateTo($"/home");
         }

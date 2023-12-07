@@ -1,18 +1,11 @@
 ﻿using AutoMapper;
 using Blazored.SessionStorage;
 using CommonBase.Dtos;
+using CommonBase.Dtos.Facturas;
 using CommonBase.Models.CabeceraFactura;
 using CommonBase.Models.DetalleFactura;
 using CommonBase.Models.UserModel;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Radzen;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace CommonBase.Services.Factura
 {
@@ -40,81 +33,88 @@ namespace CommonBase.Services.Factura
               .Delete();
         }
 
-        public async Task<List<FacturaDto>> GetAll(int? from, int? to, string? searchCrieria, DateTime DtInicio, DateTime DtFin)
+        public async Task<FacturasModel> GetAll(int? from, int? to, string? searchCrieria, DateTime DtInicio, DateTime DtFin)
         {
+            List<FacturasModel> lisFactura = new List<FacturasModel>();
+            List<FacturasModel> facturasResult = new List<FacturasModel>();
+            FacturasModel facturaResult = new FacturasModel();
+
             var UserInfo = await _localStorage.GetItemAsync<UserInfoLocalStorage>("USER_INFO");
-            var result = await _client.Rpc("getallfactura", new Dictionary<string, object> {
-                                                                                               { "pagesize", from },
-                                                                                               { "paso", to },
-                                                                                               { "criteria", searchCrieria },
-                                                                                               { "dtinicio", DtInicio.ToString("yyyy-MM-dd") },
-                                                                                               { "dtfin", DtFin.ToString("yyyy-MM-dd") },
-                                                                                               { "idtenant", UserInfo.TenantId },
-                                                                                       });
+            try
+            {
 
-            return null;
-        }
 
-        public Task<FacturaDto> GetById(int IdFactura)
-        {
-            throw new NotImplementedException();
-        }
+                var result = await _client.Rpc("getallfactura", new Dictionary<string, object> {
+                                                                                                    { "pagesize", from },
+                                                                                                    { "paso", to },
+                                                                                                    { "criteria", searchCrieria },
+                                                                                                    { "dtinicio", DtInicio.ToString("yyyy-MM-dd") },
+                                                                                                    { "dtfin", DtFin.ToString("yyyy-MM-dd") },
+                                                                                                    { "idtenant", UserInfo.TenantId },
+                                                                                               });
 
-        public Task<int> GetCount(string? searchCrieria, DateTime DtInicio, DateTime DtFin)
-        {
-            throw new NotImplementedException();
-        }
 
-        public async Task Save(FacturaDto facturaDto)
-        {
-            var UserInfo = await _localStorage.GetItemAsync<UserInfoLocalStorage>("USER_INFO");
-
-            facturaDto.CabeceraFactura.IdTenant = UserInfo.TenantId;
-            var mapModelCabecera = this._mapper.Map<CabeceraFactura>(facturaDto.CabeceraFactura);
-
-            var newCabeceraFactura = await _client.From<CabeceraFactura>().Insert(mapModelCabecera);
-
-            CabeceraFactura NewIdFacura = JsonConvert.DeserializeObject<CabeceraFactura>(newCabeceraFactura.Content);
-
-            facturaDto.DetalleFactura.All(c =>
+                if (result != null)
                 {
-                    c.IdTenant = UserInfo.TenantId;
-                    c.IdCabeceraFactura = NewIdFacura.Id;
-                    return true;
-                });
-
-            facturaDto.DetalleFactura.ForEach(async item =>
+                    string content = result.Content.ToString().Replace("'", "");
+                    facturasResult = JsonSerializer.Deserialize<List<FacturasModel>>(content);
+                    facturaResult= facturasResult.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
             {
-                var mapModelDetalle = this._mapper.Map<DetalleFactura>(item);
-                await _client.From<DetalleFactura>().Insert(mapModelDetalle);
-            });
-
-
+                Console.WriteLine(ex.Message);
+            }
+            return facturaResult;
         }
 
-        public async Task Update(FacturaDto facturaDto)
+        public async Task<FacturaModel> GetById(int IdFactura)
         {
-
-            var UserInfo = await _localStorage.GetItemAsync<UserInfoLocalStorage>("USER_INFO");
-
-            facturaDto.CabeceraFactura.IdTenant = UserInfo.TenantId;
-            var mapModelCabecera = this._mapper.Map<CabeceraFactura>(facturaDto.CabeceraFactura);
-            await _client.From<CabeceraFactura>().Update(mapModelCabecera);
-
-            facturaDto.DetalleFactura.All(c =>
+            List<FacturasModel> lisFactura = new List<FacturasModel>();
+            List<FacturasModel> facturasResult = new List<FacturasModel>();
+            FacturasModel facturaResult = new FacturasModel();
+            try
             {
-                c.IdTenant = UserInfo.TenantId;
-                return true;
-            });
 
-            facturaDto.DetalleFactura.ForEach(async item =>
+
+                var result = await _client.Rpc("getfactura", new Dictionary<string, object> {
+                                                                                                    { "idfactura", IdFactura },                                                                                                 
+                                                                                               });
+
+
+                if (result != null)
+                {
+                    string content = result.Content.ToString().Replace("'", "");
+                    facturasResult = JsonSerializer.Deserialize<List<FacturasModel>>(content);
+                    facturaResult = facturasResult.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
             {
-                var mapModelDetalle = this._mapper.Map<DetalleFactura>(item);
-                await _client.From<DetalleFactura>().Update(mapModelDetalle);
-            });
-
-
-
+                Console.WriteLine(ex.Message);
+            }
+            return facturaResult.facturas.FirstOrDefault();
         }
+        public async Task SaveOrUpdate(FacturaSaveModel facturaDto)
+        {
+             var UserInfo = await _localStorage.GetItemAsync<UserInfoLocalStorage>("USER_INFO");
+
+            try
+            {
+                string jsonData=  JsonSerializer.Serialize<FacturaSaveModel>(facturaDto);
+                var result = await _client.Rpc("insertfactura", new Dictionary<string, object> {
+                                                                                                { "jsonfactura", jsonData },
+                                                                                                { "idtenant", UserInfo.TenantId },
+                                                                                             });
+
+                
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+       
     }
 }
