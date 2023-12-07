@@ -1,9 +1,12 @@
 ﻿@using CommonBase.Services.AuthService;
+@using CommonBase.Services.Factura;
 @using Microsoft.AspNetCore.Components.Authorization
 @using CommonBase.Models.Login;
 @using CommonBase.Shared.Services;
 @inject AuthService AuthService
 @inject NavigationManager Navigation
+@inject IFacturaService facturaService
+
 
 
 
@@ -65,6 +68,8 @@
         try
         {
             await AuthService.Login(args.Username, args.Password);
+            var a = facturaService.GetAll(5, 0, "a", DateTime.Parse("2023-12-01"), DateTime.Parse("2023-12-06"));
+
             Navigation.NavigateTo($"/home");
         }
         catch (Exception ex)

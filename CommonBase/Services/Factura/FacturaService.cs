@@ -10,6 +10,7 @@ using Radzen;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -39,9 +40,19 @@ namespace CommonBase.Services.Factura
               .Delete();
         }
 
-        public Task<List<FacturaDto>> GetAll(int? from, int? to, string? searchCrieria)
+        public async Task<List<FacturaDto>> GetAll(int? from, int? to, string? searchCrieria, DateTime DtInicio, DateTime DtFin)
         {
-            throw new NotImplementedException();
+            var UserInfo = await _localStorage.GetItemAsync<UserInfoLocalStorage>("USER_INFO");
+            var result = await _client.Rpc("getallfactura", new Dictionary<string, object> {
+                                                                                               { "pagesize", from },
+                                                                                               { "paso", to },
+                                                                                               { "criteria", searchCrieria },
+                                                                                               { "dtinicio", DtInicio.ToString("yyyy-MM-dd") },
+                                                                                               { "dtfin", DtFin.ToString("yyyy-MM-dd") },
+                                                                                               { "idtenant", UserInfo.TenantId },
+                                                                                       });
+
+            return null;
         }
 
         public Task<FacturaDto> GetById(int IdFactura)
@@ -49,7 +60,7 @@ namespace CommonBase.Services.Factura
             throw new NotImplementedException();
         }
 
-        public Task<int> GetCount(string? searchCrieria)
+        public Task<int> GetCount(string? searchCrieria, DateTime DtInicio, DateTime DtFin)
         {
             throw new NotImplementedException();
         }

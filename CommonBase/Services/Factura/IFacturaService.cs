@@ -17,8 +17,8 @@ namespace CommonBase.Services.Factura
 
         Task<FacturaDto> GetById(int IdFactura);
 
-        Task<List<FacturaDto>> GetAll(int? from, int? to, string? searchCrieria);
+        Task<List<FacturaDto>> GetAll(int? from, int? to, string? searchCrieria, DateTime DtInicio, DateTime DtFin);
 
-        Task<int> GetCount(string? searchCrieria);
+        Task<int> GetCount(string? searchCrieria, DateTime DtInicio, DateTime DtFin);
     }
 }
