@@ -69,8 +69,8 @@
         try
         {
             await AuthService.Login(args.Username, args.Password);
-            
-            
+
+
             //FacturaSaveModel fac = new FacturaSaveModel();
             //fac.Id = 7;
             //fac.FechaFactura = "2023-12-07";
@@ -83,9 +83,10 @@
             //        new DetalleFacturaSaveModel() { cantidad=5, costo=6, pvp=200, idproducto=2 },
             //        new DetalleFacturaSaveModel() { cantidad=8, costo=6, pvp=7000, idproducto=2 }
             //};
-            //var a = facturaService.SaveOrUpdate(fac);
-            //var a = facturaService.GetAll(5, 0, "", DateTime.Parse("2023-12-01"), DateTime.Parse("2023-12-06"));
-            
+            //var a = await facturaService.SaveOrUpdate(fac);
+            // var a = await facturaService.GetAll(5, 0, "", DateTime.Parse("2023-12-01"), DateTime.Parse("2023-12-06"));
+            //var a = await facturaService.GetById(1);
+
 
             Navigation.NavigateTo($"/home");
         }

@@ -24,19 +24,19 @@ namespace CommonBase.Services.Factura
         }
         public async Task Delete(int IdFactura)
         {
-            await _client.From<DetalleFactura>()
-              .Where(x => x.Id == IdFactura)
-              .Delete();
+            try
+            {
+                 await _client.Rpc("deletefactura", new Dictionary<string, object> { { "idfactura", IdFactura }, });
 
-            await _client.From<CabeceraFactura>()
-              .Where(x => x.Id == IdFactura)
-              .Delete();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         public async Task<FacturasModel> GetAll(int? from, int? to, string? searchCrieria, DateTime DtInicio, DateTime DtFin)
         {
-            List<FacturasModel> lisFactura = new List<FacturasModel>();
-            List<FacturasModel> facturasResult = new List<FacturasModel>();
             FacturasModel facturaResult = new FacturasModel();
 
             var UserInfo = await _localStorage.GetItemAsync<UserInfoLocalStorage>("USER_INFO");
@@ -57,8 +57,8 @@ namespace CommonBase.Services.Factura
                 if (result != null)
                 {
                     string content = result.Content.ToString().Replace("'", "");
-                    facturasResult = JsonSerializer.Deserialize<List<FacturasModel>>(content);
-                    facturaResult= facturasResult.FirstOrDefault();
+                    facturaResult = JsonSerializer.Deserialize<FacturasModel>(content);
+                   
                 }
             }
             catch (Exception ex)
@@ -70,30 +70,23 @@ namespace CommonBase.Services.Factura
 
         public async Task<FacturaModel> GetById(int IdFactura)
         {
-            List<FacturasModel> lisFactura = new List<FacturasModel>();
-            List<FacturasModel> facturasResult = new List<FacturasModel>();
-            FacturasModel facturaResult = new FacturasModel();
+            FacturaModel facturaResult = new FacturaModel();
             try
             {
-
-
-                var result = await _client.Rpc("getfactura", new Dictionary<string, object> {
-                                                                                                    { "idfactura", IdFactura },                                                                                                 
-                                                                                               });
-
+                var result = await _client.Rpc("getfactura", new Dictionary<string, object> {{ "idfactura", IdFactura },});
 
                 if (result != null)
                 {
                     string content = result.Content.ToString().Replace("'", "");
-                    facturasResult = JsonSerializer.Deserialize<List<FacturasModel>>(content);
-                    facturaResult = facturasResult.FirstOrDefault();
+                    facturaResult = JsonSerializer.Deserialize<FacturaModel>(content);
+                    
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
-            return facturaResult.facturas.FirstOrDefault();
+            return facturaResult;
         }
         public async Task SaveOrUpdate(FacturaSaveModel facturaDto)
         {
