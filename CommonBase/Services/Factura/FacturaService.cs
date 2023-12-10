@@ -35,7 +35,7 @@ namespace CommonBase.Services.Factura
             }
         }
 
-        public async Task<FacturasModel> GetAll(int? from, int? to, string? searchCrieria, DateTime DtInicio, DateTime DtFin)
+        public async Task<FacturasModel> GetAll(int? from, int? to, string? searchCrieria, DateTime DtInicio, DateTime DtFin,string TipoMovimiento)
         {
             FacturasModel facturaResult = new FacturasModel();
 
@@ -51,6 +51,7 @@ namespace CommonBase.Services.Factura
                                                                                                     { "dtinicio", DtInicio.ToString("yyyy-MM-dd") },
                                                                                                     { "dtfin", DtFin.ToString("yyyy-MM-dd") },
                                                                                                     { "idtenant", UserInfo.TenantId },
+                                                                                                    { "tipomov", TipoMovimiento },
                                                                                                });
 
 
@@ -98,7 +99,7 @@ namespace CommonBase.Services.Factura
                 var result = await _client.Rpc("insertfactura", new Dictionary<string, object> {
                                                                                                 { "jsonfactura", jsonData },
                                                                                                 { "idtenant", UserInfo.TenantId },
-                                                                                             });
+                                                                                               });
 
                 
             }

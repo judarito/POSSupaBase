@@ -1,0 +1,11 @@
+﻿@page "/facturas/{TipoMovimiento}"
+@using Component.Facturas.Facturas
+@attribute [Authorize]
+
+<FacturasList TipoMovimiento="@TipoMovimiento"></FacturasList>
+
+@code {
+    [Parameter]
+    public string? TipoMovimiento { get; set; }
+}
+

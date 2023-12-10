@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CommonBase\CommonBase.csproj" />
     <ProjectReference Include="..\CommonLoginComponets\CommonLoginComponets.csproj" />
+    <ProjectReference Include="..\Component.Facturas\Component.Facturas.csproj" />
     <ProjectReference Include="..\Component.ProductCategory\Component.ProductCategory.csproj" />
     <ProjectReference Include="..\Component.Productos\Component.Productos.csproj" />
     <ProjectReference Include="..\Component.Terceros\Component.Terceros.csproj" />

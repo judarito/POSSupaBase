@@ -1,0 +1,288 @@
+﻿@using CommonBase.Services.Factura;
+@using CommonBase.Dtos.Facturas;
+@inject IFacturaService facturaService
+<PageTitle>Facturas</PageTitle>
+
+@if (TipoMovimiento == "COMPRA")
+{
+    <PageTitle>Compras</PageTitle>
+
+    <h2>Compras</h2>
+
+    <p>En esta pagina puedes gestionar las compras de su negocio.</p>
+}
+else
+{
+    <PageTitle>Ventas</PageTitle>
+
+    <h2>Ventas</h2>
+
+    <p>En esta pagina puedes gestionar las ventas de su negocio.</p>
+
+}
+
+@if (facturas == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+
+    <RadzenRow>
+        <RadzenColumn Size="11">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Gap="1rem">
+                <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="find_in_page" Style="max-width:30%;" Click="@(()=>Buscar())" />
+                <RadzenTextBox Placeholder="Buscar..."
+                           Style="width:100%!important"
+                           @bind-Value="searchCriteria"
+                           @oninput=@(args => OnChange(args.Value.ToString()))
+                           @onkeypress=@(e=> SearchInputKeyPressed(e)) />
+            </RadzenStack>
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.End" Gap="1rem" Wrap="FlexWrap.Wrap">
+                <RadzenButton Click=@(args => IrANuevo()) Icon="add" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Large" class="rz-border-radius-10 rz-shadow-10" />
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+
+
+    <RadzenDataList IsLoading=@isLoading
+                LoadData=@LoadDataGrig
+                Count=@count
+                Data="@facturas"
+                TItem="FacturaModel"
+                PageSize="@PageSize"
+                PagerHorizontalAlign="HorizontalAlign.Left"
+                ShowPagingSummary="true"
+                AllowPaging="true">
+        <Template Context="FacturaModel">
+            <RadzenCard Style="width: 100%; padding: 0;">
+                <RadzenRow Gap="0">
+                    <RadzenColumn Size="12" SizeLG="3" Class="rz-p-4 product-title">
+                        <RadzenRow>
+                            <RadzenColumn>
+                                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+                                    <RadzenLink Path="javascript:void(0)" Text="Go to url" onclick="@(()=> Editar(FacturaModel.Id))"><RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class="rz-color-secondary">@(FacturaModel.Id)</RadzenText>  </RadzenLink>
+                                    </RadzenStack>
+                                </RadzenColumn>
+                                <RadzenColumn>
+                                    <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.End" Gap="0">
+                                        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Gap="8">
+                                            <button type="button" onclick="@(()=> Editar(FacturaModel.Id))" class="btn btn-secondary"><spam class="fa fa-pencil-square-o" aria-hidden="true"></spam></button>
+                                            <button type="button" onclick="@(()=> Detete(FacturaModel.Id))" class="btn btn-danger"><spam class="fa fa-trash-o" aria-hidden="true"></spam></button>
+                                        </RadzenStack>
+
+
+                                    </RadzenStack>
+                                </RadzenColumn>
+                            </RadzenRow>
+
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeLG="7" Class="rz-p-4">
+                            <RadzenRow Gap="1">
+                                <RadzenColumn Size="12" SizeMD="6" SizeLG="2">
+                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">@labelName:</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Body2">@(FacturaModel.Cliente)</RadzenText>
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD=" 6" SizeLG="2">
+                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Fecha:</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Body2">@(FacturaModel.Fecha)</RadzenText>
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="6" SizeLG="2">
+                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Estado:</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Body2">@(FacturaModel.EstadoEntrega)</RadzenText>
+                                </RadzenColumn>
+                            </RadzenRow>
+                        </RadzenColumn>
+                    </RadzenRow>
+                </RadzenCard>
+            </Template>
+        </RadzenDataList>
+}
+
+<style>
+    .product-title {
+        min-height: 72px;
+        background-color: var(--rz-secondary-lighter);
+    }
+
+    .price-badge {
+        font-size: 16px;
+        font-weight: bold;
+        line-height: 20px;
+        padding: 8px;
+    }
+</style>
+
+
+
+
+@code {
+
+    [Parameter]
+    public string? TipoMovimiento { get; set; }
+
+    private bool allowVirtualization { get; set; }
+    private bool isLoading { get; set; }
+    private int from { get; set; } = 0;
+    private int to { get; set; } = 0;
+    private int PageSize { get; set; } = 5;
+    private int count { get; set; }
+    private string searchCriteria { get; set; } = "";
+    private string AditionalParamUrl { get; set; } = "";
+    private string pathRedirectNew { get; set; } = "";
+
+    private string MsjDeleteIttem { get; set; } = "";
+    private string MsjDeleteIttemOK { get; set; } = "";
+    private string MsjDeleteIttemTitle { get; set; } = "";
+    private string labelName { get; set; } = "";
+
+    private List<FacturaModel> facturas;
+    private FacturasModel facturasGeneral;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await LoadInitialData();
+        this.pathRedirectNew = $"facturasnew";
+        this.MsjDeleteIttem = "Está seguro de querer eliminar la venta?";
+        this.MsjDeleteIttemTitle = "Eliminar venta";
+        this.MsjDeleteIttemOK = "venta eliminada exitósamente";
+        labelName = "Cliente";
+        if (TipoMovimiento == "COMPRA")
+        {
+            this.MsjDeleteIttem = "Está seguro de querer eliminar la compra?";
+            this.MsjDeleteIttemTitle = "Eliminar compra";
+            this.MsjDeleteIttemOK = "compra eliminada exitósamente";
+            labelName = "Proveedor";
+        }
+
+
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        this.AditionalParamUrl = TipoMovimiento;
+        await LoadInitialData();
+        StateHasChanged();
+    }
+
+    private  async Task LoadData(int? from, int? to)
+    {
+        isLoading = true;
+        try
+        {
+            facturasGeneral = await facturaService.GetAll(from, to, searchCriteria, DateTime.Now.AddDays(-30), DateTime.Now, TipoMovimiento);
+            facturas = facturasGeneral.facturas;
+            count = facturasGeneral.rowcount;
+           
+        }
+        catch (Exception ex)
+        {
+            AppUtils.ShowNotify($"ERROR : {ex.Message} ", "WARNING", Ns);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+
+    }
+
+    private void IrANuevo()
+    {
+        if (string.IsNullOrWhiteSpace(AditionalParamUrl))
+        {
+            Navigation.NavigateTo(pathRedirectNew);
+        }
+        else
+        {
+            Navigation.NavigateTo($"{pathRedirectNew}/{AditionalParamUrl}");
+        }
+
+    }
+
+    private async void Editar(int id)
+    {
+        if (string.IsNullOrWhiteSpace(AditionalParamUrl))
+        {
+            Navigation.NavigateTo($"{pathRedirectNew}/{id}");
+        }
+        else
+        {
+            Navigation.NavigateTo($"{pathRedirectNew}/{id}/{AditionalParamUrl}");
+        }
+
+    }
+
+    private async Task LoadInitialData()
+    {
+        await LoadData(PageSize, 1);
+    }
+
+    private async void Detete(int id)
+    {
+        bool result = false;
+        try
+        {
+            result = await AppUtils.ShowConfirm(MsjDeleteIttemTitle, MsjDeleteIttem, DialogService);
+
+        }
+        catch (Exception ex)
+        {
+            AppUtils.ShowNotify($"ERROR : {ex.Message} ", "WARNING", Ns);
+        }
+
+
+        if ((bool)result)
+        {
+            spinnerService.Show();
+            try
+            {
+                await facturaService.Delete(id);
+                await LoadInitialData();
+                StateHasChanged();
+                AppUtils.ShowNotify(MsjDeleteIttemOK, "OK", Ns);
+            }
+            catch (Exception ex)
+            {
+                AppUtils.ShowNotify($"ERROR : {ex.Message} ", "WARNING", Ns);
+            }
+            finally
+            {
+                spinnerService.Hide();
+            }
+
+        }
+    }
+
+    private async Task LoadDataGrig(LoadDataArgs args)
+    {
+        var fromTo = AppUtils.GetFromTo(args?.Top, args?.Skip);
+        await LoadData(fromTo.From, fromTo.To);
+    }
+    
+    private async Task Buscar()
+    {
+        await LoadInitialData();
+        StateHasChanged();
+    }
+
+    private async Task SearchInputKeyPressed(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter")
+        {
+            await Buscar();
+        }
+    }
+
+    private async void OnChange(string value)
+    {
+        searchCriteria = value;
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            await Buscar();
+        }
+    }
+
+}
