@@ -21,30 +21,41 @@ else
 
 }
 
-@if (facturas == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
+<RadzenRow>
+    <RadzenColumn Size="11">
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Gap="1rem">
 
-    <RadzenRow>
-        <RadzenColumn Size="11">
-            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Gap="1rem">
-                <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="find_in_page" Style="max-width:30%;" Click="@(()=>Buscar())" />
-                <RadzenTextBox Placeholder="Buscar..."
+            <RadzenTextBox Placeholder="Buscar..."
                            Style="width:100%!important"
                            @bind-Value="searchCriteria"
                            @oninput=@(args => OnChange(args.Value.ToString()))
                            @onkeypress=@(e=> SearchInputKeyPressed(e)) />
-            </RadzenStack>
-        </RadzenColumn>
-        <RadzenColumn>
-            <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.End" Gap="1rem" Wrap="FlexWrap.Wrap">
-                <RadzenButton Click=@(args => IrANuevo()) Icon="add" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Large" class="rz-border-radius-10 rz-shadow-10" />
-            </RadzenStack>
-        </RadzenColumn>
-    </RadzenRow>
+
+        </RadzenStack>
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Gap="1rem" Style="margin-top:10px">
+            <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="find_in_page" Style="max-width:30%;" Click="@(()=>Buscar())" />
+            <RadzenDatePicker DateFormat="yyyy-MM-dd" Placeholder="Fecha inicio" @bind-Value=@dtInicio Name="RadzenDatePickerChangeEvent" />
+            <RadzenDatePicker DateFormat="yyyy-MM-dd" Placeholder="Fecha fin" @bind-Value=@dtFin Name="RadzenDatePickerChangeEvent1" />
+        </RadzenStack>
+    </RadzenColumn>
+    <RadzenColumn>
+        <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.End" Gap="1rem" Wrap="FlexWrap.Wrap">
+            <RadzenButton Click=@(args => IrANuevo()) Icon="add" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Large" class="rz-border-radius-10 rz-shadow-10" />
+        </RadzenStack>
+    </RadzenColumn>
+</RadzenRow>
+
+@if (facturas == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (facturas.Count<=0)
+{
+    <p style="margin-top:20px"><em>No hay resultados para tu búsqueda actual. ¿Por qué no intentas ampliar tus criterios o buscas algo diferente?</em></p>
+}else
+{
+
+   
 
 
     <RadzenDataList IsLoading=@isLoading
@@ -81,7 +92,7 @@ else
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeLG="7" Class="rz-p-4">
                             <RadzenRow Gap="1">
-                                <RadzenColumn Size="12" SizeMD="6" SizeLG="2">
+                                <RadzenColumn Size="12" SizeMD="6" SizeLG="4">
                                     <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">@labelName:</RadzenText>
                                     <RadzenText TextStyle="TextStyle.Body2">@(FacturaModel.Cliente)</RadzenText>
                                 </RadzenColumn>
@@ -89,9 +100,12 @@ else
                                     <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Fecha:</RadzenText>
                                     <RadzenText TextStyle="TextStyle.Body2">@(FacturaModel.Fecha)</RadzenText>
                                 </RadzenColumn>
-                                <RadzenColumn Size="12" SizeMD="6" SizeLG="2">
+                                <RadzenColumn Size="12" SizeMD="6" SizeLG="3">
                                     <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Estado:</RadzenText>
                                     <RadzenText TextStyle="TextStyle.Body2">@(FacturaModel.EstadoEntrega)</RadzenText>
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="6" SizeLG="3" Class="rz-text-align-start rz-text-align-lg-end">
+                                    <RadzenBadge BadgeStyle="BadgeStyle.Secondary" Shade="Shade.Lighter" class="price-badge" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}",FacturaModel.TotalFactura)}") />
                                 </RadzenColumn>
                             </RadzenRow>
                         </RadzenColumn>
@@ -122,7 +136,9 @@ else
 
     [Parameter]
     public string? TipoMovimiento { get; set; }
-
+    public DateTime dtInicio { get; set; } 
+    public DateTime dtFin { get; set; } 
+    
     private bool allowVirtualization { get; set; }
     private bool isLoading { get; set; }
     private int from { get; set; } = 0;
@@ -145,6 +161,8 @@ else
     {
         await base.OnInitializedAsync();
         await LoadInitialData();
+        dtInicio = DateTime.Now;
+        dtFin = DateTime.Now;
         this.pathRedirectNew = $"facturasnew";
         this.MsjDeleteIttem = "Está seguro de querer eliminar la venta?";
         this.MsjDeleteIttemTitle = "Eliminar venta";
@@ -173,7 +191,7 @@ else
         isLoading = true;
         try
         {
-            facturasGeneral = await facturaService.GetAll(from, to, searchCriteria, DateTime.Now.AddDays(-30), DateTime.Now, TipoMovimiento);
+            facturasGeneral = await facturaService.GetAll(from, to, searchCriteria, dtInicio, dtFin, TipoMovimiento);
             facturas = facturasGeneral.facturas;
             count = facturasGeneral.rowcount;
            
@@ -217,7 +235,7 @@ else
 
     private async Task LoadInitialData()
     {
-        await LoadData(PageSize, 1);
+        await LoadData(PageSize, 0);
     }
 
     private async void Detete(int id)
@@ -259,7 +277,7 @@ else
     private async Task LoadDataGrig(LoadDataArgs args)
     {
         var fromTo = AppUtils.GetFromTo(args?.Top, args?.Skip);
-        await LoadData(fromTo.From, fromTo.To);
+        await LoadData(args?.Top, args?.Skip);
     }
     
     private async Task Buscar()

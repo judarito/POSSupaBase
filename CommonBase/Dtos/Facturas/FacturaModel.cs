@@ -14,6 +14,7 @@ namespace CommonBase.Dtos.Facturas
         public string? EstadoEntrega { get; set; }
         public DateTime Fecha { get; set; }
         public DateTime FechaVencimiento { get; set; }
+        public decimal TotalFactura { get; set; }
         public List<DetalleFacturaModel>? Detalle { get; set;}
     }
 }
