@@ -37,6 +37,7 @@
     <BlazorWebAssemblyLazyLoad Include="Component.UnidadMedida.dll" />
     <BlazorWebAssemblyLazyLoad Include="Component.Productos.dll" />
     <BlazorWebAssemblyLazyLoad Include="Component.Terceros.dll" />
+    <BlazorWebAssemblyLazyLoad Include="Component.Facturas.dll" />
     
   </ItemGroup>
 
