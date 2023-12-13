@@ -1,0 +1,13 @@
+﻿@page "/facturasnew/{TipoMovimiento}"
+@page "/facturasnew/{id:int}/{TipoMovimiento}"
+@using Component.Facturas.Facturas
+@attribute [Authorize]
+<FacturasNew id="@id" TipoMovimiento="@TipoMovimiento"></FacturasNew>
+
+@code {
+    [Parameter]
+    public int? id { get; set; }
+
+    [Parameter]
+    public string? TipoMovimiento { get; set; }
+}

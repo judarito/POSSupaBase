@@ -1,0 +1,134 @@
+﻿@using CommonBase.Dtos.Terceros;
+@using CommonBase.Dtos.TipoPago;
+@using CommonBase.Dtos.EstadoEntrega;
+@using CommonBase.Services.EstadoEntregaService;
+@using CommonBase.Services.TercerosSevice;
+@using CommonBase.Services.TipoPagoService;
+@inject TercerosService tercerosService
+@inject EstadoEntregaService estadoEntregaService
+@inject TipoPagoService tipoPagoService
+<PageTitle>Facturas</PageTitle>
+
+@if (TipoMovimiento == "COMPRA")
+{
+    <PageTitle>Compras</PageTitle>
+
+    <h3>Actualiza o crea nueva Compra</h3>
+
+}
+else
+{
+    <PageTitle>Ventas</PageTitle>
+
+    <h3>Actualiza o crea nueva Venta</h3>
+
+}
+
+
+<div Class="rz-p-0 rz-p-md-12">
+    <RadzenRow Gap="1rem">
+        <RadzenColumn Size="12" SizeSM="6">
+            <RadzenStack>
+                <RadzenFormField Text="Fecha" Variant="@variant">
+                    <RadzenDatePicker DateFormat="yyyy-MM-dd" Placeholder="Fecha factura" @bind-Value=@dtFactura Name="RadzenDatePickerChangeEvent" />
+                </RadzenFormField>
+                <RadzenFormField Text="Cliente" Variant="@variant">
+                    <RadzenDropDown 
+                                    FilterOperator="StringFilterOperator.Contains" 
+                                    AllowFiltering="true"
+                                    Data=@Terceros 
+                                    TValue="TercerosDto"
+                                    TextProperty="Name" 
+                                    AllowClear="true" 
+                                    @bind-Value=currentTercero
+                                    Style="width: 100%; max-width: 100%;"
+                                    Name="DropDownTerceros"
+                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                     />
+                </RadzenFormField>
+                <RadzenFormField Text="RadzenPassword" Variant="@variant">
+                    <RadzenPassword  />
+                </RadzenFormField>
+                <RadzenFormField Text="RadzenDropDown" Variant="@variant">
+                    <RadzenTextBox />
+                </RadzenFormField>
+                <RadzenFormField Text="RadzenDropDownDataGrid" Variant="@variant">
+                    <RadzenTextBox />
+                </RadzenFormField>
+            </RadzenStack>
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeSM="6">
+            <RadzenStack>
+                <RadzenFormField Text="Estado" Variant="@variant">
+                    <RadzenDropDown FilterOperator="StringFilterOperator.Contains"
+                                    AllowFiltering="true"
+                                    Data=@estadoEntregas
+                                    TValue="EstadoEntregaDto"
+                                    TextProperty="Name"
+                                    AllowClear="true"
+                                    @bind-Value=currentEstadoEntrega
+                                    Style="width: 100%; max-width: 100%;"
+                                    Name="DropDownEstadoEntrega"
+                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" />
+                </RadzenFormField>
+                <RadzenFormField Text="Tipo de Pago" Variant="@variant">
+                    <RadzenDropDown FilterOperator="StringFilterOperator.Contains"
+                                    AllowFiltering="true"
+                                    Data=@tipoPagos
+                                    TValue="TipoPagoDto"
+                                    TextProperty="Name"
+                                    AllowClear="true"
+                                    @bind-Value=currentTipoPago
+                                    Style="width: 100%; max-width: 100%;"
+                                    Name="DropDownEstadoEntrega"
+                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" />
+                </RadzenFormField>
+                <RadzenFormField Text="RadzenTextArea" Variant="@variant">
+                    <RadzenTextBox />
+                </RadzenFormField>
+                <RadzenFormField Text="RadzenRadioButtonList" Variant="@variant">
+                    <RadzenTextBox />
+                </RadzenFormField>
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+
+
+</div>
+
+@code {
+    [Parameter]
+    public int? id { get; set; }
+
+    [Parameter]
+    public string? TipoMovimiento { get; set; }
+
+    Variant variant = Variant.Outlined;
+
+    private List<TercerosDto> Terceros;
+    private TercerosDto currentTercero;
+
+    private List<EstadoEntregaDto> estadoEntregas;
+    private EstadoEntregaDto currentEstadoEntrega;
+
+    private List<TipoPagoDto> tipoPagos;
+    private TipoPagoDto currentTipoPago;
+
+
+    private DateTime dtFactura;
+    RadzenDropDown<string> radzenDropDown;
+   
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        dtFactura = DateTime.Now;
+        Terceros = await tercerosService.GetAll(1,10000,"");
+        estadoEntregas = await estadoEntregaService.GetAll(1, 10000, "");
+        tipoPagos = await tipoPagoService.GetAll(1, 10000, "");
+    }
+
+   
+}

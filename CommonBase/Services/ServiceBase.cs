@@ -42,7 +42,7 @@ namespace CommonBase.Services
               .Delete();
         }
 
-        public async Task<List<TDto>> GetAll(int? from, int? to, string? searchCrieria,Dictionary<string, string> AditionalParmFilter)
+        public async Task<List<TDto>> GetAll(int? from, int? to, string? searchCrieria,Dictionary<string, string> AditionalParmFilter=null)
         {
             var UserInfo = await _localStorage.GetItemAsync<UserInfoLocalStorage>("USER_INFO");
 
