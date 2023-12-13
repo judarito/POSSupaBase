@@ -8,7 +8,6 @@ namespace CommonBase.Dtos.EstadoEntrega
 {
     public class EstadoEntregaDto:DtosBase
     {
-        public string? Cardinalidad { get; set; }
         public bool Active { get; set; }
     }
 }

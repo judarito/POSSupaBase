@@ -1,12 +1,21 @@
-﻿@using CommonBase.Dtos.Terceros;
+﻿@using AutoMapper;
+@using CommonBase.Dtos.Facturas;
+@using CommonBase.Dtos.Productos;
+@using CommonBase.Dtos.Terceros;
+@using CommonBase.Dtos.TipoMovimiento;
+@using CommonBase.Extensions;
 @using CommonBase.Dtos.TipoPago;
 @using CommonBase.Dtos.EstadoEntrega;
 @using CommonBase.Services.EstadoEntregaService;
+@using CommonBase.Services.Factura;
 @using CommonBase.Services.TercerosSevice;
 @using CommonBase.Services.TipoPagoService;
+@using System.Globalization;
 @inject TercerosService tercerosService
 @inject EstadoEntregaService estadoEntregaService
 @inject TipoPagoService tipoPagoService
+@inject IFacturaService facturaService
+@inject IMapper mapper
 <PageTitle>Facturas</PageTitle>
 
 @if (TipoMovimiento == "COMPRA")
@@ -24,77 +33,164 @@ else
 
 }
 
+@if (Terceros is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <RadzenTemplateForm Data="@Factura" Submit="@((FacturaSaveModel args) => { GuardarFactura(args); })">
+        <div Class="rz-p-0 rz-p-md-12">
+            <RadzenRow Gap="1rem">
+                <RadzenColumn Size="12" SizeSM="6">
+                    <RadzenStack>
+                        <RadzenFormField Text="Fecha" Variant="@variant">
+                            <RadzenDatePicker TValue="DateTime"
+                                          DateFormat="yyyy-MM-dd"
+                                          Placeholder="Fecha factura"
+                                          @bind-Value=@dtFactura
+                                          Name="DropDownFechaFactura"
+                                          Change=@(args => ChangeFechaFactura(args)) />
+                            <RadzenRequiredValidator Component="DropDownFechaFactura" Text="Fecha factura requerida" Popup=@popup Style="position: absolute" />
+                        </RadzenFormField>
 
-<div Class="rz-p-0 rz-p-md-12">
-    <RadzenRow Gap="1rem">
-        <RadzenColumn Size="12" SizeSM="6">
-            <RadzenStack>
-                <RadzenFormField Text="Fecha" Variant="@variant">
-                    <RadzenDatePicker DateFormat="yyyy-MM-dd" Placeholder="Fecha factura" @bind-Value=@dtFactura Name="RadzenDatePickerChangeEvent" />
-                </RadzenFormField>
-                <RadzenFormField Text="Cliente" Variant="@variant">
-                    <RadzenDropDown 
-                                    FilterOperator="StringFilterOperator.Contains" 
-                                    AllowFiltering="true"
-                                    Data=@Terceros 
-                                    TValue="TercerosDto"
-                                    TextProperty="Name" 
-                                    AllowClear="true" 
-                                    @bind-Value=currentTercero
-                                    Style="width: 100%; max-width: 100%;"
-                                    Name="DropDownTerceros"
-                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                     />
-                </RadzenFormField>
-                <RadzenFormField Text="RadzenPassword" Variant="@variant">
-                    <RadzenPassword  />
-                </RadzenFormField>
-                <RadzenFormField Text="RadzenDropDown" Variant="@variant">
-                    <RadzenTextBox />
-                </RadzenFormField>
-                <RadzenFormField Text="RadzenDropDownDataGrid" Variant="@variant">
-                    <RadzenTextBox />
-                </RadzenFormField>
-            </RadzenStack>
-        </RadzenColumn>
-        <RadzenColumn Size="12" SizeSM="6">
-            <RadzenStack>
-                <RadzenFormField Text="Estado" Variant="@variant">
-                    <RadzenDropDown FilterOperator="StringFilterOperator.Contains"
-                                    AllowFiltering="true"
-                                    Data=@estadoEntregas
-                                    TValue="EstadoEntregaDto"
-                                    TextProperty="Name"
-                                    AllowClear="true"
-                                    @bind-Value=currentEstadoEntrega
-                                    Style="width: 100%; max-width: 100%;"
-                                    Name="DropDownEstadoEntrega"
-                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" />
-                </RadzenFormField>
-                <RadzenFormField Text="Tipo de Pago" Variant="@variant">
-                    <RadzenDropDown FilterOperator="StringFilterOperator.Contains"
-                                    AllowFiltering="true"
-                                    Data=@tipoPagos
-                                    TValue="TipoPagoDto"
-                                    TextProperty="Name"
-                                    AllowClear="true"
-                                    @bind-Value=currentTipoPago
-                                    Style="width: 100%; max-width: 100%;"
-                                    Name="DropDownEstadoEntrega"
-                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" />
-                </RadzenFormField>
-                <RadzenFormField Text="RadzenTextArea" Variant="@variant">
-                    <RadzenTextBox />
-                </RadzenFormField>
-                <RadzenFormField Text="RadzenRadioButtonList" Variant="@variant">
-                    <RadzenTextBox />
-                </RadzenFormField>
-            </RadzenStack>
-        </RadzenColumn>
-    </RadzenRow>
+                        <RadzenFormField Text="@LabelTercero" Variant="@variant">
+                            <RadzenDropDown FilterOperator="StringFilterOperator.Contains"
+                                        AllowFiltering="true"
+                                        Data=@Terceros
+                                        TValue="TercerosDto"
+                                        TextProperty="Name"
+                                        AllowClear="true"
+                                        @bind-Value=currentTercero
+                                        Style="width: 100%; max-width: 100%;"
+                                        Name="DropDownTerceros"
+                                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" />
+                            <RadzenRequiredValidator Component="DropDownTerceros" Text="Tercero requerido" Popup=@popup Style="position: absolute" />
+                        </RadzenFormField>
 
+                        <RadzenFormField Text="Dias para vencer" Variant="@variant">
+                            <RadzenNumeric Name="DiasVencer" TValue="int" @bind-Value=@DiasVencer
+                                       Change=@(args => ChangeDiasVencimiento(args)) TextAlign="TextAlign.Right" Min="0" I
+                                           nputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "enter value" }})" />
+                            <RadzenRequiredValidator Component="DiasVencer" Text="Dias vencimiento requerido" Popup=@popup Style="position: absolute" />
 
-</div>
+                        </RadzenFormField>
+
+                    </RadzenStack>
+                </RadzenColumn>
+                <RadzenColumn Size="12" SizeSM="6">
+                    <RadzenStack>
+                        <RadzenFormField Text="Estado" Variant="@variant">
+                            <RadzenDropDown FilterOperator="StringFilterOperator.Contains"
+                                        AllowFiltering="true"
+                                        Data=@estadoEntregas
+                                        TValue="EstadoEntregaDto"
+                                        TextProperty="Name"
+                                        AllowClear="true"
+                                        @bind-Value=currentEstadoEntrega
+                                        Style="width: 100%; max-width: 100%;"
+                                        Name="DropDownEstadoEntrega"
+                                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" />
+                            <RadzenRequiredValidator Component="DropDownEstadoEntrega" Text="Estado requerido" Popup=@popup Style="position: absolute" />
+                        </RadzenFormField>
+
+                        <RadzenFormField Text="Tipo de Pago" Variant="@variant">
+                            <RadzenDropDown FilterOperator="StringFilterOperator.Contains"
+                                        AllowFiltering="true"
+                                        Data=@tipoPagos
+                                        TValue="TipoPagoDto"
+                                        TextProperty="Name"
+                                        AllowClear="true"
+                                        @bind-Value=currentTipoPago
+                                        Style="width: 100%; max-width: 100%;"
+                                        Name="DropDownTipoPago"
+                                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" />
+                            <RadzenRequiredValidator Component="DropDownTipoPago" Text="Tipo de pago requerido" Popup=@popup Style="position: absolute" />
+                        </RadzenFormField>
+
+                        <RadzenFormField Text="Fecha Vencimiento" Variant="@variant">
+                            <RadzenDatePicker TValue="DateTime"
+                                          DateFormat="yyyy-MM-dd"
+                                          Min="@dtFactura"
+                                          Placeholder="Fecha Vencimiento"
+                                          @bind-Value=@dtVencimientoFactura
+                                          Name="DtFechaVencimiento"
+                                          Change=@(args => ChangeFechaVencimientoFactura(args)) />
+                            <RadzenRequiredValidator Component="DtFechaVencimiento" Text="Fecha vencimiento requerida" Popup=@popup Style="position: absolute" />
+                        </RadzenFormField>
+
+                    </RadzenStack>
+                </RadzenColumn>
+            </RadzenRow>
+        </div>
+        <div class="rz-p-12 rz-text-align-right" style="margin-top: -26px">
+            <RadzenButton Click=@(args => ShowInlineDialog()) Text="Agregar Producto" Icon="add" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Medium" />
+        </div>
+
+        @if (detalleFacturaUI.Count > 0)
+        {
+            <RadzenFieldset Text="Detalle de la Factura" Icon="fact_check" Style="margin-top: -36px;">
+                <RadzenDataList IsLoading=@isLoading
+                        Data="@detalleFacturaUI"
+                        TItem="DetalleFacturaSaveUIModel"
+                        PagerHorizontalAlign="HorizontalAlign.Left"
+                        ShowPagingSummary="true">
+                    <Template Context="detalleFacturaUI">
+                        <RadzenCard Style="width: 100%; padding: 0;">
+                            <RadzenRow Gap="0">
+                                <RadzenColumn Size="12" SizeLG="3" Class="rz-p-4 product-title">
+                                    <RadzenRow>
+                                        <RadzenColumn>
+                                            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+                                                <RadzenLink Text="Go to url"><RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class="rz-color-secondary">@(detalleFacturaUI.Name)</RadzenText>  </RadzenLink>
+                                                </RadzenStack>
+                                            </RadzenColumn>
+                                            <RadzenColumn>
+                                                <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.End" Gap="0">
+                                                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Gap="8">
+                                                        <button type="button" onclick="@(()=> Detete(detalleFacturaUI))" class="btn btn-danger"><spam class="fa fa-trash-o" aria-hidden="true"></spam></button>
+                                                    </RadzenStack>
+                                                </RadzenStack>
+                                            </RadzenColumn>
+                                        </RadzenRow>
+
+                                    </RadzenColumn>
+                                    <RadzenColumn Size="12" SizeLG="7" Class="rz-p-4">
+                                        <RadzenRow Gap="1">
+                                            <RadzenColumn Size="12" SizeMD="6" SizeLG="4">
+                                                <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Cantidad:</RadzenText>
+                                                <RadzenText TextStyle="TextStyle.Body2">@(detalleFacturaUI.cantidad)</RadzenText>
+                                            </RadzenColumn>
+                                            <RadzenColumn Size="12" SizeMD=" 6" SizeLG="2">
+                                                <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Costo:</RadzenText>
+                                                <RadzenText TextStyle="TextStyle.Body2">@(detalleFacturaUI.costo)</RadzenText>
+                                            </RadzenColumn>
+                                            <RadzenColumn Size="12" SizeMD="6" SizeLG="3" Class="rz-text-align-start rz-text-align-lg-end">
+                                                <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Vlr Unitario:</RadzenText>
+                                                <RadzenBadge BadgeStyle="BadgeStyle.Secondary" Shade="Shade.Lighter" class="price-badge" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}",detalleFacturaUI.pvp)}") />
+                                            </RadzenColumn>
+                                            <RadzenColumn Size="12" SizeMD="6" SizeLG="3" Class="rz-text-align-start rz-text-align-lg-end">
+                                                <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Sub Total:</RadzenText>
+                                                <RadzenBadge BadgeStyle="BadgeStyle.Secondary" Shade="Shade.Lighter" class="price-badge" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}",detalleFacturaUI.Subtotal)}") />
+                                            </RadzenColumn>
+                                        </RadzenRow>
+                                    </RadzenColumn>
+                                </RadzenRow>
+                            </RadzenCard>
+                        </Template>
+                    </RadzenDataList>
+                </RadzenFieldset>
+
+            <div class="rz-p-12 rz-text-align-center">
+
+                <RadzenButton style="width: 160px;" Icon="save" BusyText="Guardando ..." IsBusy=@busy ButtonType="ButtonType.Submit" Text="Guardar" />
+
+            </div>
+        }
+    </RadzenTemplateForm>
+
+}
+
 
 @code {
     [Parameter]
@@ -104,6 +200,9 @@ else
     public string? TipoMovimiento { get; set; }
 
     Variant variant = Variant.Outlined;
+    bool popup = true;
+    private List<ProductosDto> productos;
+    private ProductosDto currentProducto;
 
     private List<TercerosDto> Terceros;
     private TercerosDto currentTercero;
@@ -114,21 +213,229 @@ else
     private List<TipoPagoDto> tipoPagos;
     private TipoPagoDto currentTipoPago;
 
+    public List<TipoMovimientoDto>? TiposMov;
 
+
+    bool busy;
     private DateTime dtFactura;
-    RadzenDropDown<string> radzenDropDown;
-   
+    private DateTime dtVencimientoFactura;
+    RadzenDropDown<ProductosDto> radzenDropDown;
+    private int DiasVencer;
+    private decimal Cantidad;
+    private decimal Costo;
+    private decimal PVP;
+    private bool isLoading { get; set; }
+    private string LabelTercero = "";
+
+    private FacturaSaveModel Factura;
+    private List<DetalleFacturaSaveModel>? detalleFactura;
+    private List<DetalleFacturaSaveUIModel>? detalleFacturaUI;
+    private DetalleFacturaSaveUIModel? currentFacturaUI;
+
 
 
     protected async override Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+        Factura = new FacturaSaveModel();
+        detalleFacturaUI = new List<DetalleFacturaSaveUIModel>();
+        detalleFactura = new List<DetalleFacturaSaveModel>();
 
         dtFactura = DateTime.Now;
-        Terceros = await tercerosService.GetAll(1,10000,"");
-        estadoEntregas = await estadoEntregaService.GetAll(1, 10000, "");
-        tipoPagos = await tipoPagoService.GetAll(1, 10000, "");
+        dtVencimientoFactura = DateTime.Now;
+        LabelTercero = TipoMovToTipoTercero(TipoMovimiento).ToLower().ToCamelCase();
+        var aditionaData = await facturaService.GetAditionalData(TipoMovToTipoTercero(TipoMovimiento));
+
+
+        Terceros = aditionaData.Terceros;
+        estadoEntregas = aditionaData.Estados;
+        tipoPagos = aditionaData.TiposPago;
+        productos = aditionaData.Productos;
+        TiposMov = aditionaData.TipoMov;
+
     }
 
-   
+    void ChangeDiasVencimiento(int dias)
+    {
+        if (dias < DiasVencer) dias = dias * -1;
+        dtVencimientoFactura = (dtFactura).AddDays(dias);
+        StateHasChanged();
+
+    }
+
+    void ChangeFechaFactura(DateTime? fecha)
+    {
+        if (fecha is not null)
+            dtVencimientoFactura = (DateTime)fecha;
+
+        DiasVencer = 0;
+
+    }
+
+    void ChangeFechaVencimientoFactura(DateTime? fecha)
+    {
+        if (fecha is not null)
+            DiasVencer = ((DateTime)fecha - dtFactura).Days + 1;
+
+        StateHasChanged();
+    }
+
+    private void Detete(DetalleFacturaSaveUIModel item)
+    {
+        detalleFacturaUI.Remove(item);
+        StateHasChanged();
+    }
+
+    private void AddProduct(DetalleFacturaSaveUIModel item)
+    {
+        if (currentProducto == null)
+        {
+            AppUtils.ShowNotify("Debe seleccionar un producto!", "WARNING", Ns);
+            return;
+        }
+
+        if (currentProducto.Id <= 0)
+        {
+            AppUtils.ShowNotify("Debe seleccionar un producto!", "WARNING", Ns);
+            return;
+        }
+
+
+        var existProduct = detalleFacturaUI.FirstOrDefault(x => x.idproducto == currentProducto.Id);
+        if (existProduct is not null)
+        {
+            item.cantidad += existProduct.cantidad;
+            detalleFacturaUI.Remove(existProduct);
+        }
+        item.Subtotal = item.cantidad * item.pvp;
+
+        if (TipoMovimiento == "VENTA")
+        {
+            item.costo = 0;
+        }
+
+        detalleFacturaUI.Add(new DetalleFacturaSaveUIModel
+                {
+                    cantidad = item.cantidad,
+                    costo = item.costo,
+                    pvp = item.pvp,
+                    idproducto = currentProducto.Id,
+                    Name = currentProducto.Name,
+                    Subtotal = item.Subtotal
+                });
+
+        currentFacturaUI = new DetalleFacturaSaveUIModel();
+        currentProducto = null;
+        StateHasChanged();
+    }
+
+    private async void GuardarFactura(FacturaSaveModel arg)
+    {
+        busy = true;
+        try
+        {
+            if (detalleFacturaUI.Count <= 0)
+            {
+                AppUtils.ShowNotify("Debe agregar productos a la factura!", "WARNING", Ns);
+                return;
+            }
+
+            var tipoMov = TiposMov.FirstOrDefault(x => x.Code == TipoMovimiento);
+
+            Factura.FechaFactura = dtFactura.ToString("yyyy-MM-dd");
+            Factura.DiasVencimiento = DiasVencer;
+            Factura.FechaVencimiento = dtVencimientoFactura.ToString("yyyy-MM-dd");
+            Factura.IdEstadoEntrega = currentEstadoEntrega.Id;
+            Factura.IdTipoPago = currentTipoPago.Id;
+            Factura.IdTercero = currentTercero.Id;
+            Factura.IdTipoMovimiento = tipoMov.Id;
+            Factura.Detalle = mapper.Map<List<DetalleFacturaSaveModel>>(detalleFacturaUI);
+            await facturaService.SaveOrUpdate(Factura);
+            AppUtils.ShowNotify("Información guardada de manera exitosa", "OK", Ns);
+            Navigation.NavigateTo($"facturas/{TipoMovimiento}");
+        }
+        catch (Exception ex)
+        {
+            AppUtils.ShowNotify(ex.Message, "ERROR", Ns);
+        }
+        finally
+
+        {
+            busy = false;
+        }
+
+    }
+
+    private string TipoMovToTipoTercero(string TipoMovimiento)
+    {
+        if (TipoMovimiento == "COMPRA")
+        {
+            return "PROVEEDOR";
+        }
+        return "CLIENTE";
+    }
+    int orderID = 10248;
+    async Task ShowInlineDialog()
+    {
+        currentFacturaUI = new DetalleFacturaSaveUIModel();
+        currentProducto = null;
+        var result = await DialogService.OpenAsync("Adicionar Producto", ds =>
+    @<RadzenStack Gap="1.5rem">
+        <RadzenTemplateForm Data="@currentFacturaUI" Submit="@((DetalleFacturaSaveUIModel args) => { AddProduct(args); })">
+            <RadzenStack Orientation="Orientation.Vertical" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                <RadzenRow Gap="1rem" Style="width:100%">
+                    <RadzenColumn Size="12" SizeSM="12">
+                        <RadzenStack>
+                            <RadzenFormField Text="Producto" Variant="@variant">
+                                <RadzenDropDown FilterOperator="StringFilterOperator.Contains"
+                                            AllowFiltering="true"
+                                            Data=@productos
+                                            TValue="ProductosDto"
+                                            TextProperty="Name"
+                                            AllowClear="true"
+                                                @bind-Value=currentProducto
+                                            Style="width: 100%; max-width: 100%;"
+                                            Name="DropDownProducto"
+                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" />
+
+                            </RadzenFormField>
+                            <RadzenFormField Text="Cantidad" Variant="@variant">
+                                <RadzenNumeric Name="txtCantidad" TValue="decimal" @bind-Value=@currentFacturaUI.cantidad
+                                           TextAlign="TextAlign.Right" Min="1" I
+                                           nputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "enter value" }})" />
+                                <RadzenRequiredValidator Component="txtCantidad" Text="Cantidad requerida" Popup=@popup Style="position: absolute" />
+                                <RadzenNumericRangeValidator Component="txtCantidad" Min="1" Text="Cantidad debe ser mayor a 1" Popup=@popup Style="position: absolute" />
+                            </RadzenFormField>
+                            @if (TipoMovimiento == "COMPRA")
+                            {
+                                <RadzenFormField Text="Costo" Variant="@variant">
+                                    <RadzenNumeric Name="txtCosto" TValue="decimal" @bind-Value=@currentFacturaUI.costo
+                                           TextAlign="TextAlign.Right" Min="0" I
+                                               nputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "enter value" }})" />
+                                    <RadzenRequiredValidator Component="txtCosto" Text="Costo requerido" Popup=@popup Style="position: absolute" />
+                                    <RadzenNumericRangeValidator Component="txtCosto" Min="1" Text="Costo debe ser mayor a 1" Popup=@popup Style="position: absolute" />
+                                </RadzenFormField>
+                            }
+
+
+                            <RadzenFormField Text="Precio de Venta" Variant="@variant">
+                                <RadzenNumeric Name="txtPvp" TValue="decimal" @bind-Value=@currentFacturaUI.pvp
+                                           TextAlign="TextAlign.Right" Min="0" I
+                                           nputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "enter value" }})" />
+                                <RadzenRequiredValidator Component="txtPvp" Text="Precio de venta requerido" Popup=@popup Style="position: absolute" />
+                                <RadzenNumericRangeValidator Component="txtPvp" Min="1" Text="Precio de venta debe ser mayor a 1" Popup=@popup Style="position: absolute" />
+                            </RadzenFormField>
+                        </RadzenStack>
+                    </RadzenColumn>
+
+                </RadzenRow>
+                <RadzenStack Orientation="Orientation.Horizontal">
+                    <RadzenButton Text="Ok" ButtonType="ButtonType.Submit" Style="width: 80px;" />
+                    <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+                </RadzenStack>
+            </RadzenStack>
+        </RadzenTemplateForm>
+    </RadzenStack>);
+    }
+
 }

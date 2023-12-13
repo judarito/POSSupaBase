@@ -9,7 +9,9 @@ namespace CommonBase.Dtos.TipoMovimiento
     public class TipoMovimientoDto:DtosBase
     {
         public int Cardinalidad { get; set; }
-       
+
+        public string? Code { get; set; }
+
         public bool Active { get; set; }
     }
 }

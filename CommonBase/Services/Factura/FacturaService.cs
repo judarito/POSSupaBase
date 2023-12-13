@@ -35,6 +35,34 @@ namespace CommonBase.Services.Factura
             }
         }
 
+        public async Task<DatosAdicionalesFactura> GetAditionalData(string TipoTercero)
+        {
+            DatosAdicionalesFactura aditionalData = new DatosAdicionalesFactura();
+
+            var UserInfo = await _localStorage.GetItemAsync<UserInfoLocalStorage>("USER_INFO");
+
+            try
+            {
+                var result = await _client.Rpc("getdatosadicionales", new Dictionary<string, object> {                                                                                                    
+                                                                                                        { "idtenant", UserInfo.TenantId },
+                                                                                                        { "tipotercero", TipoTercero },
+                                                                                                      });
+
+                if (result != null)
+                {
+                    string content = result.Content.ToString().Replace("'", "");
+                    aditionalData = JsonSerializer.Deserialize<DatosAdicionalesFactura>(content);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return aditionalData;
+
+        }
+
         public async Task<FacturasModel> GetAll(int? from, int? to, string? searchCrieria, DateTime DtInicio, DateTime DtFin,string TipoMovimiento)
         {
             FacturasModel facturaResult = new FacturasModel();

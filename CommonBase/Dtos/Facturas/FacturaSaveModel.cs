@@ -10,10 +10,12 @@ namespace CommonBase.Dtos.Facturas
     {
         public int Id { get; set; }
         public string? FechaFactura { get; set; }
+        public string? FechaVencimiento { get; set; }
         public int IdTipoMovimiento { get; set; }
         public int IdTipoPago { get; set; }
         public int IdTercero { get; set; }
         public int IdEstadoEntrega { get; set; }
+        public int DiasVencimiento { get; set; }
         public List<DetalleFacturaSaveModel>? Detalle { get; set; }
 
         
