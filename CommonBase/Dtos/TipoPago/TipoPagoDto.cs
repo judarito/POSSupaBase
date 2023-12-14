@@ -10,6 +10,7 @@ namespace CommonBase.Dtos.TipoPago
     {
        
         public string? Cardinalidad { get; set; }
+        public string? Code { get; set; }
        
         public bool Active { get; set; }
     }
