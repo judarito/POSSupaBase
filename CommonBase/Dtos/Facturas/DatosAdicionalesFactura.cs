@@ -17,7 +17,7 @@ namespace CommonBase.Dtos.Facturas
         public List<TercerosDto>? Terceros { get; set; }
         public List<TipoPagoDto>? TiposPago { get; set; }
         public List<EstadoEntregaDto>? Estados { get; set; }
-        public List<ProductosDto>? Productos { get; set; }
+        public List<ProductosFacturaDto>? Productos { get; set; }
         public List<TipoMovimientoDto>? TipoMov { get; set; }
     }
 }

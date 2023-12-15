@@ -208,6 +208,7 @@ else
             <div class="rz-p-12 rz-text-align-center">
 
                 <RadzenButton style="width: 160px;" Icon="save" BusyText="Guardando ..." IsBusy=@busy ButtonType="ButtonType.Submit" Text="Guardar" />
+                <RadzenButton style="width: 160px;" Icon="cancel" Text="Regresar" Click="@Cancel" ButtonStyle="ButtonStyle.Light" />
 
             </div>
         }
@@ -237,8 +238,8 @@ else
 
     Variant variant = Variant.Outlined;
     bool popup = true;
-    private List<ProductosDto> productos;
-    private ProductosDto currentProducto;
+    private List<ProductosFacturaDto> productos;
+    private ProductosFacturaDto currentProducto;
 
     private List<TercerosDto> Terceros;
     private TercerosDto currentTercero;
@@ -257,10 +258,10 @@ else
     private DateTime dtVencimientoFactura;
     RadzenDropDown<ProductosDto> radzenDropDown;
     private int DiasVencer;
-    private decimal Cantidad=1;
+    private decimal Cantidad = 1;
     private decimal Costo;
     private decimal Subtotal;
-    private decimal PVP;
+    private decimal PVP { get; set; }
     private bool isLoading { get; set; }
     private string LabelTercero = "";
     private bool isCredito = false;
@@ -271,6 +272,7 @@ else
     private List<DetalleFacturaSaveUIModel>? detalleFacturaUI;
     private DetalleFacturaSaveUIModel? currentFacturaUI;
     private FacturaModel facturaToUpdate;
+    private bool NotAvailable = false;
 
 
 
@@ -292,6 +294,7 @@ else
         productos = aditionaData.Productos;
         TiposMov = aditionaData.TipoMov;
         totalFactura = 0;
+        PVP = 0;
 
         if (id != null && id > 0)
         {
@@ -308,18 +311,18 @@ else
                 isCredito = false;
                 if (currentTipoPago.Code == "CREDITO") isCredito = true;
                 facturaToUpdate.Detalle.ForEach(item =>
-                        {
-                            detalleFacturaUI.Add(new DetalleFacturaSaveUIModel
-                                    {
-                                        cantidad = item.Cantidad,
-                                        costo = item.Costo,
-                                        idproducto = item.IdProducto,
-                                        Name = item.Nombre,
-                                        pvp = item.PVP,
-                                        Subtotal = item.Cantidad * item.PVP
-                                    });
-                            totalFactura = GetTotalFactura();
-                        });
+                    {
+                        detalleFacturaUI.Add(new DetalleFacturaSaveUIModel
+                                {
+                                    cantidad = item.Cantidad,
+                                    costo = item.Costo,
+                                    idproducto = item.IdProducto,
+                                    Name = item.Nombre,
+                                    pvp = item.PVP,
+                                    Subtotal = item.Cantidad * item.PVP
+                                });
+                        totalFactura = GetTotalFactura();
+                    });
 
             }
             catch (Exception ex)
@@ -336,6 +339,26 @@ else
         dtVencimientoFactura = (dtFactura).AddDays(dias);
         StateHasChanged();
 
+    }
+
+
+    async void ChangeProducto(object e)
+    {
+        ProductosFacturaDto selectedProduct = (ProductosFacturaDto)e;
+        if (selectedProduct is not null)
+        {
+            if (selectedProduct.PvP > 0 && TipoMovimiento == "VENTA")
+            {
+                this.PVP = (decimal)selectedProduct.PvP;
+
+            }
+
+           
+           
+
+            DialogService.Refresh(); 
+
+        }
     }
 
     void ChangeTipoPago(object e)
@@ -387,6 +410,14 @@ else
             return;
         }
 
+        NotAvailable = (bool)currentProducto.UseStok && (currentProducto.Cantidad - Cantidad) < 0;
+        if (NotAvailable)
+        {
+            AppUtils.ShowNotify("El producto no tiene unidades disponibles!", "WARNING", Ns);
+            return;
+        }
+
+
 
         var existProduct = detalleFacturaUI.FirstOrDefault(x => x.idproducto == currentProducto.Id);
         if (existProduct is not null)
@@ -418,7 +449,8 @@ else
         Subtotal = 0;
 
         currentFacturaUI = new DetalleFacturaSaveUIModel();
-        currentProducto = null;
+        currentProducto = new ProductosFacturaDto();
+        DialogService.Refresh();
         StateHasChanged();
     }
 
@@ -435,7 +467,7 @@ else
 
             dtFactura = dtFactura.AddDays(1);
             dtVencimientoFactura = dtVencimientoFactura.AddDays(1);
-          
+
 
             var tipoMov = TiposMov.FirstOrDefault(x => x.Code == TipoMovimiento);
             Factura.Id = (id is null ? 0 : (int)id);
@@ -472,12 +504,29 @@ else
         return "CLIENTE";
     }
 
+    void Cancel()
+    {
+        Navigation.NavigateTo($"facturas/{TipoMovimiento}");
+    }
+    
+
+
     async Task ShowInlineDialog()
     {
         currentFacturaUI = new DetalleFacturaSaveUIModel();
-        currentProducto = null;
+        currentProducto = new ProductosFacturaDto();
+        Cantidad = 1;
+        Costo = 0;
+        PVP = 0;
+        DialogService.Refresh();
         var result = await DialogService.OpenAsync("Adicionar Producto", ds =>
     @<RadzenStack Gap="1.5rem">
+       
+        <RadzenBadge Style="font-size: medium;"
+                 BadgeStyle="BadgeStyle.Secondary"
+                 Shade="Shade.Lighter"
+                 class="price-badge"
+                 Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "Total Factura: {0:C}",totalFactura)}") />
         <RadzenTemplateForm Data="@currentFacturaUI" Submit="@((DetalleFacturaSaveUIModel args) => { AddProduct(args); })">
             <RadzenStack Orientation="Orientation.Vertical" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
                 <RadzenRow Gap="1rem" Style="width:100%">
@@ -487,13 +536,15 @@ else
                                 <RadzenDropDown FilterOperator="StringFilterOperator.Contains"
                                             AllowFiltering="true"
                                             Data=@productos
-                                            TValue="ProductosDto"
+                                            TValue="ProductosFacturaDto"
                                             TextProperty="Name"
                                             AllowClear="true"
                                                 @bind-Value=currentProducto
                                             Style="width: 100%; max-width: 100%;"
                                             Name="DropDownProducto"
-                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" />
+                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                            Change="@(args => ChangeProducto(args))"
+                                            />
 
                             </RadzenFormField>
                             <RadzenFormField Text="Cantidad" Variant="@variant">
@@ -515,10 +566,11 @@ else
                             }
 
 
-                            <RadzenFormField Text="Precio de Venta" Variant="@variant">
-                                <RadzenNumeric Name="txtPvp" TValue="decimal" @bind-Value=@PVP
-                                           TextAlign="TextAlign.Right" Min="0" I
-                                           nputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "enter value" }})" />
+                            <RadzenFormField Text="Precio de Venta $" Variant="@variant">
+                                <RadzenNumeric Name="txtPvp" @bind-Value=@PVP
+                                           TextAlign="TextAlign.Right" 
+                                           Min="0" 
+                                           InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "enter value" }})" />
                                 <RadzenRequiredValidator Component="txtPvp" Text="Precio de venta requerido" Popup=@popup Style="position: absolute" />
                                 <RadzenNumericRangeValidator Component="txtPvp" Min="1" Text="Precio de venta debe ser mayor a 1" Popup=@popup Style="position: absolute" />
                             </RadzenFormField>
