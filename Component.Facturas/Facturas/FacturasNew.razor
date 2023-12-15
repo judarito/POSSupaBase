@@ -1,5 +1,6 @@
 ﻿@using AutoMapper;
 @using CommonBase.Dtos.Facturas;
+@using CommonBase.Dtos.Errors;
 @using CommonBase.Dtos.Productos;
 @using CommonBase.Dtos.Terceros;
 @using CommonBase.Dtos.TipoMovimiento;
@@ -11,6 +12,7 @@
 @using CommonBase.Services.TercerosSevice;
 @using CommonBase.Services.TipoPagoService;
 @using System.Globalization;
+@using System.Text.Json;
 @inject TercerosService tercerosService
 @inject EstadoEntregaService estadoEntregaService
 @inject TipoPagoService tipoPagoService
@@ -42,7 +44,7 @@ else
     <RadzenTemplateForm Data="@Factura" Submit="@((FacturaSaveModel args) => { GuardarFactura(args); })">
 
         <div Class="rz-p-0 rz-p-md-12">
-            <RadzenFieldset Text="Cabecera de la Factura" Icon="receipt" Style="margin-top: -36px;">
+            <RadzenFieldset Text="Cabecera de la Factura" Icon="receipt" Style="margin-top: 0px;">
                 <RadzenRow Gap="1rem">
                     <RadzenColumn Size="12" SizeSM="6">
                         <RadzenStack>
@@ -52,7 +54,9 @@ else
                                               Placeholder="Fecha factura"
                                               @bind-Value=@dtFactura
                                               Name="DropDownFechaFactura"
-                                              Change=@(args => ChangeFechaFactura(args)) />
+                                              Change=@(args => ChangeFechaFactura(args)) 
+                                              Disabled="isReadonly"
+                                              />
                                 <RadzenRequiredValidator Component="DropDownFechaFactura" Text="Fecha factura requerida" Popup=@popup Style="position: absolute" />
                             </RadzenFormField>
 
@@ -66,15 +70,20 @@ else
                                             @bind-Value=currentTercero
                                             Style="width: 100%; max-width: 100%;"
                                             Name="DropDownTerceros"
-                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" />
+                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" 
+                                            Disabled="isReadonly" />
                                 <RadzenRequiredValidator Component="DropDownTerceros" Text="Tercero requerido" Popup=@popup Style="position: absolute" />
                             </RadzenFormField>
                             @if (isCredito)
                             {
                                 <RadzenFormField Text="Dias para vencer" Variant="@variant">
-                                    <RadzenNumeric Name="DiasVencer" TValue="int" @bind-Value=@DiasVencer
-                                           Change=@(args => ChangeDiasVencimiento(args)) TextAlign="TextAlign.Right" Min="0" I
-                                                   nputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "enter value" }})" />
+                                    <RadzenNumeric Name="DiasVencer" 
+                                        TValue="int" 
+                                        @bind-Value=@DiasVencer
+                                        Change=@(args => ChangeDiasVencimiento(args)) 
+                                        TextAlign="TextAlign.Right" Min="0" I
+                                        nputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "enter value" }})"
+                                           Disabled="isReadonly" />
                                     <RadzenRequiredValidator Component="DiasVencer" Text="Dias vencimiento requerido" Popup=@popup Style="position: absolute" />
 
                                 </RadzenFormField>
@@ -94,7 +103,8 @@ else
                                             @bind-Value=currentEstadoEntrega
                                             Style="width: 100%; max-width: 100%;"
                                             Name="DropDownEstadoEntrega"
-                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" />
+                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                             />
                                 <RadzenRequiredValidator Component="DropDownEstadoEntrega" Text="Estado requerido" Popup=@popup Style="position: absolute" />
                             </RadzenFormField>
 
@@ -109,7 +119,8 @@ else
                                             Style="width: 100%; max-width: 100%;"
                                             Name="DropDownTipoPago"
                                             FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                            SelectedItemChanged="@(args => ChangeTipoPago(args))" />
+                                            SelectedItemChanged="@(args => ChangeTipoPago(args))" 
+                                            Disabled="isReadonly" />
                                 <RadzenRequiredValidator Component="DropDownTipoPago" Text="Tipo de pago requerido" Popup=@popup Style="position: absolute" />
                             </RadzenFormField>
                             @if (isCredito)
@@ -121,7 +132,8 @@ else
                                               Placeholder="Fecha Vencimiento"
                                               @bind-Value=@dtVencimientoFactura
                                               Name="DtFechaVencimiento"
-                                              Change=@(args => ChangeFechaVencimientoFactura(args)) />
+                                              Change=@(args => ChangeFechaVencimientoFactura(args)) 
+                                              Disabled="isReadonly" />
                                     <RadzenRequiredValidator Component="DtFechaVencimiento" Text="Fecha vencimiento requerida" Popup=@popup Style="position: absolute" />
                                 </RadzenFormField>
                             }
@@ -136,7 +148,7 @@ else
         <div class="rz-p-12 rz-text-align-right" style="margin-top: -26px">
             <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.End" Gap="10">
 
-                <RadzenButton Click=@(args => ShowInlineDialog()) Text="Agregar Producto" Icon="add" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Medium" />
+                <RadzenButton Visible="@IsVisibleReadOnly()" Click=@(args => ShowInlineDialog()) Text="Agregar Producto" Icon="add" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Medium" />
             </RadzenStack>
         </div>
 
@@ -207,7 +219,7 @@ else
 
             <div class="rz-p-12 rz-text-align-center">
 
-                <RadzenButton style="width: 160px;" Icon="save" BusyText="Guardando ..." IsBusy=@busy ButtonType="ButtonType.Submit" Text="Guardar" />
+                <RadzenButton style="width: 160px;"  Icon="save" BusyText="Guardando ..." IsBusy=@busy ButtonType="ButtonType.Submit" Text="Guardar" />
                 <RadzenButton style="width: 160px;" Icon="cancel" Text="Regresar" Click="@Cancel" ButtonStyle="ButtonStyle.Light" />
 
             </div>
@@ -238,6 +250,7 @@ else
 
     Variant variant = Variant.Outlined;
     bool popup = true;
+    bool isReadonly = false;
     private List<ProductosFacturaDto> productos;
     private ProductosFacturaDto currentProducto;
 
@@ -300,6 +313,7 @@ else
         {
             try
             {
+                isReadonly = true;
                 detalleFacturaUI.Clear();
                 facturaToUpdate = await facturaService.GetById((int)id);
                 currentTercero = Terceros.FirstOrDefault(x => x.Id == facturaToUpdate.IdTercero);
@@ -353,8 +367,8 @@ else
 
             }
 
-           
-           
+
+
 
             DialogService.Refresh(); 
 
@@ -410,12 +424,12 @@ else
             return;
         }
 
-        NotAvailable = (bool)currentProducto.UseStok && (currentProducto.Cantidad - Cantidad) < 0;
-        if (NotAvailable)
-        {
-            AppUtils.ShowNotify("El producto no tiene unidades disponibles!", "WARNING", Ns);
-            return;
-        }
+        //NotAvailable = (bool)currentProducto.UseStok && (currentProducto.Cantidad - Cantidad) < 0;
+        //if (NotAvailable)
+        //{
+        //    AppUtils.ShowNotify("El producto no tiene unidades disponibles!", "WARNING", Ns);
+        //    return;
+        //}
 
 
 
@@ -485,14 +499,20 @@ else
         }
         catch (Exception ex)
         {
-            AppUtils.ShowNotify(ex.Message, "ERROR", Ns);
+            string msjError = ex.Message;
+            if (ex.Message.Contains("code"))
+            {
+                var mensaje = JsonSerializer.Deserialize<ErrorFacturaDto>(ex.Message);
+                msjError = mensaje.message;
+            }
+            AppUtils.ShowNotify(msjError, "ERROR", Ns);
         }
         finally
 
         {
             busy = false;
         }
-
+        StateHasChanged();
     }
 
     private string TipoMovToTipoTercero(string TipoMovimiento)
@@ -509,8 +529,6 @@ else
         Navigation.NavigateTo($"facturas/{TipoMovimiento}");
     }
     
-
-
     async Task ShowInlineDialog()
     {
         currentFacturaUI = new DetalleFacturaSaveUIModel();
@@ -584,7 +602,7 @@ else
                 </RadzenStack>
             </RadzenStack>
         </RadzenTemplateForm>
-    </RadzenStack>
+            </RadzenStack>
     );
     }
 
@@ -592,6 +610,13 @@ else
     {
         var total = detalleFacturaUI.Select(x => x.Subtotal).Sum();
         return total;
+    }
+
+
+    private bool IsVisibleReadOnly()
+    {
+        return !this.isReadonly;
+
     }
 
 }

@@ -26,7 +26,7 @@ namespace CommonBase.Services.Factura
         {
             try
             {
-                 await _client.Rpc("deletefactura", new Dictionary<string, object> { { "idfactura", IdFactura }, });
+                await _client.Rpc("deletefactura", new Dictionary<string, object> { { "idfactura", IdFactura }, });
 
             }
             catch (Exception ex)
@@ -40,39 +40,30 @@ namespace CommonBase.Services.Factura
             DatosAdicionalesFactura aditionalData = new DatosAdicionalesFactura();
 
             var UserInfo = await _localStorage.GetItemAsync<UserInfoLocalStorage>("USER_INFO");
-
-            try
-            {
-                var result = await _client.Rpc("getdatosadicionales", new Dictionary<string, object> {                                                                                                    
+            var result = await _client.Rpc("getdatosadicionales", new Dictionary<string, object> {
                                                                                                         { "idtenant", UserInfo.TenantId },
                                                                                                         { "tipotercero", TipoTercero },
                                                                                                       });
 
-                if (result != null)
-                {
-                    string content = result.Content.ToString().Replace("'", "");
-                    aditionalData = JsonSerializer.Deserialize<DatosAdicionalesFactura>(content);
-
-                }
-            }
-            catch (Exception ex)
+            if (result != null)
             {
-                Console.WriteLine(ex.Message);
+                string content = result.Content.ToString().Replace("'", "");
+                aditionalData = JsonSerializer.Deserialize<DatosAdicionalesFactura>(content);
+
             }
+
             return aditionalData;
 
         }
 
-        public async Task<FacturasModel> GetAll(int? from, int? to, string? searchCrieria, DateTime DtInicio, DateTime DtFin,string TipoMovimiento)
+        public async Task<FacturasModel> GetAll(int? from, int? to, string? searchCrieria, DateTime DtInicio, DateTime DtFin, string TipoMovimiento)
         {
             FacturasModel facturaResult = new FacturasModel();
 
             var UserInfo = await _localStorage.GetItemAsync<UserInfoLocalStorage>("USER_INFO");
-            try
-            {
 
 
-                var result = await _client.Rpc("getallfactura", new Dictionary<string, object> {
+            var result = await _client.Rpc("getallfactura", new Dictionary<string, object> {
                                                                                                     { "pagesize", from },
                                                                                                     { "paso", to },
                                                                                                     { "criteria", searchCrieria },
@@ -83,60 +74,45 @@ namespace CommonBase.Services.Factura
                                                                                                });
 
 
-                if (result != null)
-                {
-                    string content = result.Content.ToString().Replace("'", "");
-                    facturaResult = JsonSerializer.Deserialize<FacturasModel>(content);
-                   
-                }
-            }
-            catch (Exception ex)
+            if (result != null)
             {
-                Console.WriteLine(ex.Message);
+                string content = result.Content.ToString().Replace("'", "");
+                facturaResult = JsonSerializer.Deserialize<FacturasModel>(content);
+
             }
+
             return facturaResult;
         }
 
         public async Task<FacturaModel> GetById(int IdFactura)
         {
             FacturaModel facturaResult = new FacturaModel();
-            try
-            {
-                var result = await _client.Rpc("getfactura", new Dictionary<string, object> {{ "idfactura", IdFactura },});
 
-                if (result != null)
-                {
-                    string content = result.Content.ToString().Replace("'", "");
-                    facturaResult = JsonSerializer.Deserialize<FacturaModel>(content);
-                    
-                }
-            }
-            catch (Exception ex)
+            var result = await _client.Rpc("getfactura", new Dictionary<string, object> { { "idfactura", IdFactura }, });
+
+            if (result != null)
             {
-                Console.WriteLine(ex.Message);
+                string content = result.Content.ToString().Replace("'", "");
+                facturaResult = JsonSerializer.Deserialize<FacturaModel>(content);
+
             }
             return facturaResult;
         }
         public async Task SaveOrUpdate(FacturaSaveModel facturaDto)
         {
-             var UserInfo = await _localStorage.GetItemAsync<UserInfoLocalStorage>("USER_INFO");
+            var UserInfo = await _localStorage.GetItemAsync<UserInfoLocalStorage>("USER_INFO");
 
-            try
-            {
-                string jsonData=  JsonSerializer.Serialize<FacturaSaveModel>(facturaDto);
-                var result = await _client.Rpc("insertfactura", new Dictionary<string, object> {
+
+            string jsonData = JsonSerializer.Serialize<FacturaSaveModel>(facturaDto);
+            var result = await _client.Rpc("insertfactura", new Dictionary<string, object> {
                                                                                                 { "jsonfactura", jsonData },
                                                                                                 { "idtenant", UserInfo.TenantId },
                                                                                                });
 
-                
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+
+
         }
 
-       
+
     }
 }
