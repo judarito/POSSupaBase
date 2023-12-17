@@ -7,6 +7,7 @@
 @inject AuthService AuthService
 @inject NavigationManager Navigation
 @inject IFacturaService facturaService
+@inject IWorkerFactory workerFactory
 
 
 
@@ -70,7 +71,28 @@
         {
             await AuthService.Login(args.Username, args.Password);
 
+            //var worker = await workerFactory.CreateAsync();
 
+            //var service = await worker.CreateBackgroundServiceAsync<FacturaService>(
+            //    options => options.AddAssemblies("CommonBase.dll", 
+            //                                    "Supabase.dll", 
+            //                                    "Supabase.Gotrue.dll",
+            //                                    "Supabase.Core.dll",
+            //                                    "Supabase.Functions.dll",
+            //                                    "Supabase.Postgrest.dll",
+            //                                    "Supabase.Realtime.dll",
+            //                                    "Supabase.Storage.dll",
+            //                                    "AutoMapper.dll",
+            //                                    "Blazored.SessionStorage.dll",
+            //                                    "System.Net.Http.dll",
+            //                                    "System.Text.Json.dll"
+            //                                    )
+            //);
+
+            //Console.WriteLine("Antes ");
+            //var result = await service.RunAsync(s => s.GetAditionalData("CLIENTE"));
+            //Console.WriteLine(result);
+            //Console.WriteLine("Despues");
             //FacturaSaveModel fac = new FacturaSaveModel();
             //fac.Id = 7;
             //fac.FechaFactura = "2023-12-07";
@@ -92,6 +114,7 @@
         }
         catch (Exception ex)
         {
+            Console.WriteLine(ex.Message);
             AppUtils.ShowNotify(ex.Message, "ERROR", Ns);
         }
         finally

@@ -34,5 +34,14 @@ namespace CommonBase.Models.Productos
 
         [Column("Active")]
         public bool Active { get; set; }
+
+        [Column("Cantidad")]
+        public decimal Cantidad { get; set; }
+
+        [Column("PvP")]
+        public decimal PvP { get; set; }
+
+        [Column("Costo")]
+        public decimal Costo { get; set; }
     }
 }

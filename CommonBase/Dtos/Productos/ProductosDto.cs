@@ -8,7 +8,6 @@ namespace CommonBase.Dtos.Productos
 {
     public class ProductosDto : DtosBase
     {
-
         public string? Code { get; set; }
         public string? Description { get; set; }
         public int MinQuantity { get; set; }
@@ -17,5 +16,8 @@ namespace CommonBase.Dtos.Productos
         public int IdUnidadMedida { get; set; }
         public int IdProductCategory { get; set; }
         public bool Active { get; set; }
+        public decimal Cantidad { get; set; }
+        public decimal PvP { get; set; }
+        public decimal Costo { get; set; }
     }
 }

@@ -14,6 +14,8 @@ namespace CommonBase.Services.Factura
         private readonly Supabase.Client _client;
         private readonly ISessionStorageService _localStorage;
         private readonly IMapper _mapper;
+
+
         public FacturaService(Supabase.Client client,
                             IMapper mapper,
                             ISessionStorageService localStorage)

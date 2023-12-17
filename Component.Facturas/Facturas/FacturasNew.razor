@@ -54,9 +54,8 @@ else
                                               Placeholder="Fecha factura"
                                               @bind-Value=@dtFactura
                                               Name="DropDownFechaFactura"
-                                              Change=@(args => ChangeFechaFactura(args)) 
-                                              Disabled="isReadonly"
-                                              />
+                                              Change=@(args => ChangeFechaFactura(args))
+                                              Disabled="isReadonly" />
                                 <RadzenRequiredValidator Component="DropDownFechaFactura" Text="Fecha factura requerida" Popup=@popup Style="position: absolute" />
                             </RadzenFormField>
 
@@ -70,19 +69,19 @@ else
                                             @bind-Value=currentTercero
                                             Style="width: 100%; max-width: 100%;"
                                             Name="DropDownTerceros"
-                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" 
+                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                                             Disabled="isReadonly" />
                                 <RadzenRequiredValidator Component="DropDownTerceros" Text="Tercero requerido" Popup=@popup Style="position: absolute" />
                             </RadzenFormField>
                             @if (isCredito)
                             {
                                 <RadzenFormField Text="Dias para vencer" Variant="@variant">
-                                    <RadzenNumeric Name="DiasVencer" 
-                                        TValue="int" 
-                                        @bind-Value=@DiasVencer
-                                        Change=@(args => ChangeDiasVencimiento(args)) 
-                                        TextAlign="TextAlign.Right" Min="0" I
-                                        nputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "enter value" }})"
+                                    <RadzenNumeric Name="DiasVencer"
+                                           TValue="int"
+                                           @bind-Value=@DiasVencer
+                                           Change=@(args => ChangeDiasVencimiento(args))
+                                           TextAlign="TextAlign.Right" Min="0" I
+                                                   nputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "enter value" }})"
                                            Disabled="isReadonly" />
                                     <RadzenRequiredValidator Component="DiasVencer" Text="Dias vencimiento requerido" Popup=@popup Style="position: absolute" />
 
@@ -103,8 +102,7 @@ else
                                             @bind-Value=currentEstadoEntrega
                                             Style="width: 100%; max-width: 100%;"
                                             Name="DropDownEstadoEntrega"
-                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                             />
+                                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" />
                                 <RadzenRequiredValidator Component="DropDownEstadoEntrega" Text="Estado requerido" Popup=@popup Style="position: absolute" />
                             </RadzenFormField>
 
@@ -119,7 +117,7 @@ else
                                             Style="width: 100%; max-width: 100%;"
                                             Name="DropDownTipoPago"
                                             FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                            SelectedItemChanged="@(args => ChangeTipoPago(args))" 
+                                            SelectedItemChanged="@(args => ChangeTipoPago(args))"
                                             Disabled="isReadonly" />
                                 <RadzenRequiredValidator Component="DropDownTipoPago" Text="Tipo de pago requerido" Popup=@popup Style="position: absolute" />
                             </RadzenFormField>
@@ -132,7 +130,7 @@ else
                                               Placeholder="Fecha Vencimiento"
                                               @bind-Value=@dtVencimientoFactura
                                               Name="DtFechaVencimiento"
-                                              Change=@(args => ChangeFechaVencimientoFactura(args)) 
+                                              Change=@(args => ChangeFechaVencimientoFactura(args))
                                               Disabled="isReadonly" />
                                     <RadzenRequiredValidator Component="DtFechaVencimiento" Text="Fecha vencimiento requerida" Popup=@popup Style="position: absolute" />
                                 </RadzenFormField>
@@ -217,13 +215,15 @@ else
                 </RadzenDataList>
             </RadzenFieldset>
 
-            <div class="rz-p-12 rz-text-align-center">
-
-                <RadzenButton style="width: 160px;"  Icon="save" BusyText="Guardando ..." IsBusy=@busy ButtonType="ButtonType.Submit" Text="Guardar" />
-                <RadzenButton style="width: 160px;" Icon="cancel" Text="Regresar" Click="@Cancel" ButtonStyle="ButtonStyle.Light" />
-
-            </div>
+           
         }
+        <div class="rz-p-12 rz-text-align-center">
+
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="1rem" Class="rz-mt-8 rz-mb-4">
+                <RadzenButton style="width: 160px;" Icon="save" BusyText="Guardando ..." IsBusy=@busy ButtonType="ButtonType.Submit" Text="Guardar" />
+                <RadzenButton style="width: 160px;" Icon="cancel" Text="Regresar" Click="@Cancel" ButtonStyle="ButtonStyle.Light" />
+            </RadzenStack>
+        </div>
     </RadzenTemplateForm>
 
 }
@@ -325,18 +325,18 @@ else
                 isCredito = false;
                 if (currentTipoPago.Code == "CREDITO") isCredito = true;
                 facturaToUpdate.Detalle.ForEach(item =>
-                    {
-                        detalleFacturaUI.Add(new DetalleFacturaSaveUIModel
-                                {
-                                    cantidad = item.Cantidad,
-                                    costo = item.Costo,
-                                    idproducto = item.IdProducto,
-                                    Name = item.Nombre,
-                                    pvp = item.PVP,
-                                    Subtotal = item.Cantidad * item.PVP
-                                });
-                        totalFactura = GetTotalFactura();
-                    });
+            {
+                detalleFacturaUI.Add(new DetalleFacturaSaveUIModel
+                        {
+                            cantidad = item.Cantidad,
+                            costo = item.Costo,
+                            idproducto = item.IdProducto,
+                            Name = item.Nombre,
+                            pvp = item.PVP,
+                            Subtotal = item.Cantidad * item.PVP
+                        });
+                totalFactura = GetTotalFactura();
+            });
 
             }
             catch (Exception ex)
@@ -370,7 +370,7 @@ else
 
 
 
-            DialogService.Refresh(); 
+            DialogService.Refresh();
 
         }
     }
@@ -528,7 +528,7 @@ else
     {
         Navigation.NavigateTo($"facturas/{TipoMovimiento}");
     }
-    
+
     async Task ShowInlineDialog()
     {
         currentFacturaUI = new DetalleFacturaSaveUIModel();
@@ -539,7 +539,7 @@ else
         DialogService.Refresh();
         var result = await DialogService.OpenAsync("Adicionar Producto", ds =>
     @<RadzenStack Gap="1.5rem">
-       
+
         <RadzenBadge Style="font-size: medium;"
                  BadgeStyle="BadgeStyle.Secondary"
                  Shade="Shade.Lighter"
@@ -561,8 +561,7 @@ else
                                             Style="width: 100%; max-width: 100%;"
                                             Name="DropDownProducto"
                                             FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                                            Change="@(args => ChangeProducto(args))"
-                                            />
+                                            Change="@(args => ChangeProducto(args))" />
 
                             </RadzenFormField>
                             <RadzenFormField Text="Cantidad" Variant="@variant">
@@ -586,8 +585,8 @@ else
 
                             <RadzenFormField Text="Precio de Venta $" Variant="@variant">
                                 <RadzenNumeric Name="txtPvp" @bind-Value=@PVP
-                                           TextAlign="TextAlign.Right" 
-                                           Min="0" 
+                                           TextAlign="TextAlign.Right"
+                                           Min="0"
                                            InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "enter value" }})" />
                                 <RadzenRequiredValidator Component="txtPvp" Text="Precio de venta requerido" Popup=@popup Style="position: absolute" />
                                 <RadzenNumericRangeValidator Component="txtPvp" Min="1" Text="Precio de venta debe ser mayor a 1" Popup=@popup Style="position: absolute" />
@@ -602,7 +601,7 @@ else
                 </RadzenStack>
             </RadzenStack>
         </RadzenTemplateForm>
-            </RadzenStack>
+    </RadzenStack>
     );
     }
 

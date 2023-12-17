@@ -20,6 +20,7 @@ using CommonBase.Services.EstadoEntregaService;
 using CommonBase.Services.TipoPagoService;
 using CommonBase.Services.TipoMovimientoService;
 using CommonBase.Services.Factura;
+using BlazorWorker.Core;
 
 const string ApiUrlBase = "https://jricardo0822-001-site1.ftempurl.com/api/";
 //const string ApiUrlBase = "https://vot20231005162706.azurewebsites.net/api/";
@@ -43,6 +44,7 @@ builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>
 )
     ;
 builder.Services.AddAuthorizationCore();
+builder.Services.AddWorkerFactory();
 builder.Services.AddScoped<IUserService, UserService>();
 
 

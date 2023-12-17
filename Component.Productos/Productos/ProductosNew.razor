@@ -103,6 +103,36 @@ else
                             </RadzenRow>
                             <RadzenRow AlignItems="AlignItems.Center">
                                 <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenLabel Text="Cantidad actual" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <RadzenNumeric Style="width: 100%;" Name="Cantidad" @bind-Value="producto.Cantidad" MaxLength="100" Disabled="isReadonly" />
+                                    <RadzenCustomValidator Component="Cantidad" Validator="@(() => AppUtils.ValidateSpaces(producto.Cantidad.ToString()))" Text="cCantidad es requerido" Popup=@popup Style="position: relative" />
+                                    <RadzenCustomValidator Component="Cantidad" Validator="@(() => AppUtils.ValidateOnlyNumber(producto.Cantidad.ToString()))" Text="Cantidad es requerido" Popup=@popup Style="position: relative" />
+                                </RadzenColumn>
+                            </RadzenRow>
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenLabel Text="Costo" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <RadzenNumeric Style="width: 100%;" Name="Costo" @bind-Value="producto.Costo" MaxLength="100" Disabled="isReadonly" />
+                                    <RadzenCustomValidator Component="Costo" Validator="@(() => AppUtils.ValidateSpaces(producto.Costo.ToString()))" Text="Costo es requerido" Popup=@popup Style="position: relative" />
+                                    <RadzenCustomValidator Component="Costo" Validator="@(() => AppUtils.ValidateOnlyNumber(producto.Costo.ToString()))" Text="Costo es requerido" Popup=@popup Style="position: relative" />
+                                </RadzenColumn>
+                            </RadzenRow>
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenLabel Text="Précio" />
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="9">
+                                    <RadzenNumeric Style="width: 100%;" Name="PvP" @bind-Value="producto.PvP" MaxLength="100" Disabled="isReadonly" />
+                                    <RadzenCustomValidator Component="PvP" Validator="@(() => AppUtils.ValidateSpaces(producto.PvP.ToString()))" Text="Précio es requerido" Popup=@popup Style="position: relative" />
+                                    <RadzenCustomValidator Component="PvP" Validator="@(() => AppUtils.ValidateOnlyNumber(producto.PvP.ToString()))" Text="Précio es requerido" Popup=@popup Style="position: relative" />
+                                </RadzenColumn>
+                            </RadzenRow>
+                            <RadzenRow AlignItems="AlignItems.Center">
+                                <RadzenColumn Size="12" SizeMD="2">
                                     <RadzenLabel Text="Maneja stock?" />
                                 </RadzenColumn>
                                 <RadzenColumn Size="12" SizeMD="9">
@@ -136,6 +166,7 @@ else
     private List<UnidadMedidaDto> ListUnidadMedida;
 
     bool popup = true;
+    bool isReadonly = false;
 
 
     protected override async Task OnInitializedAsync()
@@ -152,6 +183,7 @@ else
         {
             try
             {
+                isReadonly = true;
                 producto = await productosService.GetById((int)id);
                 currentProductCategory = ListProductCategies.FirstOrDefault(x => x.Id == producto.IdProductCategory);
                 currentUnidadMedida = ListUnidadMedida.FirstOrDefault(x => x.Id == producto.IdUnidadMedida);

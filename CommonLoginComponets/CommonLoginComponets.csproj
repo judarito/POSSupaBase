@@ -16,6 +16,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="6.0.24" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.14" />
     <PackageReference Include="Radzen.Blazor" Version="4.16.4" />
+    <PackageReference Include="Tewr.BlazorWorker.BackgroundService" Version="3.2.2" />
   </ItemGroup>
 
   <ItemGroup>
