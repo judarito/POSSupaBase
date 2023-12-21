@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
@@ -13,18 +13,18 @@
 
   <ItemGroup>
     <PackageReference Include="Blazored.SessionStorage" Version="2.4.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="6.0.24" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.14" />
-    <PackageReference Include="Radzen.Blazor" Version="4.16.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0" />
+    <PackageReference Include="Radzen.Blazor" Version="4.23.4" />
     <PackageReference Include="Tewr.BlazorWorker.BackgroundService" Version="3.2.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CommonBase\CommonBase.csproj" />
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\" />
+    <ProjectReference Include="..\CommonBase\CommonBase.csproj" />
   </ItemGroup>
 
 </Project>

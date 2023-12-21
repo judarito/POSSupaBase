@@ -14,10 +14,16 @@
 
 <p>Este es el sistema de gestión de ventas</p>
 
+<div class="icon icon-shape icon-shape-secondary me-2 me-md-0 mb-2">
+    <span class="fas fa-box-open"></span>
+</div>
+<span class="counter display-3 text-secondary d-block">1560</span>
+<span class="h5 text-gray">Units Ordered</span>
+
 
 @*<ResumenVotos></ResumenVotos>*@
 
-@code{
+@code {
 
 
     private string? DisplayName;
@@ -29,5 +35,5 @@
         DisplayName = userinfo != null ? userinfo.DisplayName : "";
     }
 
-    
+
 }

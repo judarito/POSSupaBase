@@ -47,30 +47,30 @@
             if (args.Path.Contains("productcategory"))
             {
                 var assemblies = await AssemblyLoader.LoadAssembliesAsync(
-                    new[] { "Component.ProductCategory.dll" });
+                    new[] { "Component.ProductCategory.wasm" });
             }
 
             if (args.Path.Contains("unidadmedida"))
             {
                 var assemblies = await AssemblyLoader.LoadAssembliesAsync(
-                    new[] { "Component.UnidadMedida.dll" });
+                    new[] { "Component.UnidadMedida.wasm" });
             }
 
             if (args.Path.Contains("productos"))
             {
                 var assemblies = await AssemblyLoader.LoadAssembliesAsync(
-                    new[] { "Component.Productos.dll" });
+                    new[] { "Component.Productos.wasm" });
             }
 
             if (args.Path.Contains("terceros"))
             {
                 var assemblies = await AssemblyLoader.LoadAssembliesAsync(
-                    new[] { "Component.Terceros.dll" });
+                    new[] { "Component.Terceros.wasm" });
             }
             if (args.Path.Contains("facturas"))
             {
                 var assemblies = await AssemblyLoader.LoadAssembliesAsync(
-                    new[] { "Component.Facturas.dll" });
+                    new[] { "Component.Facturas.wasm" });
             }
             
             
