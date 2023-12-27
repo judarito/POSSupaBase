@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Component.Productos", "Comp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Component.Terceros", "Component.Terceros\Component.Terceros.csproj", "{0BC6C7C1-7F7C-48ED-9D20-1FB8AA5DF53F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Component.Facturas", "Component.Facturas\Component.Facturas.csproj", "{B7D966D5-530E-416F-BD07-72DCBD34F56F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Component.Facturas", "Component.Facturas\Component.Facturas.csproj", "{B7D966D5-530E-416F-BD07-72DCBD34F56F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

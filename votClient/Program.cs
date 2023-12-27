@@ -21,6 +21,7 @@ using CommonBase.Services.TipoPagoService;
 using CommonBase.Services.TipoMovimientoService;
 using CommonBase.Services.Factura;
 using BlazorWorker.Core;
+using CommonBase.Services.CacheService;
 
 const string ApiUrlBase = "https://jricardo0822-001-site1.ftempurl.com/api/";
 //const string ApiUrlBase = "https://vot20231005162706.azurewebsites.net/api/";
@@ -98,6 +99,7 @@ builder.Services.AddScoped<TipoMovimientoService>();
 builder.Services.AddScoped<TipoPagoService>();
 builder.Services.AddScoped<EstadoEntregaService>();
 builder.Services.AddScoped<IFacturaService, FacturaService>();
+builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddScoped(typeof(ServiceBase<,>));
 
 await builder.Build().RunAsync();

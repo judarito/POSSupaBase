@@ -1,7 +1,9 @@
 ﻿@using CommonBase.ComponentBase;
 @using CommonBase.Dtos.ProductCategory;
 @using CommonBase.Models.ProductCategory;
-@inherits CustomComponentBase<ProductCategory,ProductCategoryDto>
+@inherits CustomComponentBase<ProductCategory,ProductCategoryDto>;
+
+
 
 <PageTitle>Categoría de productos</PageTitle>
 
@@ -21,14 +23,12 @@ else
     <RadzenRow>
         <RadzenColumn Size="11">
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Gap="1rem">
-                <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="find_in_page" Style="max-width:30%;"  Click="@(()=>Buscar())" />
-                <RadzenTextBox Placeholder="Buscar..." 
-                    Style="width:100%!important" 
-                 
-                    @bind-Value="searchCriteria" 
-                    @oninput=@(args => OnChange(args.Value.ToString())) 
-                    @onkeypress=@(e=> SearchInputKeyPressed(e))
-                    />
+                <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="find_in_page" Style="max-width:30%;" Click="@(()=>Buscar())" />
+                <RadzenTextBox Placeholder="Buscar..."
+                               Style="width:100%!important"
+                               @bind-Value="searchCriteria"
+                               @oninput=@(args => OnChange(args.Value.ToString()))
+                               @onkeypress=@(e=> SearchInputKeyPressed(e)) />
             </RadzenStack>
         </RadzenColumn>
         <RadzenColumn>
@@ -40,14 +40,14 @@ else
 
 
     <RadzenDataList IsLoading=@isLoading
-                LoadData=@LoadDataGrig
-                Count=@count
-                Data="@DataList"
-                TItem="ProductCategoryDto"
-                PageSize="@PageSize"
-                PagerHorizontalAlign="HorizontalAlign.Left"
-                ShowPagingSummary="true"
-                AllowPaging="true">
+                    LoadData=@LoadDataGrig
+                    Count=@count
+                    Data="@DataList"
+                    TItem="ProductCategoryDto"
+                    PageSize="@PageSize"
+                    PagerHorizontalAlign="HorizontalAlign.Left"
+                    ShowPagingSummary="true"
+                    AllowPaging="true">
         <Template Context="ProductCategoryDto">
             <RadzenCard Style="width: 100%; padding: 0;">
                 <RadzenRow Gap="0">
@@ -56,34 +56,34 @@ else
                             <RadzenColumn>
                                 <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
                                     <RadzenLink Path="javascript:void(0)" Text="Go to url" onclick="@(()=> Editar(ProductCategoryDto.Id))"><RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class="rz-color-secondary">@(ProductCategoryDto.Id)</RadzenText>  </RadzenLink>
+                                </RadzenStack>
+                            </RadzenColumn>
+                            <RadzenColumn>
+                                <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.End" Gap="0">
+                                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Gap="8">
+                                        <button type="button" onclick="@(()=> Editar(ProductCategoryDto.Id))" class="btn btn-secondary"><spam class="fa fa-pencil-square-o" aria-hidden="true"></spam></button>
+                                        <button type="button" onclick="@(()=> Detete(ProductCategoryDto.Id))" class="btn btn-danger"><spam class="fa fa-trash-o" aria-hidden="true"></spam></button>
                                     </RadzenStack>
-                                </RadzenColumn>
-                                <RadzenColumn>
-                                    <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.End" Gap="0">
-                                        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Gap="8">
-                                            <button type="button" onclick="@(()=> Editar(ProductCategoryDto.Id))" class="btn btn-secondary"><spam class="fa fa-pencil-square-o" aria-hidden="true"></spam></button>
-                                            <button type="button" onclick="@(()=> Detete(ProductCategoryDto.Id))" class="btn btn-danger"><spam class="fa fa-trash-o" aria-hidden="true"></spam></button>
-                                        </RadzenStack>
 
 
-                                    </RadzenStack>
-                                </RadzenColumn>
-                            </RadzenRow>
+                                </RadzenStack>
+                            </RadzenColumn>
+                        </RadzenRow>
 
-                        </RadzenColumn>
-                        <RadzenColumn Size="12" SizeLG="7" Class="rz-p-4">
-                            <RadzenRow Gap="0">
-                                <RadzenColumn Size="12" SizeMD="6" SizeLG="2">
-                                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Nombre:</RadzenText>
-                                    <RadzenText TextStyle="TextStyle.Body2">@(ProductCategoryDto.Name)</RadzenText>
-                                </RadzenColumn>
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeLG="7" Class="rz-p-4">
+                        <RadzenRow Gap="0">
+                            <RadzenColumn Size="12" SizeMD="6" SizeLG="2">
+                                <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">Nombre:</RadzenText>
+                                <RadzenText TextStyle="TextStyle.Body2">@(ProductCategoryDto.Name)</RadzenText>
+                            </RadzenColumn>
 
-                            </RadzenRow>
-                        </RadzenColumn>
-                    </RadzenRow>
-                </RadzenCard>
-            </Template>
-        </RadzenDataList>
+                        </RadzenRow>
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenCard>
+        </Template>
+    </RadzenDataList>
 }
 
 <style>
@@ -104,10 +104,11 @@ else
 
 
 @code {
+    
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        
+       
         this.pathRedirectNew = "productcategorynew";
         this.MsjDeleteIttem = "Está seguro de querer eliminar la categoría de producto?";
         this.MsjDeleteIttemTitle = "Eliminar la categoría de producto";

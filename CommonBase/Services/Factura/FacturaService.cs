@@ -42,6 +42,12 @@ namespace CommonBase.Services.Factura
             DatosAdicionalesFactura aditionalData = new DatosAdicionalesFactura();
 
             var UserInfo = await _localStorage.GetItemAsync<UserInfoLocalStorage>("USER_INFO");
+            var AdInfo = await _localStorage.GetItemAsync<DatosAdicionalesFactura>($"ad{TipoTercero}");
+            if (AdInfo != null)
+            {
+                return AdInfo;
+            }
+           
             var result = await _client.Rpc("getdatosadicionales", new Dictionary<string, object> {
                                                                                                         { "idtenant", UserInfo.TenantId },
                                                                                                         { "tipotercero", TipoTercero },

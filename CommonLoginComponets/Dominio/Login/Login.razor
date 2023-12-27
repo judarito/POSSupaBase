@@ -1,13 +1,20 @@
-﻿@using CommonBase.Dtos.Facturas;
+﻿@using Blazored.SessionStorage
+@using CommonBase.Dtos.Facturas;
 @using CommonBase.Services.AuthService;
+@using CommonBase.Services.CacheService
 @using CommonBase.Services.Factura;
 @using Microsoft.AspNetCore.Components.Authorization
 @using CommonBase.Models.Login;
 @using CommonBase.Shared.Services;
+@using System.Threading;
+@using System.Text.Json
 @inject AuthService AuthService
 @inject NavigationManager Navigation
 @inject IFacturaService facturaService
 @inject IWorkerFactory workerFactory
+@inject ISessionStorageService localStorage
+@inject ICacheService cacheService
+
 
 
 
@@ -54,6 +61,7 @@
     string userName = "";
     string password = "";
     bool rememberMe = false;
+  
 
     protected override async Task OnInitializedAsync()
     {
@@ -70,46 +78,9 @@
         try
         {
             await AuthService.Login(args.Username, args.Password);
-
-            //var worker = await workerFactory.CreateAsync();
-
-            //var service = await worker.CreateBackgroundServiceAsync<FacturaService>(
-            //    options => options.AddAssemblies("CommonBase.dll", 
-            //                                    "Supabase.dll", 
-            //                                    "Supabase.Gotrue.dll",
-            //                                    "Supabase.Core.dll",
-            //                                    "Supabase.Functions.dll",
-            //                                    "Supabase.Postgrest.dll",
-            //                                    "Supabase.Realtime.dll",
-            //                                    "Supabase.Storage.dll",
-            //                                    "AutoMapper.dll",
-            //                                    "Blazored.SessionStorage.dll",
-            //                                    "System.Net.Http.dll",
-            //                                    "System.Text.Json.dll"
-            //                                    )
-            //);
-
-            //Console.WriteLine("Antes ");
-            //var result = await service.RunAsync(s => s.GetAditionalData("CLIENTE"));
-            //Console.WriteLine(result);
-            //Console.WriteLine("Despues");
-            //FacturaSaveModel fac = new FacturaSaveModel();
-            //fac.Id = 7;
-            //fac.FechaFactura = "2023-12-07";
-            //fac.IdTipoMovimiento = 1;
-            //fac.IdTipoPago = 1;
-            //fac.IdTercero = 8;
-            //fac.IdEstadoEntrega = 1;
-            //fac.Detalle = new List<DetalleFacturaSaveModel>() {
-            //        new DetalleFacturaSaveModel() { cantidad=2, costo=8, pvp=80, idproducto=3 },
-            //        new DetalleFacturaSaveModel() { cantidad=5, costo=6, pvp=200, idproducto=2 },
-            //        new DetalleFacturaSaveModel() { cantidad=8, costo=6, pvp=7000, idproducto=2 }
-            //};
-            //var a = await facturaService.SaveOrUpdate(fac);
-            // var a = await facturaService.GetAll(5, 0, "", DateTime.Parse("2023-12-01"), DateTime.Parse("2023-12-06"));
-            //var a = await facturaService.GetById(1);
-
-
+            // _timer = new Timer(new TimerCallback(LoadDataInCache), null, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
+            cacheService.EntityCache = CommonBase.Services.CacheService.Enum.TipoCache.All;
+            cacheService.LoadDataInCache();
             Navigation.NavigateTo($"/home");
         }
         catch (Exception ex)
